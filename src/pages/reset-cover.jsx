@@ -15,7 +15,7 @@ const ResetCover = () => {
                 <div className="auth-cover-card-wrapper">
                     <div className="auth-cover-card p-sm-5">
                         <div className="wd-50 mb-5">
-                            <img src="/images/logo-abbr.png" alt="img" className="img-fluid" />
+                            <img src="/images/logo/techlal.png" alt="img" className="img-fluid" />
                         </div>
                         <ResetForm path={"/authentication/register/cover"} />
                     </div>

@@ -18,7 +18,7 @@ const SettingGeneralForm = () => {
                         <div className="card-body">
                             <div className="mb-5">
                                 <label htmlFor='img' className="wd-100 ht-100 position-relative overflow-hidden border border-gray-2 rounded d-inline-block" style={{ marginBottom: "-8px" }}>
-                                    <img src={uploadedImage || "/images/logo-abbr.png"} className="upload-pic img-fluid rounded h-100 w-100" alt="img" />
+                                    <img src={uploadedImage || "/images/logo/techlal.png"} className="upload-pic img-fluid rounded h-100 w-100" alt="img" />
                                     <div className="position-absolute start-50 top-50 end-0 bottom-0 translate-middle h-100 w-100 hstack align-items-center justify-content-center c-pointer upload-button">
                                         <i className="camera-icon" aria-hidden="true" ><FiCamera /></i>
                                     </div>

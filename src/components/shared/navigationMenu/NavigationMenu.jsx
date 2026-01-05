@@ -18,7 +18,7 @@ const NavigationManu = () => {
                     <Link to="/" className="b-brand">
                         {/* <!-- ========   change your logo hear   ============ --> */}
                         <img src="/images/logo-full.png" alt="logo" className="logo logo-lg" />
-                        <img src="/images/logo-abbr.png" alt="logo" className="logo logo-sm" />
+                        <img src="/images/logo/techlal.png" alt="logo" className="logo logo-sm" />
                     </Link>
                 </div>
 

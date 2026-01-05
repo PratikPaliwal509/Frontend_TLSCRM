@@ -15,7 +15,7 @@ const ErrorCover = () => {
                 <div className="auth-cover-card-wrapper">
                     <div className="auth-cover-card p-sm-5">
                         <div className="wd-50 mb-5">
-                            <img src="/images/logo-abbr.png" alt="img" className="img-fluid" />
+                            <img src="/images/logo/techlal.png" alt="img" className="img-fluid" />
                         </div>
                         <h4 className="fw-bold mb-2">Page not found</h4>
                         <p className="fs-12 fw-medium text-muted">Sorry, the page you are looking for can't be found. Please check the URL or try to a different page on our site.</p>

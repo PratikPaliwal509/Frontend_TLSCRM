@@ -10,7 +10,7 @@ const ResetCreative = () => {
                         <div className="row flex-1 g-0">
                             <div className="col-lg-6 h-100 my-auto">
                                 <div className="wd-50 bg-white p-2 rounded-circle shadow-lg position-absolute translate-middle top-50 start-50">
-                                    <img src="/images/logo-abbr.png" alt="img" className="img-fluid" />
+                                    <img src="/images/logo/techlal.png" alt="img" className="img-fluid" />
                                 </div>
                                 <div className="creative-card-body card-body p-sm-5">
                                     <ResetForm path={"/authentication/register/creative"}/>

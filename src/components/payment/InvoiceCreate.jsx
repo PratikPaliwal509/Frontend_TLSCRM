@@ -90,7 +90,7 @@ const InvoiceCreate = () => {
                             <div className="d-md-flex align-items-center justify-content-between">
                                 <div className="mb-4 mb-md-0 your-brand">
                                     <label htmlFor='img' className="wd-100 ht-100 mb-0 position-relative overflow-hidden border border-gray-2 rounded">
-                                        <img src={uploadedImage || "/images/logo-abbr.png"} className="upload-pic img-fluid rounded h-100 w-100" alt="Uploaded" />
+                                        <img src={uploadedImage || "/images/logo/techlal.png"} className="upload-pic img-fluid rounded h-100 w-100" alt="Uploaded" />
                                         <div className="position-absolute start-50 top-50 end-0 bottom-0 translate-middle h-100 w-100 hstack align-items-center justify-content-center c-pointer upload-button">
                                             <i aria-hidden="true" className='camera-icon'><FiCamera size={16} /></i>
                                         </div>
