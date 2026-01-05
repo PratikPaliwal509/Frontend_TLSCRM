@@ -68,6 +68,10 @@ import WidgetsTables from "../pages/widgets-tables";
 import WidgetsCharts from "../pages/widgets-charts";
 import WidgetsStatistics from "../pages/widgets-statistics";
 import WidgetsMiscellaneous from "../pages/widgets-miscellaneous";
+import AddRoles from "@/components/Roles/AddRoles";
+import RoleList from "@/components/Roles/RoleList";
+import EditRole from "@/components/Roles/EditRoles";
+import ViewRole from "@/components/Roles/View.Roles";
 
 export const router = createBrowserRouter([
     {
@@ -275,6 +279,28 @@ export const router = createBrowserRouter([
                 path: "/settings/miscellaneous",
                 element: <SettingsMiscellaneous />
             },
+            {
+                path: "/",
+                // element: <LayoutSetting />,
+                children: [
+                    {
+                        path: "/settings/roles",
+                        element: <RoleList/>
+                    },
+                    {
+                        path: "/settings/roles/create",
+                        element: <AddRoles/>
+                    },
+                    {
+                        path: "/settings/roles/edit/:id",
+                        element: <EditRole/>
+                    },
+                    {
+                        path: "/settings/roles/view/:id",
+                        element: <ViewRole/>
+                    },
+                ]
+            }
         ]
     },
     {

@@ -1,19 +1,90 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FiFacebook, FiGithub, FiTwitter } from 'react-icons/fi'
-import { Link } from 'react-router-dom'
-
+import { Link, useNavigate } from 'react-router-dom'
+import Loader from '../loader'
 const LoginForm = ({ registerPath, resetPath }) => {
+    const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+const navigate = useNavigate() 
+const handleSubmit = async (e) => {
+  e.preventDefault()
+  setLoading(true)
+  setError('')
+  setSuccess('')
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      setError(data.message || 'Login failed')
+      return
+    }
+
+    const { token, user } = data.data
+
+    // 🔐 Remove sensitive fields before storing
+    const safeUser = {
+      user_id: user.user_id,
+      agency_id: user.agency_id,
+      role_id: user.role_id,
+      department_id: user.department_id,
+      team_id: user.team_id,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      full_name: user.full_name,
+      phone: user.phone,
+      avatar_url: user.avatar_url,
+      job_title: user.job_title,
+      timezone: user.timezone,
+      language: user.language,
+      is_active: user.is_active,
+      is_verified: user.is_verified,
+      notification_preferences: user.notification_preferences,
+
+      // 👇 permissions should come from backend (role based)
+      permissions: user.permissions || {}
+    }
+
+    // ✅ Store in localStorage
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify(safeUser))
+
+    setSuccess('Login successful!')
+    console.log('Logged in user:', safeUser)
+
+    navigate('/')
+  } catch (err) {
+    setError('Something went wrong. Please try again.')
+    console.error(err)
+  } finally {
+    setLoading(false)
+  }
+}
+
+
     return (
         <>
             <h2 className="fs-20 fw-bolder mb-4">Login</h2>
             <h4 className="fs-13 fw-bold mb-2">Login to your account</h4>
             <p className="fs-12 fw-medium text-muted">Thank you for get back <strong>Nelel</strong> web applications, let's access our the best recommendation for you.</p>
-            <form action="index.html" className="w-100 mt-4 pt-2">
+            <form onSubmit={handleSubmit} className="w-100 mt-4 pt-2">
                 <div className="mb-4">
-                    <input type="email" className="form-control" placeholder="Email or Username" defaultValue="wrapcode.info@gmail.com" required />
+                    <input type="email"   value={email}  onChange={(e) => setEmail(e.target.value)}  className="form-control" placeholder="Email or Username" required />
+                    
                 </div>
                 <div className="mb-3">
-                    <input type="password" className="form-control" placeholder="Password" defaultValue="123456" required />
+                    <input type="password" value={password}  onChange={(e) => setPassword(e.target.value)}  className="form-control" placeholder="Password" required />
+                     
                 </div>
                 <div className="d-flex align-items-center justify-content-between">
                     <div>

@@ -331,30 +331,49 @@ export const menuList = [
                 path: "/settings/gateways",
                 subdropdownMenu: false
             },
-            {
-                id: 10,
-                name: "Customers",
-                path: "/settings/customers",
-                subdropdownMenu: false
-            },
-            {
-                id: 11,
-                name: "Localization",
-                path: "/settings/localization",
-                subdropdownMenu: false
-            },
-            {
-                id: 12,
-                name: "reCAPTCHA",
-                path: "/settings/recaptcha",
-                subdropdownMenu: false
+            // {
+            //     id: 10,
+            //     name: "Customers",
+            //     path: "/settings/customers",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 11,
+            //     name: "Localization",
+            //     path: "/settings/localization",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 12,
+            //     name: "reCAPTCHA",
+            //     path: "/settings/recaptcha",
+            //     subdropdownMenu: false
+            // },
+             {
+                id: 14,
+                name: "Roles",
+                path: "#",
+                // subdropdownMenu: false
+                subdropdownMenu: [
+                    {
+                        id: 1,
+                        name: "Role List",
+                        path: "/settings/roles",
+                    },
+                    {
+                        id: 2,
+                        name: "Add Role",
+                        path: "/settings/roles/create",
+                    },
+                ]
             },
             {
                 id: 13,
-                name: "Miscellaneous",
+                name: "Miscellaneouss",
                 path: "/settings/miscellaneous",
                 subdropdownMenu: false
             },
+           
         ]
     },
     {
@@ -373,16 +392,16 @@ export const menuList = [
                         name: "Cover",
                         path: "/authentication/login/cover",
                     },
-                    {
-                        id: 2,
-                        name: "Minimal",
-                        path: "/authentication/login/minimal",
-                    },
-                    {
-                        id: 3,
-                        name: "Creative",
-                        path: "/authentication/login/creative",
-                    },
+                    // {
+                    //     id: 2,
+                    //     name: "Minimal",
+                    //     path: "/authentication/login/minimal",
+                    // },
+                    // {
+                    //     id: 3,
+                    //     name: "Creative",
+                    //     path: "/authentication/login/creative",
+                    // },
                 ]
             },
             {
@@ -395,16 +414,16 @@ export const menuList = [
                         name: "Cover",
                         path: "/authentication/register/cover",
                     },
-                    {
-                        id: 2,
-                        name: "Minimal",
-                        path: "/authentication/register/minimal",
-                    },
-                    {
-                        id: 3,
-                        name: "Creative",
-                        path: "/authentication/register/creative",
-                    },
+                    // {
+                    //     id: 2,
+                    //     name: "Minimal",
+                    //     path: "/authentication/register/minimal",
+                    // },
+                    // {
+                    //     id: 3,
+                    //     name: "Creative",
+                    //     path: "/authentication/register/creative",
+                    // },
                 ]
             },
             {
@@ -417,16 +436,16 @@ export const menuList = [
                         name: "Cover",
                         path: "/authentication/404/cover",
                     },
-                    {
-                        id: 2,
-                        name: "Minimal",
-                        path: "/authentication/404/minimal",
-                    },
-                    {
-                        id: 3,
-                        name: "Creative",
-                        path: "/authentication/404/creative",
-                    },
+                    // {
+                    //     id: 2,
+                    //     name: "Minimal",
+                    //     path: "/authentication/404/minimal",
+                    // },
+                    // {
+                    //     id: 3,
+                    //     name: "Creative",
+                    //     path: "/authentication/404/creative",
+                    // },
                 ]
             },
             {
@@ -439,16 +458,16 @@ export const menuList = [
                         name: "Cover",
                         path: "/authentication/reset/cover",
                     },
-                    {
-                        id: 2,
-                        name: "Minimal",
-                        path: "/authentication/reset/minimal",
-                    },
-                    {
-                        id: 3,
-                        name: "Creative",
-                        path: "/authentication/reset/creative",
-                    },
+                    // {
+                    //     id: 2,
+                    //     name: "Minimal",
+                    //     path: "/authentication/reset/minimal",
+                    // },
+                    // {
+                    //     id: 3,
+                    //     name: "Creative",
+                    //     path: "/authentication/reset/creative",
+                    // },
                 ]
             },
             {
@@ -461,40 +480,40 @@ export const menuList = [
                         name: "Cover",
                         path: "/authentication/verify/cover",
                     },
-                    {
-                        id: 2,
-                        name: "Minimal",
-                        path: "/authentication/verify/minimal",
-                    },
-                    {
-                        id: 3,
-                        name: "Creative",
-                        path: "/authentication/verify/creative",
-                    },
+                    // {
+                    //     id: 2,
+                    //     name: "Minimal",
+                    //     path: "/authentication/verify/minimal",
+                    // },
+                    // {
+                    //     id: 3,
+                    //     name: "Creative",
+                    //     path: "/authentication/verify/creative",
+                    // },
                 ]
             },
-            {
-                id: 6,
-                name: "Maintenance",
-                path: "#",
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Cover",
-                        path: "/authentication/maintenance/cover",
-                    },
-                    {
-                        id: 2,
-                        name: "Minimal",
-                        path: "/authentication/maintenance/minimal",
-                    },
-                    {
-                        id: 3,
-                        name: "Creative",
-                        path: "/authentication/maintenance/creative",
-                    },
-                ]
-            },
+            // {
+            //     id: 6,
+            //     name: "Maintenance",
+            //     path: "#",
+            //     subdropdownMenu: [
+            //         {
+            //             id: 1,
+            //             name: "Cover",
+            //             path: "/authentication/maintenance/cover",
+            //         },
+            //         {
+            //             id: 2,
+            //             name: "Minimal",
+            //             path: "/authentication/maintenance/minimal",
+            //         },
+            //         {
+            //             id: 3,
+            //             name: "Creative",
+            //             path: "/authentication/maintenance/creative",
+            //         },
+            //     ]
+            // },
         ]
     },
     {

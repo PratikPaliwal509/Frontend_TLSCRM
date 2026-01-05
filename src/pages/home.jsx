@@ -12,8 +12,14 @@ import PageHeaderDate from '@/components/shared/pageHeader/PageHeaderDate'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import Footer from '@/components/shared/Footer'
 import { projectsDataTwo } from '@/utils/fackData/projectsDataTwo'
-
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const Home = () => {
+      const navigate = useNavigate();
+     useEffect(() => {
+        verifyPagePermission('dashboard', 'view', navigate);
+      }, []);
     return (
         <>
             <PageHeader >

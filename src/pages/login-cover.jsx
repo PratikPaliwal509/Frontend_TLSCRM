@@ -2,6 +2,7 @@ import React from 'react'
 import LoginForm from '@/components/authentication/LoginForm'
 
 const LoginCover = () => {
+  
   return (
     <main className="auth-cover-wrapper">
       <div className="auth-cover-content-inner">
