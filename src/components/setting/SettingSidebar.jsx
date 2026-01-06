@@ -7,18 +7,22 @@ import getIcon from '@/utils/getIcon'
 
 const navItems = [
     { label: "General", path: "/settings/ganeral", icon: "feather-airplay" },
-    { label: "SEO", path: "/settings/seo", icon: "feather-search" },
+    // { label: "SEO", path: "/settings/seo", icon: "feather-search" },
     { label: "Tags", path: "/settings/tags", icon: "feather-tag" },
     { label: "Email", path: "/settings/email", icon: "feather-mail" },
     { label: "Tasks", path: "/settings/tasks", icon: "feather-check-circle" },
     { label: "Leads", path: "/settings/leads", icon: "feather-crosshair" },
     { label: "Support", path: "/settings/support", icon: "feather-life-buoy" },
-    { label: "Finance", path: "/settings/finance", icon: "feather-dollar-sign" },
-    { label: "Gateways", path: "/settings/gateways", icon: "feather-git-branch" },
+    // { label: "Finance", path: "/settings/finance", icon: "feather-dollar-sign" },
+    // { label: "Gateways", path: "/settings/gateways", icon: "feather-git-branch" },
     { label: "Customers", path: "/settings/customers", icon: "feather-users" },
-    { label: "Localization", path: "/settings/localization", icon: "feather-globe" },
-    { label: "reCaptcha", path: "/settings/recaptcha", icon: "feather-shield" },
-    { label: "Miscellaneous", path: "/settings/miscellaneous", icon: "feather-cast" },
+    { label: "Role List", path: "/settings/roles", icon: "" },
+    { label: "Role Create", path: "/settings/roles/create", icon: "" },
+    { label: "Departments", path: "/settings/departments", icon: "" },
+    { label: "Departments Create", path: "/settings/departments/create", icon: "" },
+    // { label: "Localization", path: "/settings/localization", icon: "feather-globe" },
+    // { label: "reCaptcha", path: "/settings/recaptcha", icon: "feather-shield" },
+    // { label: "Miscellaneous", path: "/settings/miscellaneous", icon: "feather-cast" },
 ]
 const SettingSidebar = () => {
     const { sidebarOpen, setSidebarOpen } = useContext(SidebarContext)

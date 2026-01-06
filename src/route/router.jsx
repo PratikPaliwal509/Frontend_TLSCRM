@@ -72,6 +72,11 @@ import AddRoles from "@/components/Roles/AddRoles";
 import RoleList from "@/components/Roles/RoleList";
 import EditRole from "@/components/Roles/EditRoles";
 import ViewRole from "@/components/Roles/View.Roles";
+import ClientsList from "../pages/clientsList";
+import ClientsView from "../pages/clients-view";
+import ClientsCreate from "../pages/clients-create";
+import ReportsClients from "../pages/reports-clients";
+import ClientEdit from "../pages/clients-edit";
 
 export const router = createBrowserRouter([
     {
@@ -93,6 +98,10 @@ export const router = createBrowserRouter([
             {
                 path: "/reports/leads",
                 element: <ReportsLeads />
+            },
+            {
+                path: "/reports/clients",
+                element: <ReportsClients />
             },
             {
                 path: "/reports/project",
@@ -142,17 +151,33 @@ export const router = createBrowserRouter([
                 path: "/customers/create",
                 element: <CustomersCreate />
             },
+            // {
+            //     path: "/leads/list",
+            //     element: <LeadsList />
+            // },
+            // {
+            //     path: "/leads/view",
+            //     element: <LeadsView />
+            // },
+            // {
+            //     path: "/leads/create",
+            //     element: <LeadsCreate />
+            // },
             {
-                path: "/leads/list",
-                element: <LeadsList />
+                path: "/clients/list",
+                element: <ClientsList />
             },
             {
-                path: "/leads/view",
-                element: <LeadsView />
+                path: "/clients/view/:id",
+                element: <ClientsView />
             },
             {
-                path: "/leads/create",
-                element: <LeadsCreate />
+                path: "/clients/create",
+                element: <ClientsCreate />
+            },
+            {
+                path: "/clients/edit/:id",
+                element: <ClientEdit />
             },
             {
                 path: "/projects/list",

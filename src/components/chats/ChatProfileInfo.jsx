@@ -87,7 +87,7 @@ const ChatProfileInfo = () => {
                         <div className="me-3">
                             <FiMail size={16} />
                         </div>
-                        <a href="#">alex.della@outlook.com</a>
+                        <a href="#">aalex.della@outlook.com</a>
                     </div>
                     <div className="d-flex align-items-start mb-3">
                         <div className="me-3">

@@ -4,10 +4,10 @@ const status = [
     { value: 'declined', label: 'Declined', color: '#ea4d4d' },
 ];
 
-export const leadTableData = [
+export const clientsTableData = [
     {
         "id": 1,
-        "customer": {
+        "clients": {
             "name": "AAlexandra Della",
             "img": "/images/avatar/1.png"
         },
@@ -22,7 +22,7 @@ export const leadTableData = [
     },
     {
         "id": 2,
-        "customer": {
+        "clients": {
             "name": "Nancy Elliot",
             "img": ""
         },
@@ -37,7 +37,7 @@ export const leadTableData = [
     },
     {
         "id": 3,
-        "customer": {
+        "clients": {
             "name": "Green Cute",
             "img": "/images/avatar/2.png"
         },
@@ -52,7 +52,7 @@ export const leadTableData = [
     },
     {
         "id": 4,
-        "customer": {
+        "clients": {
             "name": "Henry Leach",
             "img": "/images/avatar/3.png"
         },
@@ -67,7 +67,7 @@ export const leadTableData = [
     },
     {
         "id": 5,
-        "customer": {
+        "clients": {
             "name": "Marianne Audrey",
             "img": "/images/avatar/7.png"
         },
@@ -82,7 +82,7 @@ export const leadTableData = [
     },
     {
         "id": 6,
-        "customer": {
+        "clients": {
             "name": "Alexandra Della",
             "img": "/images/avatar/4.png"
         },
@@ -97,7 +97,7 @@ export const leadTableData = [
     },
     {
         "id": 7,
-        "customer": {
+        "clients": {
             "name": "Nancy Elliot",
             "img": "/images/avatar/5.png"
         },
@@ -112,7 +112,7 @@ export const leadTableData = [
     },
     {
         "id": 8,
-        "customer": {
+        "clients": {
             "name": "Green Cute",
             "img": "/images/avatar/6.png"
         },
@@ -127,7 +127,7 @@ export const leadTableData = [
     },
     {
         "id": 9,
-        "customer": {
+        "clients": {
             "name": "Henry Leach",
             "img": ""
         },
@@ -142,7 +142,7 @@ export const leadTableData = [
     },
     {
         "id": 10,
-        "customer": {
+        "clients": {
             "name": "Alexandra Della",
             "img": "/images/avatar/4.png"
         },
@@ -157,7 +157,7 @@ export const leadTableData = [
     },
     {
         "id": 11,
-        "customer": {
+        "clients": {
             "name": "Alexandra Della",
             "img": ""
         },
@@ -172,7 +172,7 @@ export const leadTableData = [
     },
     {
         "id": 12,
-        "customer": {
+        "clients": {
             "name": "Elliot Nancy",
             "img": "/images/avatar/9.png"
         },

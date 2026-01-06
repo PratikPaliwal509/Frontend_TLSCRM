@@ -6,19 +6,20 @@ import PageHeaderSetting from "@/components/shared/pageHeader/PageHeaderSetting"
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { canUser } from '../../utils/canUser'
 import { verifyPagePermission } from "@/utils/verifyPagePermission";
-
 import { useNavigate } from 'react-router-dom';
+
 const RoleListTable = ({ title }) => {
 const [roles, setRoles] = useState([]);
 const [loading, setLoading] = useState(true);
 const [refreshKey, setRefreshKey] = useState(false);
   
     const navigate = useNavigate();
+    
   useEffect(() => {
     verifyPagePermission('roles', 'view', navigate);
     fetchRoles();
   }, []);
-
+  
   const fetchRoles = async () => {
     setLoading(true);
     try {

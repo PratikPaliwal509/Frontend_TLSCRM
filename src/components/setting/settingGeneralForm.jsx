@@ -85,10 +85,10 @@ const SettingGeneralForm = () => {
                             <TextAreaTopLabel
                                 label={"Information (PDF and HTML)"}
                                 placeholder="{company_name} 
-{address}
-{city} {state}
-{country_code} {zip_code}
-{vat_number_with_label}"
+                                                {address}
+                                                {city} {state}
+                                                {country_code} {zip_code}
+                                                {vat_number_with_label}"
                                 info="Company Information Format [Ex: {company_name} {address}, {city}, {state}, {zip_code}, {country_code}, {phone}, {vat_number}, {vat_number_with_label}]"
                             />
                         </div>

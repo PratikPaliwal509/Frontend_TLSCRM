@@ -183,30 +183,56 @@ export const menuList = [
     },
     {
         id: 6,
-        name: "leads",
+        name: "Clients",
         path: "#",
         icon: 'feather-alert-circle',
         dropdownMenu: [
             {
                 id: 1,
-                name: "Leads",
-                path: "/leads/list",
+                name: "Clients",
+                path: "/clients/list",
                 subdropdownMenu: false
             },
-            {
-                id: 2,
-                name: "Leads View",
-                path: "/leads/view",
-                subdropdownMenu: false
-            },
+            // {
+            //     id: 2,
+            //     name: "Clients View",
+            //     path: "/clients/view",
+            //     subdropdownMenu: false
+            // },
             {
                 id: 3,
-                name: "Leads Create",
-                path: "/leads/create",
+                name: "Clients Create",
+                path: "/clients/create",
                 subdropdownMenu: false
             }
         ]
     },
+    // {
+    //     id: 6,
+    //     name: "leads",
+    //     path: "#",
+    //     icon: 'feather-alert-circle',
+    //     dropdownMenu: [
+    //         {
+    //             id: 1,
+    //             name: "Leads",
+    //             path: "/leads/list",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 2,
+    //             name: "Leads View",
+    //             path: "/leads/view",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 3,
+    //             name: "Leads Create",
+    //             path: "/leads/create",
+    //             subdropdownMenu: false
+    //         }
+    //     ]
+    // },
     {
         id: 7,
         name: "projects",
@@ -233,44 +259,44 @@ export const menuList = [
             }
         ]
     },
-    {
-        id: 8,
-        name: "widgets",
-        path: "#",
-        icon: 'feather-layout',
-        dropdownMenu: [
-            {
-                id: 1,
-                name: "Lists",
-                path: "/widgets/lists",
-                subdropdownMenu: false
-            },
-            {
-                id: 2,
-                name: "Tables",
-                path: "/widgets/tables",
-                subdropdownMenu: false
-            },
-            {
-                id: 3,
-                name: "Charts",
-                path: "/widgets/charts",
-                subdropdownMenu: false
-            },
-            {
-                id: 4,
-                name: "Statistics",
-                path: "/widgets/statistics",
-                subdropdownMenu: false
-            },
-            {
-                id: 5,
-                name: "Miscellaneous",
-                path: "/widgets/miscellaneous",
-                subdropdownMenu: false
-            },
-        ]
-    },
+    // {
+    //     id: 8,
+    //     name: "widgets",
+    //     path: "#",
+    //     icon: 'feather-layout',
+    //     dropdownMenu: [
+    //         {
+    //             id: 1,
+    //             name: "Lists",
+    //             path: "/widgets/lists",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 2,
+    //             name: "Tables",
+    //             path: "/widgets/tables",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 3,
+    //             name: "Charts",
+    //             path: "/widgets/charts",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 4,
+    //             name: "Statistics",
+    //             path: "/widgets/statistics",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 5,
+    //             name: "Miscellaneous",
+    //             path: "/widgets/miscellaneous",
+    //             subdropdownMenu: false
+    //         },
+    //     ]
+    // },
     {
         id: 9,
         name: "settings",
@@ -325,18 +351,18 @@ export const menuList = [
                 path: "/settings/finance",
                 subdropdownMenu: false
             },
-            {
-                id: 9,
-                name: "Gateways",
-                path: "/settings/gateways",
-                subdropdownMenu: false
-            },
             // {
-            //     id: 10,
-            //     name: "Customers",
-            //     path: "/settings/customers",
+            //     id: 9,
+            //     name: "Gateways",
+            //     path: "/settings/gateways",
             //     subdropdownMenu: false
             // },
+            {
+                id: 10,
+                name: "Customers",
+                path: "/settings/customers",
+                subdropdownMenu: false
+            },
             // {
             //     id: 11,
             //     name: "Localization",
@@ -367,15 +393,33 @@ export const menuList = [
                     },
                 ]
             },
-            {
-                id: 13,
-                name: "Miscellaneouss",
-                path: "/settings/miscellaneous",
-                subdropdownMenu: false
+             {
+                id: 15,
+                name: "Departments",
+                path: "#",
+                subdropdownMenu: [
+                    {
+                        id: 1,
+                        name: "Department",
+                        path: "/settings/departments",
+                    },
+                    {
+                        id: 2,
+                        name: "Add Department",
+                        path: "/settings/departments/create",
+                    },
+                ]
             },
+            // {
+            //     id: 13,
+            //     name: "Miscellaneouss",
+            //     path: "/settings/miscellaneous",
+            //     subdropdownMenu: false
+            // },
            
         ]
     },
+    
     {
         id: 10,
         name: "authentication",

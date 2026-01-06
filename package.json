@@ -21,6 +21,7 @@
     "axios": "^1.13.2",
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
+    "dotenv": "^17.2.3",
     "emoji-picker-react": "^4.12.0",
     "feather-icons": "^4.29.2",
     "feather-icons-react": "^0.7.0",
