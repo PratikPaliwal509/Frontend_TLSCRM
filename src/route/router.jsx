@@ -78,6 +78,7 @@ import ClientsCreate from "../pages/clients-create";
 import ReportsClients from "../pages/reports-clients";
 import ClientEdit from "../pages/clients-edit";
 import ProjectEdit from "../pages/project-edit";
+import ProjectMember from "../pages/project-member";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -180,6 +181,10 @@ export const router = createBrowserRouter([
                 element: <ClientEdit />
             },
             {
+                path: "/projects/create",
+                element: <ProjectsCreate />
+            },
+            {
                 path: "/projects/list",
                 element: <ProjectsList />
             },
@@ -191,14 +196,14 @@ export const router = createBrowserRouter([
                 path: "/projects/edit/:id",
                 element: <ProjectEdit />
             },
+            {
+                path: "/projects/members/create",
+                element: <ProjectMember />
+            },
             // {
             //     path: "/projects/view/",
             //     element: <ProjectsView />
             // },
-            {
-                path: "/projects/create",
-                element: <ProjectsCreate />
-            },
             {
                 path: "/widgets/lists",
                 element: <WidgetsLists />

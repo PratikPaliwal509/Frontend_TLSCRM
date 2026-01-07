@@ -7,7 +7,7 @@ export const menuList = [
         dropdownMenu: [
             {
                 id: 1,
-                name: "CRM",
+                name: "CRM Dashboard",
                 path: "/",
                 subdropdownMenu: false
             },
@@ -258,6 +258,12 @@ export const menuList = [
                 id: 3,
                 name: "Projects Create",
                 path: "/projects/create",
+                subdropdownMenu: false
+            },
+            {
+                id: 4,
+                name: "Members create",
+                path: "/projects/members/create",
                 subdropdownMenu: false
             }
         ]

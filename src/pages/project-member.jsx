@@ -5,25 +5,21 @@ import ProjectCreateHeader from '@/components/projectsCreate/ProjectCreateHeader
 
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
-const ProjectsCreate = () => {
-    const navigate = useNavigate();
-    useEffect(() => {
-        verifyPagePermission('projects', 'create', navigate);
-    }, []);
-
-    return (
-        <>
+import AddProjectMember from '@/components/projectMembers/AddProjectMember'
+const projectMember = () => {
+  return (
+      <>
             <PageHeader>
-                <ProjectCreateHeader />
+                {/* <ProjectCreateHeader /> */}
             </PageHeader>
             <div className='main-content'>
                 <div className='row'>
-                    <ProjectCreateContent />
+                    <AddProjectMember/>
                 </div>
             </div>
 
         </>
-    )
+  )
 }
 
-export default ProjectsCreate
+export default projectMember
