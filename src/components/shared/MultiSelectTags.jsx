@@ -1,27 +1,38 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Select from 'react-select'
-const MultiSelectTags = ({ options, defaultSelect, placeholder }) => {
+
+const MultiSelectTags = ({
+    options,
+    value,
+    defaultSelect,
+    placeholder = 'Select tags',
+    onChange,
+}) => {
     return (
         <Select
-            defaultValue={defaultSelect}
             isMulti
             name="tags"
-            placeholder={placeholder}
             options={options}
-            className={`basic-multi-select`}
+            value={value}                 // ✅ CONTROLLED VALUE
+            defaultValue={defaultSelect}  // ✅ INITIAL VALUE
+            onChange={onChange}           // ✅ EMIT CHANGE
+            placeholder={placeholder}
+            className="basic-multi-select"
             classNamePrefix="select"
+            hideSelectedOptions={false}
+            isSearchable={false}
             styles={{
                 control: (baseStyles, state) => ({
                     ...baseStyles,
                     padding: state.hasValue ? '6px 12px' : '13px',
                 }),
             }}
-            hideSelectedOptions={false}
-            isSearchable={false}
-            // onChange={(e) => console.log(e)}
-            formatOptionLabel={tags => (
+            formatOptionLabel={(tags) => (
                 <div className="user-option d-flex align-items-center gap-2">
-                    <span style={{ marginTop: "1px", backgroundColor: `${tags.color}` }} className={`wd-7 ht-7 rounded-circle`}></span>
+                    <span
+                        className="wd-7 ht-7 rounded-circle"
+                        style={{ backgroundColor: tags.color }}
+                    />
                     <span>{tags.label}</span>
                 </div>
             )}

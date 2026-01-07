@@ -1,7 +1,7 @@
 import React from 'react'
 import { FiActivity, FiCalendar, FiClock, FiCodepen, FiDownload, FiExternalLink, FiGithub, FiGitlab, FiGlobe, FiInstagram, FiLinkedin, FiMail, FiMapPin, FiPhone, FiUser, FiUsers } from 'react-icons/fi'
 import ImageGroup from '@/components/shared/ImageGroup'
-import { imageList } from '../projectsView/TabProjectOverview'
+// import { imageList } from '../projectsView/TabProjectOverview'
 import getIcon from '@/utils/getIcon'
 import { userList } from '@/utils/fackData/userList'
 import { BsPatchCheck, BsPatchPlus, BsPatchQuestion } from 'react-icons/bs'
@@ -104,7 +104,7 @@ const ChatProfileInfo = () => {
                     <div className="d-flex align-items-center mb-3">
                         <div className="me-3"><FiUsers size={16} /></div>
                         <div className="img-group lh-0 ms-3">
-                            <ImageGroup data={imageList} />
+                            {/* <ImageGroup data={imageList} /> */}
                             <span className="text-muted fs-12 ms-3">886+ members connections</span>
                         </div>
                     </div>

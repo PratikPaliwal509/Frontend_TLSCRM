@@ -184,9 +184,13 @@ export const router = createBrowserRouter([
                 element: <ProjectsList />
             },
             {
-                path: "/projects/view",
+                path: "/projects/view/:id",
                 element: <ProjectsView />
             },
+            // {
+            //     path: "/projects/view/",
+            //     element: <ProjectsView />
+            // },
             {
                 path: "/projects/create",
                 element: <ProjectsCreate />

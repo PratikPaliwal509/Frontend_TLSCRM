@@ -164,21 +164,24 @@ export const menuList = [
             {
                 id: 1,
                 name: "Customers",
-                path: "/customers/list",
+                // path: "/customers/list",
+                path: "#",
                 subdropdownMenu: false
             },
-            {
-                id: 2,
-                name: "Customers View",
-                path: "/customers/view",
-                subdropdownMenu: false
-            },
-            {
-                id: 3,
-                name: "Customers Create",
-                path: "/customers/create",
-                subdropdownMenu: false
-            }
+            // {
+            //     id: 2,
+            //     name: "Customers View",
+            //     // path: "/customers/view",
+            //      path: "#",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 3,
+            //     name: "Customers Create",
+            //     // path: "/customers/create",
+            //      path: "#",
+            //     subdropdownMenu: false
+            // }
         ]
     },
     {
@@ -245,12 +248,12 @@ export const menuList = [
                 path: "/projects/list",
                 subdropdownMenu: false
             },
-            {
-                id: 2,
-                name: "Projects View",
-                path: "/projects/view",
-                subdropdownMenu: false
-            },
+            // {
+            //     id: 2,
+            //     name: "Projects View",
+            //     path: "/projects/view",
+            //     subdropdownMenu: false
+            // },
             {
                 id: 3,
                 name: "Projects Create",

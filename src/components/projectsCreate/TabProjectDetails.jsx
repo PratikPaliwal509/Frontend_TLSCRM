@@ -1,120 +1,120 @@
 import React, { useEffect, useState } from 'react'
-import SelectDropdown from '@/components/shared/SelectDropdown'
-import { customerListTagsOptions, projectBillingOptions, projectStatusOptions, propasalLeadOptions } from '@/utils/options'
-import MultiSelectTags from '@/components/shared/MultiSelectTags';
-import DatePicker from 'react-datepicker';
-import useDatePicker from '@/hooks/useDatePicker';
-import ReactQuill from 'react-quill';
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
-const TabProjectDetails = () => {
-    const [selectedOption, setSelectedOption] = useState(null);
-    const { startDate, endDate, setStartDate, setEndDate, renderFooter } = useDatePicker();
-    const [value, setValue] = useState('');
+const TabProjectDetails = ({ formData = {}, setFormData }) => {
+  const [value, setValue] = useState(formData.description || '')
+  const [startDate, setStartDate] = useState(formData.start_date ? new Date(formData.start_date) : new Date())
+  const [endDate, setEndDate] = useState(formData.end_date ? new Date(formData.end_date) : null)
 
-    useEffect(() => {
-        setStartDate(new Date())
-        setValue(`
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores beatae inventore reiciendis ipsum natus, porro recusandae sunt accusantium reprehenderit aliquid commodi est veniam sit molestiae, nesciunt cupiditate. Laborum, culpa maxime.
-            `)
-    }, []);
+  useEffect(() => {
+    // Sync editor value with formData
+    setValue(formData.description || '')
+  }, [formData.description])
 
-    return (
-        <section className="step-body mt-4 body current">
-            <form id="project-details">
-                <fieldset>
-                    <div className="mb-5">
-                        <h2 className="fs-16 fw-bold">Project details</h2>
-                        <p className="text-muted">You project details gose here.</p>
-                    </div>
-                    <fieldset>
-                        <div className="mb-4">
-                            <label htmlFor="projectName" className="form-label">Project Name <span className="text-danger">*</span></label>
-                            <input type="text" className="form-control" id="projectName" name="projectName" defaultValue="Website design and development" required />
-                        </div>
-                        <div className="mb-4 ">
-                            <label className="form-label">Project Description <span className="text-danger">*</span></label>
-                            <ReactQuill theme="snow" value={value} onChange={setValue} />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="ratePerHour" className="form-label">Rate Per Hour <span className="text-danger">*</span></label>
-                            <input type="number" className="form-control" id="ratePerHour" name="ratePerHour" defaultValue={20} required />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="projectClient" className="form-label">Project Client <span className="text-danger">*</span></label>
-                            <SelectDropdown
-                                options={propasalLeadOptions}
-                                selectedOption={selectedOption}
-                                defaultSelect="ui"
-                                onSelectOption={(option) => setSelectedOption(option)}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="billingType" className="form-label">Billing type <span className="text-danger">*</span></label>
-                            <SelectDropdown
-                                options={projectBillingOptions}
-                                selectedOption={selectedOption}
-                                defaultSelect="tasks-hours"
-                                onSelectOption={(option) => setSelectedOption(option)}
-                            />
-                        </div>
-                        <div className="mb-4">
+  const handleChange = (field, val) => {
+    setFormData({ ...formData, [field]: val })
+  }
 
-                            <label htmlFor="projectStatus" className="form-label">Project status <span className="text-danger">*</span></label>
-                            <SelectDropdown
-                                options={projectStatusOptions}
-                                selectedOption={selectedOption}
-                                defaultSelect="active"
-                                onSelectOption={(option) => setSelectedOption(option)}
-                            />
+  return (
+    <section className="step-body mt-4 body current">
+      <form id="project-details">
+        <fieldset>
+          <div className="mb-5">
+            <h2 className="fs-16 fw-bold">Project details</h2>
+            <p className="text-muted">Your project details go here.</p>
+          </div>
 
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="projectTags" className="form-label">Project tags <span className="text-danger">*</span></label>
-                            <MultiSelectTags
-                                options={customerListTagsOptions}
-                                selectedOption={selectedOption}
-                                defaultSelect={[customerListTagsOptions[10]]}
-                                onSelectOption={(option) => setSelectedOption(option)}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="projectReleaseDate" className="form-label">Release Date <span className="text-danger">*</span></label>
-                            <div className='input-group date '>
-                                <DatePicker
-                                    placeholderText='Pick start date'
-                                    selected={startDate}
-                                    showPopperArrow={false}
-                                    onChange={(date) => setStartDate(date)}
-                                    className='form-control'
-                                    popperPlacement="bottom-start"
-                                    calendarContainer={({ children }) => (
-                                        <div className='bg-white react-datepicker'>
-                                            {children}
-                                            {renderFooter("start")}
-                                        </div>
-                                    )}
-                                />
-                            </div>
-                        </div>
-                        <hr className="mb-5" />
-                        <div className="custom-control custom-checkbox mb-2">
-                            <input type="checkbox" className="custom-control-input" id="sendProjectEmail" defaultChecked />
-                            <label className="custom-control-label c-pointer" htmlFor="sendProjectEmail">Send project created email.</label>
-                        </div>
-                        <div className="custom-control custom-checkbox mb-2">
-                            <input type="checkbox" className="custom-control-input" id="calculateTasks" defaultChecked />
-                            <label className="custom-control-label c-pointer" htmlFor="calculateTasks">Calculate progress through tasks.</label>
-                        </div>
-                        <div className="custom-control custom-checkbox mb-2">
-                            <input type="checkbox" className="custom-control-input" id="allowNotifications" defaultChecked />
-                            <label className="custom-control-label c-pointer" htmlFor="allowNotifications">Allow Notifications by Phone or Email.</label>
-                        </div>
-                    </fieldset>
-                </fieldset>
-            </form>
-        </section>
+          {/* Project Name */}
+          <div className="mb-4">
+            <label htmlFor="projectName" className="form-label">
+              Project Name <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="projectName"
+              value={formData.project_name || ''}
+              onChange={(e) => handleChange('project_name', e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="projectCode" className="form-label">
+              Project Code <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="projectCode"
+              value={formData.project_code || ''}
+              onChange={(e) => handleChange('project_code', e.target.value)}
+              required
+            />
+          </div>
 
-    )
+          {/* Project Description */}
+          <div className="mb-4">
+            <label className="form-label">
+              Project Description <span className="text-danger">*</span>
+            </label>
+            {/* <ReactQuillSafe
+              theme="snow"
+              value={value}
+              onChange={(val) => {
+                setValue(val)
+                handleChange('description', val)
+              }} */}
+            {/* /> */}
+            <textarea
+              className="form-control"
+              rows={5}
+              placeholder="Enter project description..."
+              value={formData.description || ''}
+              onChange={(e) =>
+                handleChange('description', e.target.value)
+              }
+            />
+          </div>
+
+          {/* Start Date */}
+          <div className="mb-4">
+            <label htmlFor="projectStartDate" className="form-label">
+              Start Date <span className="text-danger">*</span>
+            </label>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => {
+                setStartDate(date)
+                handleChange('start_date', date)
+              }}
+              placeholderText="Pick start date"
+              className="form-control"
+              dateFormat="yyyy-MM-dd"
+            />
+          </div>
+
+          {/* End / Release Date */}
+          <div className="mb-4">
+            <label htmlFor="projectEndDate" className="form-label">
+              End Date / Release Date <span className="text-danger">*</span>
+            </label>
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => {
+                setEndDate(date)
+                handleChange('end_date', date)
+              }}
+              placeholderText="Pick end date"
+              className="form-control"
+              dateFormat="yyyy-MM-dd"
+              minDate={startDate}
+            />
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  )
 }
 
 export default TabProjectDetails

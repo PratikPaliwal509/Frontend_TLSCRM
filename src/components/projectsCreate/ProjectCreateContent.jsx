@@ -11,7 +11,7 @@ import TabCompleted from './TabCompleted';
 const steps = [
     { name: "Type", required: true },
     { name: "Details", required: false },
-    { name: "Settings", required: false },
+    // { name: "Settings", required: false },
     { name: "Budget", required: true },
     { name: "Assagined", required: false },
     { name: "Target", required: false },
@@ -23,11 +23,30 @@ const ProjectCreateContent = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [error, setError] = useState(false)
     const [formData, setFormData] = useState({
-        projectType: "",
-        projectManage: "",
-        projectBudgets: "",
-        budgetsSpend: "",
-    });
+        project_name: '',
+        description: '',
+        project_code: '',
+        priority: '',
+        start_date: new Date(),
+        end_date: null,
+        billing_type: 'tasks-hours',
+        status: 'planning',
+        tags: [],
+        project_manager_id: null,
+        is_billable: true,
+        is_public: false,
+        auto_task_numbering: true,
+        task_prefix: '',
+        custom_fields: {},
+        notes: '',
+        client_id: null,
+        agency_id: null,
+        estimated_hours: null,
+        budget_amount: null,
+        budget_currency: 'USD',
+        // optional / extra fields can be added here
+    })
+
 
     const validateFields = () => {
         const { projectManage, projectType, budgetsSpend, projectBudgets, target } = formData;
@@ -44,11 +63,19 @@ const ProjectCreateContent = () => {
     };
 
     const handleNext = (e) => {
-        e.preventDefault()
-        if (validateFields()) {
-            setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+        e.preventDefault(); // Prevent <a> default navigation
+
+        // validation: agency & client must be selected
+        if (formData.agency_id === null || formData.client_id === null) {
+            setError(true)
+            return
         }
-    };
+
+        setError(false)
+        setCurrentStep(prev => prev + 1)
+        console.log('Current Step:', currentStep + formData);
+    }
+
 
     // Handle prev button click
     const handlePrev = (e) => {
@@ -57,12 +84,27 @@ const ProjectCreateContent = () => {
     };
 
     // Handle tab click to change step
+    // const handleTabClick = (e, index) => {
+    //     e.preventDefault()
+    //     if (validateFields()) {
+    //         setCurrentStep(index);
+    //     }
+    // };
     const handleTabClick = (e, index) => {
         e.preventDefault()
-        if (validateFields()) {
-            setCurrentStep(index);
+
+        // allow going backward freely
+        if (index < currentStep) {
+            setError(false)
+            setCurrentStep(index)
+            return
         }
-    };
+
+        // validate only when moving forward
+        if (validateFields()) {
+            setCurrentStep(index)
+        }
+    }
 
     return (
         <div className="col-lg-12">
@@ -84,13 +126,13 @@ const ProjectCreateContent = () => {
 
                     <div className="content clearfix">
                         {currentStep === 0 && <TabProjectType setFormData={setFormData} formData={formData} error={error} setError={setError} />}
-                        {currentStep === 1 && <TabProjectDetails />}
-                        {currentStep === 2 && <TabProjectSettings />}
-                        {currentStep === 3 && <TabProjectBudget setFormData={setFormData} formData={formData} error={error} setError={setError} />}
-                        {currentStep === 4 && <TabProjectAssigned />}
-                        {currentStep === 5 && <TabProjectTarget />}
-                        {currentStep === 6 && <TabAttachement />}
-                        {currentStep === 7 && <TabCompleted />}
+                        {currentStep === 1 && <TabProjectDetails setFormData={setFormData} formData={formData} error={error} setError={setError} />}
+                        {/* {currentStep === 2 && <TabProjectSettings />} */}
+                        {currentStep === 2 && <TabProjectBudget setFormData={setFormData} formData={formData} error={error} setError={setError} />}
+                        {currentStep === 3 && <TabProjectAssigned setFormData={setFormData} formData={formData} setError={setError} />}
+                        {currentStep === 4 && <TabProjectTarget setFormData={setFormData} formData={formData} setError={setError} />}
+                        {currentStep === 5 && <TabAttachement />}
+                        {currentStep === 6 && <TabCompleted setFormData={setFormData} formData={formData} setError={setError} />}
                     </div>
 
                     {/* Buttons */}
@@ -99,9 +141,14 @@ const ProjectCreateContent = () => {
                             <li className={`${currentStep === 0 ? "disabled" : ""}`} onClick={(e) => handlePrev(e)} disabled={currentStep === 0}>
                                 <a href="#">Previous</a>
                             </li>
-                            <li className={`${currentStep === steps.length - 1 ? "disabled" : ""}`} onClick={(e) => handleNext(e)} disabled={currentStep === steps.length - 1}>
-                                <a href="#">Next</a>
+                            <li
+                                className={`${currentStep === steps.length - 1 ? "disabled" : ""}`}
+                                onClick={handleNext}
+                                style={{ cursor: currentStep === steps.length - 1 ? 'not-allowed' : 'pointer' }}
+                            >
+                                Next
                             </li>
+
                         </ul>
 
                     </div>
