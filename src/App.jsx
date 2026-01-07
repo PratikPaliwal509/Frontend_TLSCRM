@@ -9,8 +9,8 @@ import "react-datetime/css/react-datetime.css";
 import NavigationProvider from './contentApi/navigationProvider';
 import SideBarToggleProvider from './contentApi/sideBarToggleProvider';
 import ThemeCustomizer from './components/shared/ThemeCustomizer';
-
 const App = () => {
+
   return (
     <>
       <NavigationProvider>

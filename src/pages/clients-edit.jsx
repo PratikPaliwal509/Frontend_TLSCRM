@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate  } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/shared/pageHeader/PageHeader';
 import ClientsEditHeader from '@/components/clientsViewCreate/ClientsEditHeader';
 import ClientsCreateContent from '@/components/clientsViewCreate/ClientsCreateContent';
 import ClientsEditContent from '@/components/clientsViewCreate/ClientsEditContent';
 import Swal from 'sweetalert2';
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
 const ClientEdit = () => {
     const { id } = useParams(); // get client id from route
@@ -24,6 +25,9 @@ const ClientEdit = () => {
         status: 'active',
     });
 
+    useEffect(() => {
+        verifyPagePermission('clients', 'edit', navigate);
+    }, []);
     /* ================= FETCH AGENCIES ================= */
     useEffect(() => {
         const fetchAgencies = async () => {
@@ -52,7 +56,7 @@ const ClientEdit = () => {
         const fetchClient = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:5000/api/clients/${id}`, {
+                const response = await fetch(`http://localhost:5000/api/clients/client/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -61,8 +65,8 @@ const ClientEdit = () => {
                 });
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
-                
-        console.log('Fetched client data for data ID:', id, data);
+
+                console.log('Fetched client data for data ID:', id, data);
                 setFormData({
                     agency_id: data.data.agency_id || '',
                     company_name: data.data.company_name || '',
@@ -111,14 +115,14 @@ const ClientEdit = () => {
 
             const data = await response.json();
             await Swal.fire({
-            icon: 'success',
-            title: 'Client Updated',
-            text: 'Client details updated successfully.',
-            confirmButtonText: 'OK',
-        });
+                icon: 'success',
+                title: 'Client Updated',
+                text: 'Client details updated successfully.',
+                confirmButtonText: 'OK',
+            });
 
-        // ✅ REDIRECT TO PREVIOUS PAGE
-        navigate(-1); 
+            // ✅ REDIRECT TO PREVIOUS PAGE
+            navigate(-1);
             console.log('Client updated successfully:', data);
 
         } catch (error) {

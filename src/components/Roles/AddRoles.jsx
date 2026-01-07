@@ -9,7 +9,8 @@ const permissionPages = [
     { key: 'users', label: 'Users', actions: ['view', 'create', 'edit', 'delete'] },
     { key: 'projects', label: 'Projects', actions: ['view', 'create', 'edit', 'delete'] },
     { key: 'roles', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
-    { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] }
+    { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
+    { key: "clients", label: "Clients", actions: ["view", "create", "edit", "delete", "assign"] }
 ];
 
 const AddRoleForm = () => {
@@ -19,7 +20,14 @@ const AddRoleForm = () => {
         role_name: '',
         role_description: '',
         is_system_role: false,
-        permissions: {}
+        permissions: {
+    roles: [],
+    tasks: [],
+    users: [],
+    clients: [],
+    projects: [],
+    dashboard: []
+  }
     });
 
      useEffect(() => {
@@ -32,18 +40,37 @@ const AddRoleForm = () => {
 
     
     // Toggle permission checkbox
-    const handlePermissionChange = (page, action) => {
-        setFormData(prev => ({
-            ...prev,
-            permissions: {
-                ...prev.permissions,
-                [page]: {
-                    ...prev.permissions[page],
-                    [action]: !prev.permissions?.[page]?.[action]
-                }
-            }
-        }));
+    // const handlePermissionChange = (page, action) => {
+    //     setFormData(prev => ({
+    //         ...prev,
+    //         permissions: {
+    //             ...prev.permissions,
+    //             [page]: {
+    //                 ...prev.permissions[page],
+    //                 [action]: !prev.permissions?.[page]?.[action]
+    //             }
+    //         }
+    //     }));
+    // };
+const handlePermissionChange = (page, action) => {
+  setFormData(prev => {
+    const currentActions = prev.permissions?.[page] || [];
+
+    const updatedActions = currentActions.includes(action)
+      ? currentActions.filter(a => a !== action) // remove if exists
+      : [...currentActions, action];            // add if not exists
+
+    return {
+      ...prev,
+      permissions: {
+        ...prev.permissions,
+        [page]: updatedActions
+      }
     };
+  });
+};
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -148,7 +175,7 @@ const AddRoleForm = () => {
                                     </div>
                                 </div>
 
-                                {permissionPages.map(page => (
+                                {/* {permissionPages.map(page => (
                                     <div key={page.key} className="mb-4">
                                         <div className="fw-semibold mb-2">{page.label}</div>
                                         <div className="d-flex flex-wrap gap-4">
@@ -171,7 +198,32 @@ const AddRoleForm = () => {
                                             ))}
                                         </div>
                                     </div>
-                                ))}
+                                ))} */}
+{permissionPages.map(page => (
+  <div key={page.key} className="mb-4">
+    <div className="fw-semibold mb-2">{page.label}</div>
+    <div className="d-flex flex-wrap gap-4">
+      {page.actions.map(action => (
+        <div className="form-check" key={action}>
+          <input
+  className="form-check-input"
+  type="checkbox"
+  id={`${page.key}-${action}`}
+  checked={formData.permissions?.[page.key]?.includes(action) || false} // ✅ use includes
+  onChange={() => handlePermissionChange(page.key, action)}
+/>
+
+          <label
+            className="form-check-label text-capitalize"
+            htmlFor={`${page.key}-${action}`}
+          >
+            {action}
+          </label>
+        </div>
+      ))}
+    </div>
+  </div>
+))}
 
                                 <hr className="my-5" />
 

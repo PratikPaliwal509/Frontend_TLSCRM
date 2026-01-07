@@ -9,7 +9,8 @@ const permissionPages = [
   { key: "users", label: "Users", actions: ["view", "create", "edit", "delete"] },
   { key: "projects", label: "Projects", actions: ["view", "create", "edit", "delete"] },
   { key: "roles", label: "Roles", actions: ["view", "create", "edit", "delete"] },
-    { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] }
+  { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
+  { key: "clients", label: "Clients", actions: ["view", "create", "edit", "delete", "assign"] }
 ];
 
 const EditRoleForm = () => {
@@ -51,23 +52,23 @@ const EditRoleForm = () => {
     );
   }
 
-const handlePermissionChange = (page, action) => {
-  setFormData(prev => {
-    const existingActions = prev.permissions?.[page] || [];
+  const handlePermissionChange = (page, action) => {
+    setFormData(prev => {
+      const existingActions = prev.permissions?.[page] || [];
 
-    const updatedActions = existingActions.includes(action)
-      ? existingActions.filter(a => a !== action) // remove
-      : [...existingActions, action]; // add
+      const updatedActions = existingActions.includes(action)
+        ? existingActions.filter(a => a !== action) // remove
+        : [...existingActions, action]; // add
 
-    return {
-      ...prev,
-      permissions: {
-        ...prev.permissions,
-        [page]: updatedActions
-      }
-    };
-  });
-};
+      return {
+        ...prev,
+        permissions: {
+          ...prev.permissions,
+          [page]: updatedActions
+        }
+      };
+    });
+  };
 
 
   const handleUpdate = async () => {

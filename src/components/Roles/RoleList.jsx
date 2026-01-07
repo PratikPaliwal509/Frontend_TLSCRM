@@ -137,9 +137,9 @@ const [refreshKey, setRefreshKey] = useState(false);
                       ) : (
                         roles.map((role) => (
                           <tr key={role.role_id} className="align-middle">
-                            <td className="fw-semibold fs-6 py-3">{role.role_name}</td>
-                            <td className="fs-6 py-3">{role.role_description || "-"}</td>
-                            <td className="text-center fs-6 py-3">
+                            <td className=" py-3">{role.role_name}</td>
+                            <td className=" py-3">{role.role_description || "-"}</td>
+                            <td className="text-center py-3">
                               {role.is_system_role ? (
                                 <span className="badge bg-success">Yes</span>
                               ) : (

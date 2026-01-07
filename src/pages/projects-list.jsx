@@ -1,15 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import ProjectsListHeader from '@/components/projectsList/ProjectsListHeader'
 import ProjectTable from '@/components/projectsList/ProjectTable'
+import ToastProvider from '@/components/ToastProvider'
+import { useNavigate } from 'react-router-dom'
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
 const ProjectsList = () => {
+    const navigate = useNavigate();
+    useEffect(() => {
+        verifyPagePermission('projects', 'view', navigate);
+    }, []);
     return (
         <>
             <PageHeader>
                 <ProjectsListHeader />
             </PageHeader>
             <div className='main-content'>
+                <ToastProvider />
                 <div className='row'>
                     <ProjectTable />
                 </div>

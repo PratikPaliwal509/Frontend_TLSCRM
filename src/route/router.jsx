@@ -77,7 +77,7 @@ import ClientsView from "../pages/clients-view";
 import ClientsCreate from "../pages/clients-create";
 import ReportsClients from "../pages/reports-clients";
 import ClientEdit from "../pages/clients-edit";
-
+import ProjectEdit from "../pages/project-edit";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -186,6 +186,10 @@ export const router = createBrowserRouter([
             {
                 path: "/projects/view/:id",
                 element: <ProjectsView />
+            },
+            {
+                path: "/projects/edit/:id",
+                element: <ProjectEdit />
             },
             // {
             //     path: "/projects/view/",

@@ -34,12 +34,17 @@ import ProjectViewHeader from '@/components/projectsView/ProjectViewHeader'
 import ProjectViewTabItems from '@/components/projectsView/ProjectViewTabItems'
 import TabProjectOverview from '@/components/projectsView/TabProjectOverview'
 import LeadsEmptyCard from '@/components/leadsViewCreate/LeadsEmptyCard'
-
+import { useNavigate } from 'react-router-dom'
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const ProjectsView = () => {
   const { id } = useParams() // project id from route
   const [project, setProject] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    verifyPagePermission('projects', 'view', navigate);
+  }, []);
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -83,11 +88,11 @@ const ProjectsView = () => {
 
       {/* <ProjectViewTabItems /> */}
       <ProjectViewTabItems
-  tabs={[
-    { id: 'overviewTab', label: 'Overview', active: true },
-    { id: 'activityTab', label: 'Activity' },
-  ]}
-/>
+        tabs={[
+          { id: 'overviewTab', label: 'Overview', active: true },
+          { id: 'activityTab', label: 'Activity' },
+        ]}
+      />
 
 
       <div className="main-content">

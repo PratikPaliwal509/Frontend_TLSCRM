@@ -5,18 +5,24 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import ClientsViewHeader from '@/components/clientsViewCreate/ClientsViewHeader'
 import ClientsViewContent from '@/components/clientsViewCreate/ClientsViewContent'
 import ClientsViewTab from '@/components/clientsViewCreate/ClientsViewTabs'
-
+import { useNavigate } from 'react-router-dom'
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const ClientsView = () => {
   const { id } = useParams()
   const [client, setClient] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    verifyPagePermission('clients', 'view', navigate);
+  }, []);
 
   useEffect(() => {
     const fetchClient = async () => {
       try {
         const token = localStorage.getItem('token')
 
-        const res = await fetch(`http://localhost:5000/api/clients/${id}`, {
+        const res = await fetch(`http://localhost:5000/api/clients/client/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
@@ -40,11 +46,11 @@ const ClientsView = () => {
       <PageHeader>
         <ClientsViewHeader client={client} />
       </PageHeader>
-      <ClientsViewTab  client={client} />
+      <ClientsViewTab client={client} />
       <div className="main-content">
         <div className='tab-content'>
-        <ClientsViewContent client={client} />
-      </div>
+          <ClientsViewContent client={client} />
+        </div>
       </div>
     </>
   )
