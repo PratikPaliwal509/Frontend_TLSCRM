@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { FiStar } from 'react-icons/fi'
 import Dropdown from '@/components/shared/Dropdown'
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -16,73 +15,112 @@ const actions = [
     { label: 'Delete Task', icon: '' },
 ]
 
+
 const TaskContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [tasks, setTasks] = useState([])
-    const [selectedTask, setSelectedTask] = useState(null);
+    const [selectedTask, setSelectedTask] = useState(null)
+    const [activeFilter, setActiveFilter] = useState({
+        type: 'status',
+        value: 'all',
+    })
 
     /* =========================
        FETCH TASKS
     ========================== */
     useEffect(() => {
         const fetchTasks = async () => {
-            try {
-                const token = localStorage.getItem('token')
+            const token = localStorage.getItem('token')
+            const res = await fetch('http://localhost:5000/api/tasks/', {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            const json = await res.json()
 
-                const res = await fetch('http://localhost:5000/api/tasks/', {
-                    headers: { Authorization: `Bearer ${token}` },
-                })
-
-                const json = await res.json()
-                const formattedTasks = Array.isArray(json.data)
-                    ? json.data.map((task) => ({
-                        id: task.task_id,
-                        title: task.task_title,
-                        description: task.description || '—',
-                        priority: task.priority,
-                        priorityColor:
-                            task.priority === 'high'
-                                ? 'danger'
-                                : task.priority === 'medium'
+            const formattedTasks = Array.isArray(json.data)
+                ? json.data.map((task) => ({
+                    id: task.task_id,
+                    title: task.task_title,
+                    description: task.description || '—',
+                    priority: task.priority,
+                    priorityColor:
+                        task.priority === 'high'
+                            ? 'danger'
+                            : task.priority === 'medium'
+                                ? 'warning'
+                                : 'success',
+                    priorityBgColor:
+                        task.priority === 'high'
+                            ? 'soft-danger'
+                            : task.priority === 'medium'
+                                ? 'soft-warning'
+                                : 'soft-success',
+                    statusColor:
+                        task.status === 'completed'
+                            ? 'success'
+                            : task.status === 'inprogress'
+                                ? 'info'
+                                : task.status === 'pending'
                                     ? 'warning'
-                                    : 'success',
-                        priorityBgColor:
-                            task.priority === 'high'
-                                ? 'soft-danger'
-                                : task.priority === 'medium'
+                                    : 'primary',
+                    statusBgColor:
+                        task.status === 'completed'
+                            ? 'soft-success'
+                            : task.status === 'inprogress'
+                                ? 'soft-info'
+                                : task.status === 'pending'
                                     ? 'soft-warning'
-                                    : 'soft-success',
-                        taskType: task.task_type || 'Task',
-                        taskTypeColor: 'primary',
-                        taskTypeBgColor: 'soft-primary',
-                        user_img: '/images/avatar/1.png',
-                        assigned_date: new Date(task.assigned_date),
-                        due_date: new Date(task.due_date),
-                        assigned_to: task.assigned_to,
-                        start_date: new Date(task.start_date),
-                        tags: task.tags || [],
-                        status: task.status || 'to_do',
-                        checklist: task.checklist || [],
-                        created_at: task.created_at,
-                        task_type:task.task_type
-                    }))
-                    : []
-                setTasks(formattedTasks)
-            } catch (err) {
-                console.error('Fetch tasks error:', err)
-            }
+                                    : 'soft-primary',
+                    taskType: task.task_type || 'Task',
+                    taskTypeColor: 'primary',
+                    taskTypeBgColor: 'soft-primary',
+                    user_img: '/images/avatar/1.png',
+                    assigned_date: new Date(task.assigned_date),
+                    due_date: new Date(task.due_date),
+                    assigned_to: task.assigned_to,
+                    start_date: new Date(task.start_date),
+                    tags: task.tags || [],
+                    status: task.status || 'to_do',
+                    checklist: task.checklist || [],
+                    created_at: task.created_at,
+                    task_type: task.task_type
+                }))
+                : []
+            setTasks(formattedTasks)
         }
 
         fetchTasks()
     }, [])
 
-    const groupedTasks = groupTasksByDate(tasks)
+    /* =========================
+       APPLY FILTER
+    ========================== */
+    const filteredTasks = useMemo(() => {
+        if (activeFilter.value === 'all') return tasks
+
+        if (activeFilter.type === 'status') {
+            return tasks.filter((t) => t.status === activeFilter.value)
+        }
+
+        if (activeFilter.type === 'priority') {
+            return tasks.filter((t) => t.priority === activeFilter.value)
+        }
+
+        return tasks
+    }, [tasks, activeFilter])
+
+    const groupedTasks = groupTasksByDate(filteredTasks)
 
     return (
         <>
-            <TaskSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <TaskSidebar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                onFilterChange={setActiveFilter}
+            />
+
             <ToastProvider />
             <TasksDetails task={selectedTask} />
+
             <div className="content-area">
                 <PerfectScrollbar>
                     <TaskHeader setSidebarOpen={setSidebarOpen} />
@@ -90,23 +128,19 @@ const TaskContent = () => {
                     <div className="content-area-body">
                         {Object.keys(groupedTasks).map((group, index) =>
                             groupedTasks[group].length > 0 ? (
-                                <div key={group} className="card stretch stretch-full mb-4">
-                                    <a
-                                        href="#"
-                                        className="card-header"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target={`#tasks_collapse_${index}`}
-                                    >
+                                <div key={group} className="card mb-4">
+                                    <div className="card-header">
                                         <h5 className="mb-0">{group}</h5>
-                                    </a>
+                                    </div>
 
-                                    <div
-                                        className="card-body collapse show"
-                                        id={`tasks_collapse_${index}`}
-                                    >
+                                    <div className="card-body">
                                         <ul className="list-unstyled mb-0">
-                                            {groupedTasks[group].map((task, i) => (
-                                                <List key={i} {...task} onSelect={() => setSelectedTask(task)} />
+                                            {groupedTasks[group].map((task) => (
+                                                <List
+                                                    key={task.id}
+                                                    {...task}
+                                                    onSelect={() => setSelectedTask(task)}
+                                                />
                                             ))}
                                         </ul>
                                     </div>
@@ -124,6 +158,7 @@ const TaskContent = () => {
 
 export default TaskContent
 
+
 /* =========================
    TASK ITEM
 ========================== */
@@ -137,6 +172,8 @@ const List = ({
     priorityBgColor,
     taskTypeColor,
     taskTypeBgColor,
+    statusBgColor,
+    statusColor,
     onSelect,
     tags,
     status
@@ -161,6 +198,7 @@ const List = ({
                                 >
                                     {priority}
                                 </span>
+
                             </div>
                             <div className="fs-12 fw-normal text-muted text-truncate-1-line">
                                 {description}
@@ -180,6 +218,11 @@ const List = ({
                 </div>
 
                 <div className="d-flex align-items-center gap-3">
+                    <span
+                        className={`badge bg-${statusBgColor} text-${statusColor} text-capitalize`}
+                    >
+                        {status}
+                    </span>
                     <span
                         className={`badge bg-${taskTypeBgColor} text-${taskTypeColor} text-capitalize`}
                     >
@@ -232,6 +275,5 @@ const getStartOfWeekGroup = (date) => {
     d.setDate(d.getDate() - (d.getDate() % 7))
     return d
 }
-
 
 
