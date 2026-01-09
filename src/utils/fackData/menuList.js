@@ -265,7 +265,8 @@ export const menuList = [
                 name: "Members create",
                 path: "/projects/members/create",
                 subdropdownMenu: false
-            }
+            },
+           
         ]
     },
     // {
@@ -384,7 +385,7 @@ export const menuList = [
             //     path: "/settings/recaptcha",
             //     subdropdownMenu: false
             // },
-             {
+            {
                 id: 14,
                 name: "Roles",
                 path: "#",
@@ -402,7 +403,7 @@ export const menuList = [
                     },
                 ]
             },
-             {
+            {
                 id: 15,
                 name: "Departments",
                 path: "#",
@@ -425,10 +426,10 @@ export const menuList = [
             //     path: "/settings/miscellaneous",
             //     subdropdownMenu: false
             // },
-           
+
         ]
     },
-    
+
     {
         id: 10,
         name: "authentication",

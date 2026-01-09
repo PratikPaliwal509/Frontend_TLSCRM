@@ -52,7 +52,7 @@ const LayoutApplications = () => {
             <ComposeMailPopUp />
             <StorageDetails />
             <AddsNote />
-            <TasksDetails />
+            {/* <TasksDetails /> */}
             <AddTask />
         </>
     )

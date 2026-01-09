@@ -1,103 +1,119 @@
-import React, { useState } from 'react'
-import { FiInfo, FiPlus } from 'react-icons/fi'
+import React, { useEffect, useState } from 'react'
+import { FiPlus } from 'react-icons/fi'
 
-const checkList = [
-    {
-        id: 1,
-        title: "Tested, debugged, and shipped 10s of 1000s of lines of code to various development teams.",
-        checked: true
-    },
-    {
-        id: 2,
-        title: " Introduced Kanban Board style ticketing system to promote highly.",
-        checked: false
-    },
-    {
-        id: 3,
-        title: "Utilized HTML, CSS, and JavaScript to create 100+ responsive landing pages for both company and client.",
-        checked: false
-    },
-    {
-        id: 4,
-        title: "Rewrote HTML to meet industry and company standards for SEO and Accessibility.",
-        checked: true
-    },
-    {
-        id: 5,
-        title: "Led bi-weekly stand-up to ensure team worked effectively.",
-        checked: false
-    },
-    {
-        id: 6,
-        title: "Worked with Quality Assurance to get new pages/products tested.",
-        checked: false
-    },
+const CheckList = ({ checklist = [], taskID }) => {
+  const [data, setData] = useState([])
+  const [inputValue, setInputValue] = useState("")
+  const token = localStorage.getItem("token")
 
-]
-const CheckList = () => {
-    const [data, setData] = useState(checkList)
-    const [inputValue, setInputValue] = useState("")
+  /* Sync checklist from backend */
+  useEffect(() => {
+    setData(checklist)
+  }, [checklist])
 
-    const handleCheckList = (id) => {
-        const updatedData = data.map(item => {
-            if (item.id === id) {
-                return { ...item, checked: !item.checked };
-            }
-            return item;
-        });
-
-        setData(updatedData);
+  /* Persist checklist to backend */
+  const persistChecklist = async (updatedData, rollbackData) => {
+    try {
+      await fetch(`http://localhost:5000/api/tasks/${taskID}/checklist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ checklist: updatedData })
+      })
+    } catch (err) {
+      console.error('Checklist update failed', err)
+      setData(rollbackData)
     }
+  }
 
-    const handleDeleteItem = (id) => {
-        setData(data.filter((item) => item.id !== id))
-    }
+  /* Toggle checklist */
+  const handleCheckList = (id) => {
+    const prevData = data
 
-    const handleValueSubmit = () => {
-        const id = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-        const value = {
-            id,
-            title: inputValue,
-            checked: false
-        }
-        setData([...data, value])
-        setInputValue("")
-    }
-
-    return (
-        <>
-            <div id="checklist">
-                {
-                    data.map(({ checked, id, title }) => (
-                        <div key={id} className='d-flex p-0'>
-                            <div onClick={() => handleCheckList(id)} className={`mb-0 w-100 ${checked ? "checked" : ""}`}>
-                                {title}
-                            </div>
-                            <span onClick={() => handleDeleteItem(id)} className="close">×</span>
-                        </div>
-                    ))
-                }
-            </div>
-            <div className="input-group mt-3">
-                <input
-                    id="checklistInput"
-                    type="text"
-                    className="form-control"
-                    placeholder="Title..."
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                />
-                <a
-                    href="#"
-                    className="input-group-text addCheckList"
-                    onClick={handleValueSubmit}
-                >
-                    <FiPlus size={16} className='me-2' />
-                    <span>Add Checklist</span>
-                </a>
-            </div>
-        </>
+    const updatedData = data.map(item =>
+      item.id === id
+        ? { ...item, checked: !item.checked }
+        : item
     )
+
+    setData(updatedData)
+    persistChecklist(updatedData, prevData)
+  }
+
+  /* Delete checklist item */
+  const handleDeleteItem = (id) => {
+    const prevData = data
+    const updatedData = data.filter(item => item.id !== id)
+
+    setData(updatedData)
+    persistChecklist(updatedData, prevData)
+  }
+
+  /* Add new checklist item */
+  const handleValueSubmit = () => {
+    if (!inputValue.trim()) return
+
+    const prevData = data
+
+    const newItem = {
+      id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+      title: inputValue,
+      checked: false
+    }
+
+    const updatedData = [...data, newItem]
+
+    setData(updatedData)
+    persistChecklist(updatedData, prevData)
+    setInputValue("")
+  }
+
+  return (
+    <>
+      <div id="checklist">
+        {data.map(({ checked, id, title }) => (
+          <div key={id} className="d-flex align-items-center p-0">
+            <div
+              onClick={() => handleCheckList(id)}
+              className={`mb-0 w-100 ${checked ? "checked" : ""}`}
+              style={{ cursor: 'pointer' }}
+            >
+              {title}
+            </div>
+
+            <span
+              onClick={() => handleDeleteItem(id)}
+              className="close"
+              style={{ cursor: 'pointer' }}
+            >
+              ×
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="input-group mt-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Title..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+
+        <button
+          type="button"
+          className="input-group-text addCheckList"
+          onClick={handleValueSubmit}
+        >
+          <FiPlus size={16} className="me-2" />
+          Add Checklist
+        </button>
+      </div>
+    </>
+  )
 }
 
 export default CheckList

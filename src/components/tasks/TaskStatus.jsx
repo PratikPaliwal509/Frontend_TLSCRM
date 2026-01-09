@@ -1,17 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import SelectDropdown from '@/components/shared/SelectDropdown'
 
-
-const TaskStatus = ({ label, options, defaultSelect }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
+const TaskStatus = ({ label, value, options, onChange }) => {
     return (
         <div className="form-group mb-4">
             <label className="form-label">{label}</label>
             <SelectDropdown
                 options={options}
-                defaultSelect={defaultSelect}
-                selectedOption={selectedOption}
-                onSelectOption={(option) => setSelectedOption(option)}
+                value={value}              // controlled value
+                onSelectOption={onChange}  // directly pass onChange
             />
         </div>
     )

@@ -1,105 +1,169 @@
-import React, { Fragment } from 'react'
-import { FiBellOff, FiEyeOff, FiFlag, FiMoreHorizontal, FiSlash } from 'react-icons/fi';
-import { tasksCommentsData } from '../utils/fackData/tasksListData';
-import Dropdown from './shared/Dropdown';
-const Comments = () => {
-    return (
-        <>
-            {
-                tasksCommentsData.map(({ comments, like, replies, time, user_img, user_name }, index) => {
-                    return (
-                        <Fragment key={index}>
-                            <CommentCard user_img={user_img} user_name={user_name} like={like} comments={comments} time={time} replies={replies} />
-                            {
-                                replies.length ?
-                                    <div className="ms-4">
-                                        <div className="ms-4">
-                                            {
-                                                replies.slice(0, 2).map(({ replie, like, time, user_img, user_name, replies }, index) =>
-                                                    <CommentCard key={index} user_img={user_img} user_name={user_name} like={like} comments={replie} time={time} replies={replies} />
-                                                )
-                                            }
-                                            {
-                                                replies.length > 2
-                                                    ?
-                                                    <div className="ms-4 mb-4">
-                                                        <a
-                                                            href="#"
-                                                            className="d-flex align-items-center text-muted"
-                                                        >
-                                                            <FiMoreHorizontal className='fs-12' />
-                                                            <span className="fs-10 text-uppercase ms-2 text-truncate-1-line">
-                                                                Load More Replies
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                    :
-                                                    ""
-                                            }
+import React, { Fragment, useState } from 'react'
+import { FiMoreHorizontal } from 'react-icons/fi'
+import CommentCard from './tasks/CommetCard'
 
-                                        </div>
-                                    </div>
-                                    :
-                                    ""
-                            }
-                        </Fragment>
-                    )
-                })
-            }
-        </>
+const COMMENTS_PER_LOAD = 5
+const REPLIES_PER_LOAD = 2
+
+const Comments = ({ comments, loading, setComments }) => {
+  const [visibleComments, setVisibleComments] = useState(COMMENTS_PER_LOAD)
+  const [visibleReplies, setVisibleReplies] = useState({})
+  const [expandedReplies, setExpandedReplies] = useState({})
+
+  /* ---------------- COMMENTS ---------------- */
+  const loadMoreComments = () =>
+    setVisibleComments(prev => prev + COMMENTS_PER_LOAD)
+
+  const hideComments = () =>
+    setVisibleComments(COMMENTS_PER_LOAD)
+
+  /* ---------------- REPLIES ---------------- */
+  const loadMoreReplies = (commentId) => {
+    setVisibleReplies(prev => ({
+      ...prev,
+      [commentId]: (prev[commentId] || REPLIES_PER_LOAD) + REPLIES_PER_LOAD
+    }))
+  }
+
+  const hideReplies = (commentId) => {
+    setVisibleReplies(prev => ({
+      ...prev,
+      [commentId]: REPLIES_PER_LOAD
+    }))
+  }
+
+  const toggleNestedReplies = (commentId) => {
+    setExpandedReplies(prev => ({
+      ...prev,
+      [commentId]: !prev[commentId]
+    }))
+  }
+
+  /* ---------------- RENDER ---------------- */
+  const renderCommentWithReplies = (comment, level = 0) => {
+    const totalReplies = comment.replies?.length || 0
+    const repliesVisible =
+      visibleReplies[comment.comment_id] || REPLIES_PER_LOAD
+
+    const hasMoreReplies = totalReplies > repliesVisible
+    const canHideReplies = repliesVisible > REPLIES_PER_LOAD
+
+    return (
+      <Fragment key={comment.comment_id}>
+        {/* Main Comment */}
+        <div style={{ marginLeft: level * 20 }}>
+          <CommentCard {...comment} setComments={setComments} />
+        </div>
+
+        {/* Replies */}
+        {totalReplies > 0 && (
+          <div style={{ marginLeft: (level + 1) * 20 }} className="mt-1">
+
+            {/* Render Replies */}
+            {comment.replies.slice(0, repliesVisible).map(reply => {
+              const hasNestedReplies = reply.replies?.length > 0
+              const isExpanded = expandedReplies[reply.comment_id]
+
+              return (
+                <div key={reply.comment_id} className="mb-1">
+                  <CommentCard {...reply} setComments={setComments} />
+
+                  {/* Show nested replies */}
+                  {hasNestedReplies && !isExpanded && (
+                    <button
+                      className="btn btn-link p-0 fs-10 text-muted ms-3"
+                      onClick={() => toggleNestedReplies(reply.comment_id)}
+                    >
+                      Show replies ({reply.replies.length})
+                    </button>
+                  )}
+
+                  {/* Nested replies */}
+                  {hasNestedReplies && isExpanded && (
+                    <div className="ms-3 mt-1">
+                      {reply.replies.map(child =>
+                        renderCommentWithReplies(child, level + 2)
+                      )}
+
+                      {/* Hide nested replies – ALWAYS AT END */}
+                      <button
+                        className="btn btn-link p-0 fs-10 text-muted mt-1"
+                        onClick={() => toggleNestedReplies(reply.comment_id)}
+                      >
+                        Hide replies
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+
+            {/* Load more replies */}
+            {hasMoreReplies && (
+              <div className="ms-3 mt-1">
+                <button
+                  className="btn btn-link p-0 fs-10 text-muted"
+                  onClick={() => loadMoreReplies(comment.comment_id)}
+                >
+                  <FiMoreHorizontal className="fs-12 me-1" />
+                  Load more replies
+                </button>
+              </div>
+            )}
+
+            {/* Hide replies – AFTER loaded replies */}
+            {canHideReplies && (
+              <div className="ms-3 mt-1">
+                <button
+                  className="btn btn-link p-0 fs-10 text-muted"
+                  onClick={() => hideReplies(comment.comment_id)}
+                >
+                  Hide replies
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </Fragment>
     )
+  }
+
+  if (loading) return <p>Loading comments...</p>
+  if (!comments.length) return <p>No comments yet</p>
+
+  const commentsToShow = comments.slice(0, visibleComments)
+  const hasMoreComments = comments.length > visibleComments
+  const canHideComments = visibleComments > COMMENTS_PER_LOAD
+
+  return (
+    <>
+      {commentsToShow.map(comment =>
+        renderCommentWithReplies(comment)
+      )}
+
+      {/* Comment controls */}
+      <div className="text-center my-3">
+        {hasMoreComments && (
+          <button
+            className="btn btn-link fs-10 text-muted me-3"
+            onClick={loadMoreComments}
+          >
+            <FiMoreHorizontal className="fs-12 me-1" />
+            See more comments
+          </button>
+        )}
+
+        {canHideComments && (
+          <button
+            className="btn btn-link fs-10 text-muted"
+            onClick={hideComments}
+          >
+            Hide comments
+          </button>
+        )}
+      </div>
+    </>
+  )
 }
 
 export default Comments
-
-
-const CommentCard = ({ user_img, user_name, like, comments, time, replies }) => {
-    const commentOptions = [
-        { label: "Mute", icon: <FiBellOff /> },
-        { label: "Hide", icon: <FiEyeOff /> },
-        { label: "Block", icon: <FiSlash /> },
-        { label: "Report", icon: <FiFlag /> },
-    ]
-    return (
-        <div className="d-flex mb-4">
-            <div className="avatar-image me-3">
-                <a href="#">
-                    <img
-                        src={user_img}
-                        className="img-fluid"
-                        alt=""
-                    />
-                </a>
-            </div>
-            <div className="">
-                <a
-                    href="#"
-                    className="mb-1 d-flex align-items-center"
-                >
-                    <span>{user_name}</span>
-                    <span className="wd-3 ht-3 bg-gray-500 rounded-circle d-flex mx-2 d-none d-sm-block" />
-                    <span className="fs-10 text-uppercase text-muted d-none d-sm-block">
-                        {time}
-                    </span>
-                </a>
-                <div className="d-flex align-items-center">
-                    <p className="fs-12 text-dark p-3 bg-gray-200 rounded-3 mb-0">{comments}</p>
-                    <Dropdown dropdownItems={commentOptions} dropdownParentStyle={"ms-2"} />
-                </div>
-                <div className="fs-10 text-uppercase d-flex align-items-center mt-2">
-                    <a href="#" className="text-muted">
-                        Like {like ? `(${like})` : ""}
-                    </a>
-                    <span className="wd-3 ht-3 bg-gray-500 rounded-circle d-flex mx-2" />
-                    <a href="#" className="text-muted">
-                        Reply
-                    </a>
-                    <span className="wd-3 ht-3 bg-gray-500 rounded-circle d-flex mx-2" />
-                    <a href="#" className="text-muted">
-                        {replies.length ? `${replies.length} Replies` : ""}
-                    </a>
-                </div>
-            </div>
-        </div>
-    )
-}

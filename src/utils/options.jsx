@@ -82,6 +82,7 @@ const leadsGroupsOptions = [
 ]
 
 const taskStatusOptions = [
+    { value: 'to_do', label: 'To Do', color: '#f59e0b' },
     { value: 'inprogress', label: 'Inprogress', color: '#3454d1' },
     { value: 'pending', label: 'Pending', color: '#64748b' },
     { value: 'completed', label: 'Completed', color: '#17c666' },
