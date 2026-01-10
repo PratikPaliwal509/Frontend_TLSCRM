@@ -209,7 +209,7 @@ const TasksDetails = ({ task }) => {
         >
             <div
                 className="offcanvas-header border-bottom"
-                style={{ paddingTop: 20, paddingBottom: 20 }}
+                style={{ paddingTop: 20, paddingBottom: 20,  display: 'flex',   justifyContent: 'space-between' }}
             >
                 <div className="d-flex align-items-center">
                     <div

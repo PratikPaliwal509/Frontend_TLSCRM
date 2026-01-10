@@ -18,7 +18,7 @@ const CommentTabContent = () => {
                                 </div>
                                 <hr className="border-dashed my-4" />
 
-                                <Comments />
+                                {/* <Comments /> */}
                             </div>
                             <div className="input-group mb-4">
                                 <input type="text" name="name" id="name" className="form-control" placeholder="Your comment..." aria-describedby="suffixId" />

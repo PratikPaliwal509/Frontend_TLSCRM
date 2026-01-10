@@ -79,6 +79,11 @@ import ReportsClients from "../pages/reports-clients";
 import ClientEdit from "../pages/clients-edit";
 import ProjectEdit from "../pages/project-edit";
 import ProjectMember from "../pages/project-member";
+// import Departments from "../pages/departments";
+import AddDepartments from "../pages/add-departments";
+import DepartmentsList from "../pages/departments-list";
+import DepartmentsView from "../pages/department-view";
+import DepartmentEdit from "../pages/edit-department";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -200,7 +205,7 @@ export const router = createBrowserRouter([
                 path: "/projects/members/create",
                 element: <ProjectMember />
             },
-          
+
             // {
             //     path: "/projects/view/",
             //     element: <ProjectsView />
@@ -215,19 +220,39 @@ export const router = createBrowserRouter([
             },
             {
                 path: "/widgets/charts",
-                element: <WidgetsCharts/>
+                element: <WidgetsCharts />
             },
             {
                 path: "/widgets/statistics",
-                element: <WidgetsStatistics/>
+                element: <WidgetsStatistics />
             },
             {
                 path: "/widgets/miscellaneous",
-                element: <WidgetsMiscellaneous/>
+                element: <WidgetsMiscellaneous />
             },
             {
                 path: "/help/knowledgebase",
                 element: <HelpKnowledgebase />
+            },
+             {
+                path: "/settings/departments/view/:id",
+                element: <DepartmentsView />
+            },
+             {
+                path: "/settings/departments/edit/:id",
+                element: <DepartmentEdit />
+            },
+            //  {
+            //     path: "/settings/departments",
+            //     element: <Departments />
+            // },
+             {
+                path: "/settings/departments/list",
+                element: <DepartmentsList/>
+            },
+             {
+                path: "/settings/departments/create",
+                element: <AddDepartments/>
             },
 
         ]
@@ -262,10 +287,12 @@ export const router = createBrowserRouter([
             },
         ]
     },
+    
     {
         path: "/",
         element: <LayoutSetting />,
         children: [
+            
             {
                 path: "/settings/ganeral",
                 element: <SettingsGaneral />
@@ -318,28 +345,29 @@ export const router = createBrowserRouter([
                 path: "/settings/miscellaneous",
                 element: <SettingsMiscellaneous />
             },
+           
             {
                 path: "/",
                 // element: <LayoutSetting />,
                 children: [
                     {
                         path: "/settings/roles",
-                        element: <RoleList/>
+                        element: <RoleList />
                     },
                     {
                         path: "/settings/roles/create",
-                        element: <AddRoles/>
+                        element: <AddRoles />
                     },
                     {
                         path: "/settings/roles/edit/:id",
-                        element: <EditRole/>
+                        element: <EditRole />
                     },
                     {
                         path: "/settings/roles/view/:id",
-                        element: <ViewRole/>
+                        element: <ViewRole />
                     },
                 ]
-            }
+            },
         ]
     },
     {

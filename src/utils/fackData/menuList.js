@@ -343,12 +343,12 @@ export const menuList = [
                 path: "/settings/tasks",
                 subdropdownMenu: false
             },
-            {
-                id: 6,
-                name: "Leads",
-                path: "/settings/leads",
-                subdropdownMenu: false
-            },
+            // {
+            //     id: 6,
+            //     name: "Leads",
+            //     path: "/settings/leads",
+            //     subdropdownMenu: false
+            // },
             {
                 id: 7,
                 name: "Support",
@@ -410,8 +410,18 @@ export const menuList = [
                 subdropdownMenu: [
                     {
                         id: 1,
-                        name: "Department",
-                        path: "/settings/departments",
+                        name: "Department List",
+                        path: "/settings/departments/list",
+                    },
+                    // {
+                    //     id: 3,
+                    //     name: "Department View",
+                    //     path: "/settings/departments/view/1",
+                    // },
+                    {
+                        id: 4,
+                        name: "Department Edit",
+                        path: "/settings/departments/Edit/1",
                     },
                     {
                         id: 2,

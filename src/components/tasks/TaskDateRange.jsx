@@ -12,10 +12,11 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
     }, [initialStartDate, initialEndDate]);
 
     return (
-        <div className="col-12">
-            <label className="form-label">Date Range:</label>
+        <div className="col-12 mt-4">
+            {/* <label className="form-label">Date Range:</label> */}
 
             <div className="input-group">
+                <span className="input-group-text">Start Date</span>
                 <DatePicker
                     placeholderText="Start date..."
                     selected={startDate}
@@ -31,7 +32,7 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
                     }}
                 />
 
-                <span className="input-group-text">to</span>
+                <span className="input-group-text">End Date</span>
 
                 <DatePicker
                     placeholderText="End date..."
