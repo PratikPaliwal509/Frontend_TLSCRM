@@ -373,6 +373,19 @@ export const menuList = [
                 path: "/settings/customers",
                 subdropdownMenu: false
             },
+             {
+                id: 18,
+                name: "Teams List",
+                path: "/teams/list",
+                subdropdownMenu: false
+            },
+            {
+                id: 19,
+                name: "Teams Create",
+                path: "/teams/create",
+                subdropdownMenu: false
+            },
+           
             // {
             //     id: 11,
             //     name: "Localization",

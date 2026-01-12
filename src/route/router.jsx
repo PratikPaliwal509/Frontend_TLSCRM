@@ -84,6 +84,10 @@ import AddDepartments from "../pages/add-departments";
 import DepartmentsList from "../pages/departments-list";
 import DepartmentsView from "../pages/department-view";
 import DepartmentEdit from "../pages/edit-department";
+import TeamCreate from "../pages/team-create";
+import TeamsView from "../pages/team-view";
+import TeamEdit from "../pages/teams-edit";
+import TeamsList from "../pages/teams-list";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -233,6 +237,22 @@ export const router = createBrowserRouter([
             {
                 path: "/help/knowledgebase",
                 element: <HelpKnowledgebase />
+            },
+             {
+                path: "/teams/create",
+                element: <TeamCreate/>
+            },
+             {
+                path: "/teams/view/:id",
+                element: <TeamsView/>
+            },
+             {
+                path: "/teams/edit/:id",
+                element: <TeamEdit/>
+            },
+             {
+                path: "/teams/list",
+                element: <TeamsList/>
             },
              {
                 path: "/settings/departments/view/:id",
