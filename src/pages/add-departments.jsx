@@ -44,7 +44,6 @@ const AddDepartment = () => {
         }
 
         const data = await response.json()
-        console.log('Fetched users:', data)
 
         setUsers(data.data || [])
       } catch (error) {
@@ -67,8 +66,6 @@ const AddDepartment = () => {
       setLoading(true)
       const token = localStorage.getItem('token')
       //             const decoded = jwtDecode(token)
-      // console.log(decoded)
-      console.log('Creating department with data:', formData)
       const payload = {
         ...formData,
         manager_id: Number(formData.manager_id),
@@ -89,7 +86,6 @@ const AddDepartment = () => {
       }
 
       const data = await response.json()
-      console.log('Department created successfully:', data.data)
       setFormData({
         department_name: '',
         department_code: '',

@@ -73,7 +73,6 @@ const ProjectCreateContent = () => {
 
         setError(false)
         setCurrentStep(prev => prev + 1)
-        console.log('Current Step:', currentStep + formData);
     }
 
 

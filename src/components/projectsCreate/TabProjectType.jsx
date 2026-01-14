@@ -30,7 +30,6 @@ const TabProjectType = ({ formData, setFormData, error }) => {
       return
     }
 
-    console.log('Fetching clients for agency:', formData.agency_id)
 
     fetch(
       `http://localhost:5000/api/clients/clientsAll?agency_id=${formData.agency_id}`,
@@ -44,7 +43,6 @@ const TabProjectType = ({ formData, setFormData, error }) => {
       .then(res => res.json())
       .then(res => {
         const list = Array.isArray(res) ? res : res.data || res.clients || []
-        console.log('Filtered clients:', list)
         setClients(list)
       })
       .catch(err => {

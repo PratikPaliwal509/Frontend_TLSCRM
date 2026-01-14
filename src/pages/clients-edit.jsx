@@ -66,7 +66,6 @@ const ClientEdit = () => {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
 
-                console.log('Fetched client data for data ID:', id, data);
                 setFormData({
                     agency_id: data.data.agency_id || '',
                     company_name: data.data.company_name || '',
@@ -85,7 +84,6 @@ const ClientEdit = () => {
         };
 
         fetchClient();
-        console.log('Fetched client data for ID:', id, formData);
     }, [id]);
 
     /* ================= HANDLE INPUT ================= */
@@ -123,7 +121,6 @@ const ClientEdit = () => {
 
             // ✅ REDIRECT TO PREVIOUS PAGE
             navigate(-1);
-            console.log('Client updated successfully:', data);
 
         } catch (error) {
             console.error('Update client error', error);

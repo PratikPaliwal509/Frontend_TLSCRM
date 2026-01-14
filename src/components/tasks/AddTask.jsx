@@ -55,7 +55,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/users', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -65,7 +65,6 @@ const AddTask = () => {
                     value: u.user_id,
                     img: u.avatar_url || null,
                 }))
-                console.log(options)
                 setUsers(options)
             } catch (err) {
                 console.error('Fetch users error', err)

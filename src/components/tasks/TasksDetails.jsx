@@ -107,7 +107,7 @@ const TasksDetails = ({ task }) => {
             try {
                 setLoadingUsers(true)
 
-                const res = await fetch('http://localhost:5000/api/users', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,

@@ -37,7 +37,6 @@ const UsersCreate = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
-                console.log("departemtns"+JSON.stringify(data))
                 setDepartments(data.data || [])
             } catch (err) {
                 console.error(err)
@@ -80,7 +79,7 @@ const UsersCreate = () => {
             setLoading(true)
             const token = localStorage.getItem('token')
 
-            await fetch('http://localhost:5000/api/users', {
+            await fetch('http://localhost:5000/api/users/user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -369,7 +369,6 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
             <button
                 className="btn btn-sm btn-success"
                 onClick={async () => {
-                    console.log('YES CLICKED') // 🔍 debug
 
                     // ⛔ Disable buttons + show loader
                     toast.update(toastId, {
@@ -391,7 +390,6 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
                         )
 
                         const data = await res.json()
-                        console.log('API RESPONSE:', data) // 🔍 debug
 
                         if (data.success) {
                             setSelectedOption(option)

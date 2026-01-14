@@ -26,7 +26,6 @@ const GeneralCard = ({ title, icon, text }) => (
 const TabTeamProfile = ({ team }) => {
   if (!team) return null
 
-  console.log('team:', team)
 
   /* -------- Team Info -------- */
   const teamInfoData = [

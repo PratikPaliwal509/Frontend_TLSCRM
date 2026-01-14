@@ -61,7 +61,6 @@ const [refreshKey, setRefreshKey] = useState(false);
 
     if (!isConfirmed) {
         // User clicked Cancel
-        console.log("Role deletion cancelled");
         return;
     }
   try {
@@ -91,7 +90,6 @@ const [refreshKey, setRefreshKey] = useState(false);
     console.error("Delete role error:", error);
     // alert(error.message || "Failed to delete role");
     alert("Failed to delete role");
-    // console.log(error || "Failed to delete role");
   }
 };
 

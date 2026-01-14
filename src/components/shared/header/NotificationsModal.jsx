@@ -10,7 +10,6 @@
 //         removeNotification,
 //         markAllAsRead
 //     } = useNotifications()
-// console.log(notifications)
 //     const unreadCount = notifications.filter(n => !n.read).length
 
 //     return (

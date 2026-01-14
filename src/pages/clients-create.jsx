@@ -46,7 +46,6 @@ const ClientsCreate = () => {
                 }
 
                 const data = await response.json()
-                console.log('Fetched agencies:', data)
                 setAgencies(data || [])
 
             } catch (error) {
@@ -68,7 +67,6 @@ const ClientsCreate = () => {
             setLoading(true)
 
             const token = localStorage.getItem('token') // use correct key
-            console.log('Submitting client with data:', formData, 'as', type)
             const response = await fetch('http://localhost:5000/api/clients', {
                 method: 'POST',
                 headers: {
@@ -98,7 +96,6 @@ const ClientsCreate = () => {
             }
 
             const data = await response.json()
-            console.log('Client created successfully:', data)
 
         } catch (error) {
             console.error('Create client error', error)

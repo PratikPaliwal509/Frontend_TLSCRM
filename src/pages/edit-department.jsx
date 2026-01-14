@@ -46,7 +46,6 @@ const [users, setUsers] = useState([])
                 }
 
                 const data = await response.json()
-                console.log('Fetched department:', data)
 
                 setFormData({
                     department_name: data.data.department_name || '',
@@ -86,7 +85,6 @@ const [users, setUsers] = useState([])
         try {
             setLoading(true)
             const token = localStorage.getItem('token')
-            console.log('Updating department with data:', formData)
 
             const response = await fetch(`http://localhost:5000/api/departments/${id}`, {
                 method: 'PUT', // use PUT for update
@@ -103,7 +101,6 @@ const [users, setUsers] = useState([])
             }
 
             const data = await response.json()
-            console.log('Department updated successfully:', data)
             navigate(`/settings/departments/view/${data.data.department_id}`)
         } catch (error) {
             console.error('Update department error:', error)

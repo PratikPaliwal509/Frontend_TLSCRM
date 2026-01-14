@@ -1,10 +1,10 @@
 // src/utils/verifyPagePermission.js
 
 export const verifyPagePermission = async (
-    moduleKey,
-    action,
-      navigate,
-    loginPath = '/authentication/login'
+  moduleKey,
+  action,
+  navigate,
+  loginPath = '/authentication/login'
 ) => {
   try {
     const token = localStorage.getItem('token')
@@ -33,16 +33,14 @@ export const verifyPagePermission = async (
         },
       }
     )
-console.log("i am here")
-// ❌ Token invalid or forbidden
-if (response.status === 401 || response.status === 403) {
-    localStorage.clear()
-    navigate(loginPath, { replace: true })
-    return false
-}
+    // ❌ Token invalid or forbidden
+    if (response.status === 401 || response.status === 403) {
+      localStorage.clear()
+      navigate(loginPath, { replace: true })
+      return false
+    }
 
-if (!response.ok) return false
-console.log("i am here too")
+    if (!response.ok) return false
 
     const result = await response.json()
     const permissions = result?.data?.permissions || {}

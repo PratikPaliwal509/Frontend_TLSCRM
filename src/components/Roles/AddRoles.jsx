@@ -81,7 +81,6 @@ const handlePermissionChange = (page, action) => {
         }
 
         const payload = { ...formData };
-        console.log('ADD ROLE PAYLOAD 👉', payload);
 
         try {
             const token = localStorage.getItem('token');

@@ -33,7 +33,6 @@ const DepartmentsView= () => {
                 )
 
                 const data = await res.json()
-                console.log("data"+JSON.stringify(data))
                 setDepartments(data.data)
             } catch (error) {
                 console.error('Failed to load department', error)

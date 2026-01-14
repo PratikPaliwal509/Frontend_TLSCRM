@@ -26,7 +26,6 @@ const GeneralCard = ({ title, icon, text }) => (
 const TabDepartmentProfile = ({ departments }) => {
 
     if (!departments) return null
-    console.log("departments" + JSON.stringify(departments))
 
     /* -------- Department Info (Left Section) -------- */
     const departmentInfoData = [
@@ -125,7 +124,6 @@ const TabDepartmentProfile = ({ departments }) => {
                 </div>
 
                 {generalInfoData.map((data, index) => {
-                    console.log(data)
                     return (
                         <GeneralCard
                             key={index}

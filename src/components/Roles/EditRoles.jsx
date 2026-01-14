@@ -37,7 +37,6 @@ const EditRoleForm = () => {
         permissions: role.permissions || {}
       });
     }
-    console.log("Editing role:", role);
   }, [role]);
 
   if (!role) {

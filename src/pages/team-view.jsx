@@ -34,7 +34,6 @@ const TeamsView = () => {
         if (!res.ok) throw new Error('Failed to fetch team')
 
         const data = await res.json()
-        console.log('Team data:', data)
 
         setTeam(data.data)
       } catch (error) {

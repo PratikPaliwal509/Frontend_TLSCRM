@@ -10,7 +10,6 @@ const RoleViewPage = () => {
 
   // ✅ role coming ONLY from previous page
   const role = location.state?.role;
-console.log("Viewing role:", role);
   const permissionPages = [
     { key: "dashboard", label: "Dashboard", actions: ["view"] },
     { key: "users", label: "Users", actions: ["view", "create", "edit", "delete"] },

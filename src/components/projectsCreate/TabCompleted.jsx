@@ -25,11 +25,9 @@ const TabCompleted = ({ formData, resetForm }) => {
 
       const data = await res.json()
 
-      console.log('Project created:', data)
       if (!res.ok) {
         throw new Error(data.message || 'Failed to create project')
       }
-      console.log('Project created:', data)
       // ✅ Optional: reset form
       resetForm && resetForm()
 
