@@ -43,7 +43,6 @@ import { useNavigate } from 'react-router-dom'
 //   )
 // })
 const TableCell = ({ value, onChange }) => {
-  // console.log("TableCell value:", value)
   return (
     <select
       value={value.status}
@@ -146,8 +145,6 @@ const navigate = useNavigate()
       : client
   )
 )
-
-    console.log("Status updated:", clientId, status)  
   } catch (error) {
     console.error("Status update error:", error)
   }
@@ -165,7 +162,6 @@ const navigate = useNavigate()
 //       },
 //     })
 
-//     console.log("Client deleted:", clientId)
 
 //     // Optional: update UI
 //     setClients(prev => prev.filter(c => c.id !== clientId))
@@ -238,7 +234,6 @@ const navigate = useNavigate()
   header: () => 'Status',
   cell: (info) => {
     const row = info.row.original
-// console.log(row.id, row.status)
         return (
           <TableCell
             value={row.status}   // ✅ STRING
@@ -267,7 +262,6 @@ const navigate = useNavigate()
       //   icon: <FiTrash2 />,
       //   onClick: () => {
       //     handleDeleteClient(clientId);
-      //     console.log("Delete client", clientId)
       //     // call delete API here
       //   },
       // },

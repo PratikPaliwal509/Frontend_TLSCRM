@@ -17,7 +17,7 @@ const RegisterCover = () => {
                         <div className="wd-50 mb-5">
                             <img src="/images/logo/techlal.png" alt="img" className="img-fluid" />
                         </div>
-                        <RegisterForm path={"/authentication/login/cover"} />
+                        <RegisterForm path={"/authentication/login"} />
                     </div>
                 </div>
             </div>

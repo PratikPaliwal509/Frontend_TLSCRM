@@ -1,0 +1,143 @@
+import React from 'react'
+import Input from '@/components/shared/Input'
+
+const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    onChange(name, value)
+  }
+
+  return (
+    <div className="col-12">
+      <div className="card p-4">
+        <h5 className="mb-4">User Information</h5>
+
+        {/* Name */}
+        <Input
+          label="Full Name"
+          name="name"
+          labelId="name"
+          placeholder="Enter full name"
+          value={formData.name}
+          onChange={handleInputChange}
+        />
+
+        {/* Email */}
+        <Input
+          label="Email"
+          type="email"
+          name="email"
+          labelId="email"
+          placeholder="Enter email"
+          value={formData.email}
+          onChange={handleInputChange}
+        />
+
+        {/* Phone */}
+        <Input
+          label="Phone"
+          type="tel"
+          name="phone"
+          labelId="phone"
+          placeholder="Enter phone number"
+          value={formData.phone}
+          onChange={handleInputChange}
+        />
+
+        {/* Role */}
+        <div className="row mb-4 align-items-center">
+          <div className="col-lg-4">
+            <label className="fw-semibold">Role: </label>
+          </div>
+          <div className="col-lg-8">
+            <select
+              className="form-select"
+              name="role"
+              value={formData.role}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Role</option>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Department */}
+        <div className="row mb-4 align-items-center">
+          <div className="col-lg-4">
+            <label className="fw-semibold">Department: </label>
+          </div>
+          <div className="col-lg-8">
+            <select
+              className="form-select"
+              name="department_id"
+              value={formData.department_id}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Department</option>
+              {departments.map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Team */}
+        <div className="row mb-4 align-items-center">
+          <div className="col-lg-4">
+            <label className="fw-semibold">Team: </label>
+          </div>
+          <div className="col-lg-8">
+            <select
+              className="form-select"
+              name="team_id"
+              value={formData.team_id}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Team</option>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Status */}
+        <div className="row mb-4 align-items-center">
+          <div className="col-lg-4">
+            <label className="fw-semibold">Status: </label>
+          </div>
+          <div className="col-lg-8">
+            <select
+              className="form-select"
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Notes */}
+        <Input
+          label="Notes"
+          name="notes"
+          labelId="notes"
+          placeholder="Enter notes"
+          value={formData.notes || ''}
+          onChange={handleInputChange}
+        />
+      </div>
+    </div>
+  )
+}
+
+export default UsersEditContent

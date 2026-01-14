@@ -107,7 +107,6 @@ const DepartmentsTable = () => {
       accessorKey: 'actions',
       header: 'Actions',
       cell: ({ row }) => {
-        console.log(row)
         const departmentId = row.original.id
         const rowActions = [
           {

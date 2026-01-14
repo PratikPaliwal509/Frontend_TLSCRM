@@ -90,7 +90,7 @@ const menuData = [
             {
                 name: 'login',
                 subSubMenu: [
-                    { name: 'Cover', path: '/authentication/login/cover' },
+                    { name: 'Cover', path: '/authentication/login' },
                     { name: 'Minimal', path: '/authentication/login/minimal' },
                     { name: 'Creative', path: '/authentication/login/creative' },
                 ],

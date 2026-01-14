@@ -3,7 +3,7 @@ import RootLayout from "../layout/root";
 import Home from "../pages/home";
 import Analytics from "../pages/analytics";
 import ReportsSales from "../pages/reports-sales";
-import ReportsLeads from "../pages/reports-leads";
+// import ReportsLeads from "../pages/reports-leads";
 import ReportsProject from "../pages/reports-project";
 import AppsChat from "../pages/apps-chat";
 import LayoutApplications from "../layout/layoutApplications";
@@ -18,12 +18,9 @@ import Proposalist from "../pages/proposal-list";
 import CustomersList from "../pages/customers-list";
 import ProposalView from "../pages/proposal-view";
 import ProposalEdit from "../pages/proposal-edit";
-import LeadsList from "../pages/leadsList";
 import CustomersView from "../pages/customers-view";
 import CustomersCreate from "../pages/customers-create";
 import ProposalCreate from "../pages/proposal-create";
-import LeadsView from "../pages/leads-view";
-import LeadsCreate from "../pages/leads-create";
 import PaymentList from "../pages/payment-list";
 import PaymentView from "../pages/payment-view/";
 import PaymentCreate from "../pages/payment-create";
@@ -63,7 +60,8 @@ import MaintenanceCover from "../pages/maintenance-cover";
 import MaintenanceMinimal from "../pages/maintenance-minimal";
 import MaintenanceCreative from "../pages/maintenance-creative";
 import HelpKnowledgebase from "../pages/help-knowledgebase";
-import WidgetsLists from "../pages/widgets-lists";
+// WidgetsLists have error and it is not required also
+// import WidgetsLists from "../pages/widgets-lists";
 import WidgetsTables from "../pages/widgets-tables";
 import WidgetsCharts from "../pages/widgets-charts";
 import WidgetsStatistics from "../pages/widgets-statistics";
@@ -75,11 +73,11 @@ import ViewRole from "@/components/Roles/View.Roles";
 import ClientsList from "../pages/clientsList";
 import ClientsView from "../pages/clients-view";
 import ClientsCreate from "../pages/clients-create";
-import ReportsClients from "../pages/reports-clients";
+// ReportsClients have error and it is not required also
+// import ReportsClients from "../pages/reports-clients";
 import ClientEdit from "../pages/clients-edit";
 import ProjectEdit from "../pages/project-edit";
 import ProjectMember from "../pages/project-member";
-// import Departments from "../pages/departments";
 import AddDepartments from "../pages/add-departments";
 import DepartmentsList from "../pages/departments-list";
 import DepartmentsView from "../pages/department-view";
@@ -88,6 +86,13 @@ import TeamCreate from "../pages/team-create";
 import TeamsView from "../pages/team-view";
 import TeamEdit from "../pages/teams-edit";
 import TeamsList from "../pages/teams-list";
+import AllNotifications from "../pages/AllNotifications";
+import Profile from "../pages/profile";
+import ProfileEdit from "../pages/profile-edit";
+import CreateUser from "../pages/user-add";
+import UsersList from "../pages/user-list";
+import UsersView from "../pages/user-view";
+import UserEditPage from "../pages/user-edit";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -98,6 +103,18 @@ export const router = createBrowserRouter([
                 element: <Home />
             },
             {
+                path: "profile",
+                element: <Profile/>
+            },
+            {
+                path: "profile/edit",
+                element: <ProfileEdit/>
+            },
+            {
+                path: "/notifications",
+                element: <AllNotifications/>
+            },
+            {
                 path: "/dashboards/analytics",
                 element: <Analytics />
             },
@@ -105,14 +122,14 @@ export const router = createBrowserRouter([
                 path: "/reports/sales",
                 element: <ReportsSales />
             },
-            {
-                path: "/reports/leads",
-                element: <ReportsLeads />
-            },
-            {
-                path: "/reports/clients",
-                element: <ReportsClients />
-            },
+            // {
+            //     path: "/reports/leads",
+            //     element: <ReportsLeads />
+            // },
+            // {
+            //     path: "/reports/clients",
+            //     element: <ReportsClients />
+            // },
             {
                 path: "/reports/project",
                 element: <ReportsProject />
@@ -161,18 +178,6 @@ export const router = createBrowserRouter([
                 path: "/customers/create",
                 element: <CustomersCreate />
             },
-            // {
-            //     path: "/leads/list",
-            //     element: <LeadsList />
-            // },
-            // {
-            //     path: "/leads/view",
-            //     element: <LeadsView />
-            // },
-            // {
-            //     path: "/leads/create",
-            //     element: <LeadsCreate />
-            // },
             {
                 path: "/clients/list",
                 element: <ClientsList />
@@ -209,15 +214,10 @@ export const router = createBrowserRouter([
                 path: "/projects/members/create",
                 element: <ProjectMember />
             },
-
             // {
-            //     path: "/projects/view/",
-            //     element: <ProjectsView />
+            //     path: "/widgets/lists",
+            //     element: <WidgetsLists />
             // },
-            {
-                path: "/widgets/lists",
-                element: <WidgetsLists />
-            },
             {
                 path: "/widgets/tables",
                 element: <WidgetsTables />
@@ -262,10 +262,6 @@ export const router = createBrowserRouter([
                 path: "/settings/departments/edit/:id",
                 element: <DepartmentEdit />
             },
-            //  {
-            //     path: "/settings/departments",
-            //     element: <Departments />
-            // },
              {
                 path: "/settings/departments/list",
                 element: <DepartmentsList/>
@@ -273,6 +269,22 @@ export const router = createBrowserRouter([
              {
                 path: "/settings/departments/create",
                 element: <AddDepartments/>
+            },
+             {
+                path: "/user/create",
+                element: <CreateUser/>
+            },
+             {
+                path: "/user/list",
+                element: <UsersList/>
+            },
+             {
+                path: "/user/view/:id",
+                element: <UsersView/>
+            },
+             {
+                path: "/user/edit/:id",
+                element: <UserEditPage/>
             },
 
         ]
@@ -395,7 +407,7 @@ export const router = createBrowserRouter([
         element: <LayoutAuth />,
         children: [
             {
-                path: "/authentication/login/cover",
+                path: "/authentication/login",
                 element: <LoginCover />
             },
             {
@@ -469,3 +481,108 @@ export const router = createBrowserRouter([
         ]
     }
 ])
+
+
+// import { createBrowserRouter } from "react-router-dom";
+// import RootLayout from "../layout/root";
+// import Home from "../pages/home";
+// import Analytics from "../pages/analytics";
+// import ReportsSales from "../pages/reports-sales";
+// // import ReportsLeads from "../pages/reports-leads";
+// import ReportsProject from "../pages/reports-project";
+// import AppsChat from "../pages/apps-chat";
+// import LayoutApplications from "../layout/layoutApplications";
+// import AppsEmail from "../pages/apps-email";
+// import ReportsTimesheets from "../pages/reports-timesheets";
+// import LoginCover from "../pages/login-cover";
+// import AppsTasks from "../pages/apps-tasks";
+// import AppsNotes from "../pages/apps-notes";
+// import AppsCalender from "../pages/apps-calender";
+// import AppsStorage from "../pages/apps-storage";
+// import Proposalist from "../pages/proposal-list";
+// import CustomersList from "../pages/customers-list";
+// import ProposalView from "../pages/proposal-view";
+// import ProposalEdit from "../pages/proposal-edit";
+// import LeadsList from "../pages/leadsList";
+// import CustomersView from "../pages/customers-view";
+// import CustomersCreate from "../pages/customers-create";
+// import ProposalCreate from "../pages/proposal-create";
+// // import LeadsView from "../pages/leads-view";
+// // import LeadsCreate from "../pages/leads-create";
+// import PaymentList from "../pages/payment-list";
+// import PaymentView from "../pages/payment-view/";
+// import PaymentCreate from "../pages/payment-create";
+// import ProjectsList from "../pages/projects-list";
+// import ProjectsView from "../pages/projects-view";
+// import ProjectsCreate from "../pages/projects-create";
+// import SettingsGaneral from "../pages/settings-ganeral";
+// import LayoutSetting from "../layout/layoutSetting";
+// import SettingsSeo from "../pages/settings-seo";
+// import SettingsTags from "../pages/settings-tags";
+// import SettingsEmail from "../pages/settings-email";
+// import SettingsTasks from "../pages/settings-tasks";
+// import SettingsLeads from "../pages/settings-leads";
+// import SettingsMiscellaneous from "../pages/settings-miscellaneous";
+// import SettingsRecaptcha from "../pages/settings-recaptcha";
+// import SettingsLocalization from "../pages/settings-localization";
+// import SettingsCustomers from "../pages/settings-customers";
+// import SettingsGateways from "../pages/settings-gateways";
+// import SettingsFinance from "../pages/settings-finance";
+// import SettingsSupport from "../pages/settings-support";
+// import LayoutAuth from "../layout/layoutAuth";
+// import LoginMinimal from "../pages/login-minimal";
+// import LoginCreative from "../pages/login-creative";
+// import RegisterCover from "../pages/register-cover";
+// import RegisterMinimal from "../pages/register-minimal";
+// import RegisterCreative from "../pages/register-creative";
+// import ResetCover from "../pages/reset-cover";
+// import ResetMinimal from "../pages/reset-minimal";
+// import ResetCreative from "../pages/reset-creative";
+// import ErrorCover from "../pages/error-cover";
+// import ErrorCreative from "../pages/error-creative";
+// import ErrorMinimal from "../pages/error-minimal";
+// import OtpCover from "../pages/otp-cover";
+// import OtpMinimal from "../pages/otp-minimal";
+// import OtpCreative from "../pages/otp-creative";
+// import MaintenanceCover from "../pages/maintenance-cover";
+// import MaintenanceMinimal from "../pages/maintenance-minimal";
+// import MaintenanceCreative from "../pages/maintenance-creative";
+// import HelpKnowledgebase from "../pages/help-knowledgebase";
+// // import WidgetsLists from "../pages/widgets-lists";
+// import WidgetsTables from "../pages/widgets-tables";
+// import WidgetsCharts from "../pages/widgets-charts";
+// import WidgetsStatistics from "../pages/widgets-statistics";
+// import WidgetsMiscellaneous from "../pages/widgets-miscellaneous";
+// import AddRoles from "@/components/Roles/AddRoles";
+// import RoleList from "@/components/Roles/RoleList";
+// import EditRole from "@/components/Roles/EditRoles";
+// import ViewRole from "@/components/Roles/View.Roles";
+// import ClientsList from "../pages/clientsList";
+// import ClientsView from "../pages/clients-view";
+// import ClientsCreate from "../pages/clients-create";
+// // import ReportsClients from "../pages/reports-clients";
+// import ClientEdit from "../pages/clients-edit";
+// import ProjectEdit from "../pages/project-edit";
+// import ProjectMember from "../pages/project-member";
+// // import Departments from "../pages/departments";
+// import AddDepartments from "../pages/add-departments";
+// import DepartmentsList from "../pages/departments-list";
+// import DepartmentsView from "../pages/department-view";
+// import DepartmentEdit from "../pages/edit-department";
+// import TeamCreate from "../pages/team-create";
+// import TeamsView from "../pages/team-view";
+// import TeamEdit from "../pages/teams-edit";
+// import TeamsList from "../pages/teams-list";
+// export const router = createBrowserRouter([
+// {
+//   path: "/",
+//   element: <RootLayout />,
+//   children: [
+//     {
+//       path: "/",        // ❌ WRONG
+//       element: <Home />
+//     }
+//   ]
+// }
+
+// ])

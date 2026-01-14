@@ -58,18 +58,18 @@ export const menuList = [
         path: '#',
         icon: 'feather-send',
         dropdownMenu: [
-            {
-                id: 1,
-                name: "Chat",
-                path: "/applications/chat",
-                subdropdownMenu: false
-            },
-            {
-                id: 2,
-                name: "Email",
-                path: "/applications/email",
-                subdropdownMenu: false
-            },
+            // {
+            //     id: 1,
+            //     name: "Chat",
+            //     path: "/applications/chat",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 2,
+            //     name: "Email",
+            //     path: "/applications/email",
+            //     subdropdownMenu: false
+            // },
             {
                 id: 3,
                 name: "Tasks",
@@ -96,78 +96,78 @@ export const menuList = [
             },
         ]
     },
-    {
-        id: 3,
-        name: "proposal",
-        path: "#",
-        icon: 'feather-sign',
-        dropdownMenu: [
-            {
-                id: 1,
-                name: "Proposal",
-                path: "/proposal/list",
-                subdropdownMenu: false
-            },
-            {
-                id: 2,
-                name: "Proposal View",
-                path: "/proposal/view",
-                subdropdownMenu: false
-            },
-            {
-                id: 3,
-                name: "Proposal Edit",
-                path: "/proposal/edit",
-                subdropdownMenu: false
-            },
-            {
-                id: 4,
-                name: "Proposal Create",
-                path: "/proposal/create",
-                subdropdownMenu: false
-            },
+    // {
+    //     id: 3,
+    //     name: "proposal",
+    //     path: "#",
+    //     icon: 'feather-sign',
+    //     dropdownMenu: [
+    //         {
+    //             id: 1,
+    //             name: "Proposal",
+    //             path: "/proposal/list",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 2,
+    //             name: "Proposal View",
+    //             path: "/proposal/view",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 3,
+    //             name: "Proposal Edit",
+    //             path: "/proposal/edit",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 4,
+    //             name: "Proposal Create",
+    //             path: "/proposal/create",
+    //             subdropdownMenu: false
+    //         },
 
-        ],
-    },
-    {
-        id: 4,
-        name: "payment",
-        path: "#",
-        icon: 'feather-dollar-sign',
-        dropdownMenu: [
-            {
-                id: 1,
-                name: "Payment",
-                path: "/payment/list",
-                subdropdownMenu: false
-            },
-            {
-                id: 2,
-                name: "Invoice View",
-                path: "/payment/view",
-                subdropdownMenu: false
-            },
-            {
-                id: 4,
-                name: "Invoice Create",
-                path: "/payment/create",
-                subdropdownMenu: false
-            }
-        ]
-    },
-    {
-        id: 5,
-        name: "customers",
-        path: "#",
-        icon: 'feather-users',
-        dropdownMenu: [
-            {
-                id: 1,
-                name: "Customers",
-                // path: "/customers/list",
-                path: "#",
-                subdropdownMenu: false
-            },
+    //     ],
+    // },
+    // {
+    //     id: 4,
+    //     name: "payment",
+    //     path: "#",
+    //     icon: 'feather-dollar-sign',
+    //     dropdownMenu: [
+    //         {
+    //             id: 1,
+    //             name: "Payment",
+    //             path: "/payment/list",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 2,
+    //             name: "Invoice View",
+    //             path: "/payment/view",
+    //             subdropdownMenu: false
+    //         },
+    //         {
+    //             id: 4,
+    //             name: "Invoice Create",
+    //             path: "/payment/create",
+    //             subdropdownMenu: false
+    //         }
+    //     ]
+    // },
+    // {
+    //     id: 5,
+    //     name: "customers",
+    //     path: "#",
+    //     icon: 'feather-users',
+    //     dropdownMenu: [
+    //         {
+    //             id: 1,
+    //             name: "Customers",
+    //             // path: "/customers/list",
+    //             path: "#",
+    //             subdropdownMenu: false
+    //         },
             // {
             //     id: 2,
             //     name: "Customers View",
@@ -182,13 +182,14 @@ export const menuList = [
             //      path: "#",
             //     subdropdownMenu: false
             // }
-        ]
-    },
+    //     ]
+    // },
     {
         id: 6,
         name: "Clients",
         path: "#",
-        icon: 'feather-alert-circle',
+        icon: 'feather-users',
+        // icon: 'feather-alert-circle',
         dropdownMenu: [
             {
                 id: 1,
@@ -211,7 +212,7 @@ export const menuList = [
         ]
     },
     // {
-    //     id: 6,
+    //     id: 5,
     //     name: "leads",
     //     path: "#",
     //     icon: 'feather-alert-circle',
@@ -266,7 +267,7 @@ export const menuList = [
                 path: "/projects/members/create",
                 subdropdownMenu: false
             },
-           
+
         ]
     },
     // {
@@ -308,72 +309,12 @@ export const menuList = [
     //     ]
     // },
     {
-        id: 9,
-        name: "settings",
+        id: 8,
+        name: "teams",
         path: "#",
-        icon: 'feather-settings',
+        icon: 'feather-users',
         dropdownMenu: [
             {
-                id: 1,
-                name: "Ganeral",
-                path: "/settings/ganeral",
-                subdropdownMenu: false
-            },
-            {
-                id: 2,
-                name: "SEO",
-                path: "/settings/seo",
-                subdropdownMenu: false
-            },
-            {
-                id: 3,
-                name: "Tags",
-                path: "/settings/tags",
-                subdropdownMenu: false
-            },
-            {
-                id: 4,
-                name: "Email",
-                path: "/settings/email",
-                subdropdownMenu: false
-            },
-            {
-                id: 5,
-                name: "Tasks",
-                path: "/settings/tasks",
-                subdropdownMenu: false
-            },
-            // {
-            //     id: 6,
-            //     name: "Leads",
-            //     path: "/settings/leads",
-            //     subdropdownMenu: false
-            // },
-            {
-                id: 7,
-                name: "Support",
-                path: "/settings/Support",
-                subdropdownMenu: false
-            },
-            {
-                id: 8,
-                name: "Finance",
-                path: "/settings/finance",
-                subdropdownMenu: false
-            },
-            // {
-            //     id: 9,
-            //     name: "Gateways",
-            //     path: "/settings/gateways",
-            //     subdropdownMenu: false
-            // },
-            {
-                id: 10,
-                name: "Customers",
-                path: "/settings/customers",
-                subdropdownMenu: false
-            },
-             {
                 id: 18,
                 name: "Teams List",
                 path: "/teams/list",
@@ -385,7 +326,138 @@ export const menuList = [
                 path: "/teams/create",
                 subdropdownMenu: false
             },
-           
+
+        ]
+    },
+    {
+        id: 14,
+        name: "Roles",
+        path: "#",
+        icon: 'feather-user-check',
+        // subdropdownMenu: false
+        dropdownMenu: [
+            {
+                id: 1,
+                name: "Role List",
+                path: "/settings/roles",
+                subdropdownMenu: false
+            },
+            {
+                id: 2,
+                name: "Add Role",
+                path: "/settings/roles/create",
+                subdropdownMenu: false
+            },
+        ]
+    },
+    {
+        id: 15,
+        name: "Departments",
+        icon: 'feather-layers',
+        path: "#",
+        dropdownMenu: [
+            {
+                id: 1,
+                name: "Department List",
+                path: "/settings/departments/list",
+                subdropdownMenu: false
+            },
+            {
+                id: 2,
+                name: "Add Department",
+                path: "/settings/departments/create",
+                subdropdownMenu: false
+            },
+        ]
+    },
+    {
+        id: 16,
+        name: "Users",
+        icon: 'feather-user-check',
+        path: "#",
+        dropdownMenu: [
+            {
+                id: 1,
+                name: "User Add",
+                path: "/user/create",
+                subdropdownMenu: false
+            },
+            {
+                id: 2,
+                name: "User List",
+                path: "/user/list",
+                subdropdownMenu: false
+            },
+        ]
+    },
+    {
+        id: 9,
+        name: "settings",
+        path: "#",
+        icon: 'feather-settings',
+        dropdownMenu: [
+            {
+                id: 1,
+                name: "Ganeral",
+                path: "/settings/ganeral",
+                subdropdownMenu: false
+            },
+            // {
+            //     id: 2,
+            //     name: "SEO",
+            //     path: "/settings/seo",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 3,
+            //     name: "Tags",
+            //     path: "/settings/tags",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 4,
+            //     name: "Email",
+            //     path: "/settings/email",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 5,
+            //     name: "Tasks",
+            //     path: "/settings/tasks",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 6,
+            //     name: "Leads",
+            //     path: "/settings/leads",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 7,
+            //     name: "Support",
+            //     path: "/settings/Support",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 8,
+            //     name: "Finance",
+            //     path: "/settings/finance",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 9,
+            //     name: "Gateways",
+            //     path: "/settings/gateways",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 10,
+            //     name: "Customers",
+            //     path: "/settings/customers",
+            //     subdropdownMenu: false
+            // },
+
+
             // {
             //     id: 11,
             //     name: "Localization",
@@ -398,51 +470,8 @@ export const menuList = [
             //     path: "/settings/recaptcha",
             //     subdropdownMenu: false
             // },
-            {
-                id: 14,
-                name: "Roles",
-                path: "#",
-                // subdropdownMenu: false
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Role List",
-                        path: "/settings/roles",
-                    },
-                    {
-                        id: 2,
-                        name: "Add Role",
-                        path: "/settings/roles/create",
-                    },
-                ]
-            },
-            {
-                id: 15,
-                name: "Departments",
-                path: "#",
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Department List",
-                        path: "/settings/departments/list",
-                    },
-                    // {
-                    //     id: 3,
-                    //     name: "Department View",
-                    //     path: "/settings/departments/view/1",
-                    // },
-                    {
-                        id: 4,
-                        name: "Department Edit",
-                        path: "/settings/departments/Edit/1",
-                    },
-                    {
-                        id: 2,
-                        name: "Add Department",
-                        path: "/settings/departments/create",
-                    },
-                ]
-            },
+
+
             // {
             //     id: 13,
             //     name: "Miscellaneouss",
@@ -462,13 +491,14 @@ export const menuList = [
             {
                 id: 1,
                 name: "login",
-                path: "#",
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Cover",
-                        path: "/authentication/login/cover",
-                    },
+                path: "/authentication/login",
+                subdropdownMenu: false
+                //  [
+                    // {
+                    //     id: 1,
+                    //     name: "Cover",
+                    //     path: "/authentication/login/cover",
+                    // },
                     // {
                     //     id: 2,
                     //     name: "Minimal",
@@ -479,18 +509,19 @@ export const menuList = [
                     //     name: "Creative",
                     //     path: "/authentication/login/creative",
                     // },
-                ]
+                // ]
             },
             {
                 id: 2,
                 name: "register",
-                path: "#",
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Cover",
-                        path: "/authentication/register/cover",
-                    },
+                path: "/authentication/register/",
+                subdropdownMenu: false
+                // [
+                //     {
+                //         id: 1,
+                //         name: "Cover",
+                //         path: "/authentication/register/cover",
+                //     },
                     // {
                     //     id: 2,
                     //     name: "Minimal",
@@ -501,18 +532,19 @@ export const menuList = [
                     //     name: "Creative",
                     //     path: "/authentication/register/creative",
                     // },
-                ]
+                // ]
             },
             {
                 id: 3,
                 name: "Error 404",
-                path: "#",
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Cover",
-                        path: "/authentication/404/cover",
-                    },
+                path: "/authentication/404",
+                subdropdownMenu: false
+                // [
+                //     {
+                //         id: 1,
+                //         name: "Cover",
+                //         path: "/authentication/404/cover",
+                //     },
                     // {
                     //     id: 2,
                     //     name: "Minimal",
@@ -523,18 +555,19 @@ export const menuList = [
                     //     name: "Creative",
                     //     path: "/authentication/404/creative",
                     // },
-                ]
+                // ]
             },
             {
                 id: 4,
                 name: "Reset Pass",
-                path: "#",
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Cover",
-                        path: "/authentication/reset/cover",
-                    },
+                path: "/authentication/reset",
+                subdropdownMenu: false
+                // [
+                //     {
+                //         id: 1,
+                //         name: "Cover",
+                //         path: "/authentication/reset/cover",
+                //     },
                     // {
                     //     id: 2,
                     //     name: "Minimal",
@@ -545,18 +578,19 @@ export const menuList = [
                     //     name: "Creative",
                     //     path: "/authentication/reset/creative",
                     // },
-                ]
+                // ]
             },
             {
                 id: 5,
                 name: "Verify OTP",
-                path: "#",
-                subdropdownMenu: [
-                    {
-                        id: 1,
-                        name: "Cover",
-                        path: "/authentication/verify/cover",
-                    },
+                path: "/authentication/verify",
+                subdropdownMenu: false
+                // [
+                //     {
+                //         id: 1,
+                //         name: "Cover",
+                //         path: "/authentication/verify/cover",
+                //     },
                     // {
                     //     id: 2,
                     //     name: "Minimal",
@@ -567,7 +601,7 @@ export const menuList = [
                     //     name: "Creative",
                     //     path: "/authentication/verify/creative",
                     // },
-                ]
+                // ]
             },
             // {
             //     id: 6,

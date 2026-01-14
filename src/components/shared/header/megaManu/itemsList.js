@@ -154,27 +154,27 @@ export const authenticationPageList = [
         col: [
             {
                 page_name: "Login",
-                path: "/authentication/login/cover"
+                path: "/authentication/login"
             },
             {
                 page_name: "Register",
-                path: "/authentication/register/cover"
+                path: "/authentication/register"
             },
             {
                 page_name: "Error-404",
-                path: "/authentication/404/cover"
+                path: "/authentication/404"
             },
             {
                 page_name: "Reset Pass",
-                path: "/authentication/rest/cover"
+                path: "/authentication/rest"
             },
             {
                 page_name: "Verify OTP",
-                path: "/authentication/verify/cover"
+                path: "/authentication/verify"
             },
             {
                 page_name: "Maintenance",
-                path: "/authentication/maintenance/cover"
+                path: "/authentication/maintenance"
             },
         ]
     },

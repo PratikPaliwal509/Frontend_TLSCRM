@@ -148,7 +148,7 @@ const TabClientsProfile = ({ client }) => {
               General information for this client
             </span>
           </h5>
-          <a href="#" className="btn btn-sm btn-light-brand">
+          <a href={`/clients/edit/${client.id}`} className="btn btn-sm btn-light-brand">
             Edit Client
           </a>
         </div>

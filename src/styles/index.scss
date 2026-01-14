@@ -1,2 +1,10 @@
 
 @import "../../public/assets/scss/theme.scss";
+.notification-card {
+  transition: all 0.3s ease;
+}
+
+.notification-card.deleting {
+  opacity: 0;
+  transform: translateX(40px);
+}

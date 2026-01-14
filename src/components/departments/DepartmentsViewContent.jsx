@@ -1,10 +1,9 @@
 import React from 'react'
 import TabDepartmentProfile from './TabDepartmentProfile'
-// import DepartmentsEmptyCard from './DepartmentsEmptyCard'
+import DepartmentsEmptyCard from './DepartmentsEmptyCard'
 
 const DepartmentsViewContent = ({ departments }) => {
     const notes = departments?.notes || []
-
     return (
         <>
             {/* PROFILE TAB */}
@@ -19,12 +18,12 @@ const DepartmentsViewContent = ({ departments }) => {
             </div> */}
 
             {/* MEMBERS TAB */}
-            {/* <div className="tab-pane fade" id="membersTab" role="tabpanel">
+            <div className="tab-pane fade" id="membersTab" role="tabpanel">
                 <DepartmentsEmptyCard
                     title="No members yet!"
                     description={`There are no members added to ${departments?.name}`}
                 />
-            </div> */}
+            </div>
 
             {/* NOTES TAB */}
             {/* <div className="tab-pane fade" id="notesTab" role="tabpanel">

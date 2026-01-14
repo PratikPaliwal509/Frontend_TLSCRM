@@ -185,7 +185,7 @@ const Header = () => {
                 <div className="header-right ms-auto">
                     <div className="d-flex align-items-center">
                         <SearchModal />
-                        <LanguagesModal />
+                        {/* <LanguagesModal /> */}
                         <div className="nxl-h-item d-none d-sm-flex" >
                             <div className="full-screen-switcher">
                                 <span className="nxl-head-link me-0">
@@ -194,14 +194,14 @@ const Header = () => {
                                 </span>
                             </div>
                         </div>
-                        <div className="nxl-h-item dark-light-theme">
+                        {/* <div className="nxl-h-item dark-light-theme">
                             <div className="nxl-head-link me-0 dark-button" onClick={() => handleThemeMode("dark")}>
                                 <FiMoon size={20} />
                             </div>
                             <div className="nxl-head-link me-0 light-button" onClick={() => handleThemeMode("light")} style={{ display: "none" }}>
                                 <FiSun size={20} />
                             </div>
-                        </div>
+                        </div> */}
                         <TimesheetsModal />
                         <NotificationsModal />
                         <ProfileModal />

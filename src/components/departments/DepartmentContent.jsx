@@ -2,8 +2,7 @@ import React from 'react'
 import Input from '@/components/shared/Input'
 
 const DepartmentContent = ({ formData, onChange, users }) => {
-    console.log('DepartmentContent formData:', formData)
-
+  
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target
         // Handle checkbox for is_active
@@ -60,7 +59,7 @@ const DepartmentContent = ({ formData, onChange, users }) => {
                         >
                             <option value="">Select Manager</option>
 
-                            {users.map(user => (
+                            {users?.map(user => (
                                 <option key={user.user_id} value={user.user_id}>
                                     {user.first_name} {user.last_name}
                                 </option>

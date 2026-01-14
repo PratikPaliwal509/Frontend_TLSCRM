@@ -4,7 +4,7 @@ export const verifyPagePermission = async (
     moduleKey,
     action,
       navigate,
-    loginPath = '/authentication/login/cover'
+    loginPath = '/authentication/login'
 ) => {
   try {
     const token = localStorage.getItem('token')

@@ -10,6 +10,8 @@ import DepartmentEditHeader from '@/components/departments/DepartmentEditHeader'
 const DepartmentEdit = () => {
     const { id } = useParams() // department id from URL
     const navigate = useNavigate()
+    
+const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         department_name: '',
@@ -61,7 +63,19 @@ const DepartmentEdit = () => {
 
         fetchDepartment()
     }, [id])
-
+     useEffect(() => {
+        const fetchUsers = async () => {
+          const token = localStorage.getItem('token')
+          const res = await fetch(
+            // 'http://localhost:5000/api/users/users/by-agency',
+            'http://localhost:5000/api/users/users/by-agency',
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+          const data = await res.json()
+          setUsers(data.data || [])
+        }
+        fetchUsers()
+      }, [])
     /* ================= HANDLE INPUT ================= */
     const handleChange = (name, value) => {
         setFormData(prev => ({ ...prev, [name]: value }))
@@ -112,6 +126,7 @@ const DepartmentEdit = () => {
                     <DepartmentContent
                         formData={formData}
                         onChange={handleChange}
+                        users={users}
                     />
                 </div>
             </div>

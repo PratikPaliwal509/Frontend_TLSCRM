@@ -2,7 +2,6 @@ import React from 'react';
 import Input from '@/components/shared/Input';
 
 const ClientsEditContent = ({ formData, agencies, onChange }) => {
-console.log('ClientsEditContent formData:', formData, agencies);
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         onChange(name, value);

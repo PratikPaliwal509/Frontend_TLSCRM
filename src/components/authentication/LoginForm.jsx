@@ -60,7 +60,6 @@ const handleSubmit = async (e) => {
     localStorage.setItem('user', JSON.stringify(safeUser))
 
     setSuccess('Login successful!')
-    console.log('Logged in user:', safeUser)
 
     navigate('/')
   } catch (err) {
