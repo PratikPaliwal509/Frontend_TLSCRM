@@ -14,6 +14,7 @@ import Select from 'react-select'
 import AddComment from './AddComment';
 import TaskTimer from '@/components/TaskTimer'
 import TaskTimeLogDetails from '../TaskTimeLogDetails';
+import AddAttachment from './TaskAttachment';
 const detailsMoreOptions = [
     { label: "Make Unread", icon: <FiEyeOff /> },
     { label: "Filter Messages", icon: <FiSliders /> },
@@ -371,6 +372,8 @@ const TasksDetails = ({ task }) => {
                 <hr className="my-5" />
                 
                 <TaskTimeLogDetails taskId={id} project_id={project_id} />
+                <hr className="my-5" />
+                <AddAttachment taskId={task?.id}/>
                 <hr className="my-5" />
                 <div className="checklist">
                     <div className="d-flex justify-content-between mb-4">

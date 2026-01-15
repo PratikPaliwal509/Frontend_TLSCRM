@@ -15,7 +15,11 @@ const RoleViewPage = () => {
     { key: "users", label: "Users", actions: ["view", "create", "edit", "delete"] },
     { key: "projects", label: "Projects", actions: ["view", "create", "edit", "delete"] },
     { key: "roles", label: "Roles", actions: ["view", "create", "edit", "delete"] },
-    { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] }
+    { key: 'teams', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: 'applications', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: 'departments', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
+    { key: "clients", label: "Clients", actions: ["view", "create", "edit", "delete", "assign"] }
   ];
 
   // 🚫 If user refreshes or opens URL directly

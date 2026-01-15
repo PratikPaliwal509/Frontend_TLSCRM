@@ -9,6 +9,9 @@ const permissionPages = [
     { key: 'users', label: 'Users', actions: ['view', 'create', 'edit', 'delete'] },
     { key: 'projects', label: 'Projects', actions: ['view', 'create', 'edit', 'delete'] },
     { key: 'roles', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: 'teams', label: 'Teams', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: 'applications', label: 'Applications', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: 'departments', label: 'Departments', actions: ['view', 'create', 'edit', 'delete'] },
     { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
     { key: "clients", label: "Clients", actions: ["view", "create", "edit", "delete", "assign"] }
 ];

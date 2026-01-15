@@ -15,7 +15,7 @@ const steps = [
     { name: "Budget", required: true },
     { name: "Assagined", required: false },
     { name: "Target", required: false },
-    { name: "Attachment", required: false },
+    // { name: "Attachment", required: false },
     { name: "Completed", required: false },
 ];
 
@@ -130,8 +130,8 @@ const ProjectCreateContent = () => {
                         {currentStep === 2 && <TabProjectBudget setFormData={setFormData} formData={formData} error={error} setError={setError} />}
                         {currentStep === 3 && <TabProjectAssigned setFormData={setFormData} formData={formData} setError={setError} />}
                         {currentStep === 4 && <TabProjectTarget setFormData={setFormData} formData={formData} setError={setError} />}
-                        {currentStep === 5 && <TabAttachement />}
-                        {currentStep === 6 && <TabCompleted setFormData={setFormData} formData={formData} setError={setError} />}
+                        {/* {currentStep === 5 && <TabAttachement />} */}
+                        {currentStep === 5 && <TabCompleted setFormData={setFormData} formData={formData} setError={setError} />}
                     </div>
 
                     {/* Buttons */}
