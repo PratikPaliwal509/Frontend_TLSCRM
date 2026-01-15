@@ -504,7 +504,7 @@ const ProjectTable = () => {
 
     /* ---------- TABLE DATA ---------- */
     const tableData = useMemo(() => {
-        return projects.map((project) => ({
+        return projects?.map((project) => ({
             id: project.project_id,
 
             project: {

@@ -12,6 +12,8 @@ import topTost from '@/utils/topTost';
 import CheckList from '../CheckList';
 import Select from 'react-select'
 import AddComment from './AddComment';
+import TaskTimer from '@/components/TaskTimer'
+import TaskTimeLogDetails from '../TaskTimeLogDetails';
 const detailsMoreOptions = [
     { label: "Make Unread", icon: <FiEyeOff /> },
     { label: "Filter Messages", icon: <FiSliders /> },
@@ -44,6 +46,7 @@ const TasksDetails = ({ task }) => {
     const user_img = task?.user_img || '/images/avatar/1.png';
     const start_date = task?.start_date || null;
     const checklist = task?.checklist || [];
+    const project_id = task?.project_id || '';
 
     const selectedTags = taskLabelsOptions.filter(opt =>
         tags?.includes(opt.value)
@@ -232,8 +235,8 @@ const TasksDetails = ({ task }) => {
                     </a>
                 </div>
                 <div className="d-none d-md-flex gap-1 align-items-center justify-content-center">
-                    <a
-                        href="#"
+                    <TaskTimer taskId={id} project_id={project_id}/>
+                    <a href="#"
                         className="d-none d-lg-flex align-items-center fs-9 fw-bold text-uppercase text-dark py-2 px-3 border border-gray-2 rounded"
                     >
                         <FiLink2 size={16} strokeWidth={1.7} className='me-2' />
@@ -365,6 +368,9 @@ const TasksDetails = ({ task }) => {
                     />
 
                 </div>
+                <hr className="my-5" />
+                
+                <TaskTimeLogDetails taskId={id} project_id={project_id} />
                 <hr className="my-5" />
                 <div className="checklist">
                     <div className="d-flex justify-content-between mb-4">

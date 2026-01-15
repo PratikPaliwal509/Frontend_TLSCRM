@@ -82,7 +82,8 @@ const TaskContent = () => {
                     status: task.status || 'to_do',
                     checklist: task.checklist || [],
                     created_at: task.created_at,
-                    task_type: task.task_type
+                    task_type: task.task_type,
+                    project_id: task.project_id,
                 }))
                 : []
             setTasks(formattedTasks)
