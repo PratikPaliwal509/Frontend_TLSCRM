@@ -8,9 +8,13 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
 const ProjectsList = () => {
     const navigate = useNavigate();
-    useEffect(() => {
-        verifyPagePermission('projects', 'view', navigate);
-    }, []);
+     useEffect(() => {
+           const checkPermission = async () => {
+             await verifyPagePermission('projects', 'view', navigate);
+           };
+       
+           checkPermission();
+         }, []);
     return (
         <>
             <PageHeader>

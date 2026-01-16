@@ -13,10 +13,13 @@ const TeamsList = () => {
   const navigate = useNavigate()
 
   // Uncomment when permission system is enabled
-  // useEffect(() => {
-  //   verifyPagePermission('teams', 'view', navigate)
-  // }, [])
-
+  useEffect(() => {
+       const checkPermission = async () => {
+         await verifyPagePermission('teams', 'view', navigate);
+       };
+   
+       checkPermission();
+     }, []);
   return (
     <>
       <PageHeader>

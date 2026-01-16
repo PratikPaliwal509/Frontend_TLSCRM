@@ -4,6 +4,7 @@ import UsersEditHeader from '../components/users/UsersEditHeader'
 import UsersEditContent from '../components/users/UsersEditContent'
 // import topTost from '@/utils/topTost'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
 const UserEditPage = () => {
   const { id } = useParams()
@@ -23,6 +24,11 @@ const UserEditPage = () => {
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(false)
 
+
+      /* ================= PERMISSION ================= */
+      useEffect(() => {
+          verifyPagePermission('users', 'edit', navigate)
+      }, [])
   // Fetch user, departments, and teams directly
   useEffect(() => {
     const fetchData = async () => {

@@ -1,84 +1,166 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from "react"
 
-const AddsNote = () => {
-    const [title, setTitle] = useState("")
+const AddsNote = ({
+    isOpen,
+    onClose,
+    noteType,
+    clientList = [],
+    projectList = [],
+    onNoteAdded,
+}) => {
+    //   const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+    const [selectedClient, setSelectedClient] = useState("")
+    const [selectedProject, setSelectedProject] = useState("")
+
+    useEffect(() => {
+        if (isOpen) {
+            //   setTitle("")
+            setDescription("")
+            setSelectedClient("")
+            setSelectedProject("")
+        }
+    }, [noteType, isOpen])
+
+    if (!isOpen) return null
+
+    const handleSubmit = async () => {
+        const token = localStorage.getItem("token")
+
+        const url =
+            noteType === "clients"
+                ? `http://localhost:5000/api/clients/${selectedClient}`
+                : `http://localhost:5000/api/projects/${selectedProject}`
+
+        const body =
+            noteType === "clients"
+                ? { notes: description }
+                : { notes: description }
+
+        const res = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(body),
+        })
+
+        const json = await res.json()
+
+        if (json.success) {
+            onNoteAdded?.()
+            onClose()
+        }
+    }
+
     return (
-        <div
-            className="modal fade"
-            id="addNewNotes"
-            tabIndex={-1}
-            data-bs-keyboard="false"
-            role="dialog"
-
-        >
+        <>
+            {/* Overlay */}
             <div
-                className="modal-dialog modal-dialog-scrollable modal-dialog-centered"
-                role="document"
+                className="position-fixed top-0 start-0 w-100 h-100 "
+                style={{
+                    background: "rgba(0,0,0, 0.5)",
+                    zIndex: 1050,
+
+                }}
+                onClick={onClose}
+            />
+
+            {/* Modal */}
+            <div
+                className="position-fixed top-50 start-50 translate-middle rounded-lg"
+                style={{
+                    background: "rgb(255, 255, 255)",
+                    zIndex: 1060,
+                    width: "100%",
+                    maxWidth: "700px",
+                }}
             >
-                <div className="modal-content">
+                <div className="modal-content shadow-lg border-0 bg-white rounded-3 p-4 animate-modal">
+                    {/* Header */}
                     <div className="modal-header">
-                        <h5 className="modal-title" id="modalTitleId">
-                            Add Notes
-                        </h5>
-                        <button
-                            type="button"
-                            className="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                        />
+                        <h5 className="modal-title ">Add Note</h5>
+                        <button className="btn-close m-2" onClick={onClose} />
                     </div>
+
+                    {/* Body */}
                     <div className="modal-body">
-                        <div className="notes-box">
-                            <div className="notes-content">
-                                <form action="#" id="addnotesmodalTitle">
-                                    <div className="row">
-                                        <div className="col-md-12 mb-3">
-                                            <div className="note-title">
-                                                <label className="form-label">Note Title</label>
-                                                <input
-                                                    type="text"
-                                                    id="note-has-title"
-                                                    className="form-control"
-                                                    minLength={25}
-                                                    placeholder="Title"
-                                                    defaultValue={title}
-                                                    onChange={(e) => setTitle(e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-12">
-                                            <div className="note-description">
-                                                <label className="form-label">Note Description</label>
-                                                <textarea
-                                                    id="note-has-description"
-                                                    className="form-control"
-                                                    minLength={60}
-                                                    placeholder="Description"
-                                                    rows={5}
-                                                    defaultValue={""}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                        {/* <div className="mb-3">
+                            <label className="form-label">Title</label>
+                            <input
+                                className="form-control"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                            </div> */}
+
+                        <div className="mb-3">
+                            <label className="form-label">Description</label>
+                            <textarea
+                                className="form-control"
+                                rows={4}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
                         </div>
+
+                        {noteType === "clients" && (
+                            <div className="mb-3">
+                                <label className="form-label">Client</label>
+                                <select
+                                    className="form-select"
+                                    value={selectedClient}
+                                    onChange={(e) => setSelectedClient(e.target.value)}
+                                >
+                                    <option value="">Select Client</option>
+                                    {clientList.map((c) => (
+                                        <option key={c.client_id} value={c.client_id}>
+                                            {c.company_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        {noteType === "projects" && (
+                            <div className="mb-3">
+                                <label className="form-label">Project</label>
+                                <select
+                                    className="form-select"
+                                    value={selectedProject}
+                                    onChange={(e) => setSelectedProject(e.target.value)}
+                                >
+                                    <option value="">Select Project</option>
+                                    {projectList.map((p) => (
+                                        <option key={p.project_id} value={p.project_id}>
+                                            {p.project_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Footer */}
                     <div className="modal-footer">
-                        {/* <button id="btn-n-save" className="float-left btn btn-success">
-                            Save
-                        </button> */}
-                        <button className="btn btn-danger" data-bs-dismiss="modal">
+                        <button className="btn btn-danger" onClick={onClose}>
                             Discard
                         </button>
-                        <button className="btn btn-success" data-bs-dismiss="modal" disabled={title.length < 2 ? "disabled" : ""}>
+                        <button
+                            className="btn m-2 btn-success"
+                            onClick={handleSubmit}
+                            disabled={
+                                (noteType === "clients" && !selectedClient) ||
+                                (noteType === "projects" && !selectedProject)
+                            }
+                        >
                             Add Note
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </>
     )
 }
 

@@ -4,7 +4,7 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import DepartmentsViewHeader from '@/components/departments/DepartmentsViewHeader'
 import DepartmentsViewContent from '@/components/departments/DepartmentsViewContent'
 import DepartmentsViewTabs from '@/components/departments/DepartmentsViewTabs'
-// import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
 const DepartmentsView= () => {
     const { id } = useParams()
@@ -13,9 +13,9 @@ const DepartmentsView= () => {
 
     const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     verifyPagePermission('departments', 'view', navigate)
-    // }, [])
+    useEffect(() => {
+        verifyPagePermission('departments', 'view', navigate)
+    }, [])
 
     useEffect(() => {
         const fetchDepartment = async () => {

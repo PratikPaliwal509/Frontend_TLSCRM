@@ -11,9 +11,9 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const DepartmentsList = () => {
     const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     verifyPagePermission('departments', 'view', navigate)
-    // }, [])
+    useEffect(() => {
+        verifyPagePermission('departments', 'view', navigate)
+    }, [])
 
     return (
         <>

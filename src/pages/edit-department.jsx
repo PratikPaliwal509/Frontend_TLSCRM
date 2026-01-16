@@ -21,9 +21,9 @@ const [users, setUsers] = useState([])
     })
 
     /* ================= VERIFY PERMISSION ================= */
-    // useEffect(() => {
-    //     verifyPagePermission('departments', 'edit', navigate)
-    // }, [])
+    useEffect(() => {
+        verifyPagePermission('departments', 'edit', navigate)
+    }, [])
 
     /* ================= FETCH DEPARTMENT ================= */
     useEffect(() => {

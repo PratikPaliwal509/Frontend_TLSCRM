@@ -27,6 +27,8 @@ import PaymentCreate from "../pages/payment-create";
 import ProjectsList from "../pages/projects-list";
 import ProjectsView from "../pages/projects-view";
 import ProjectsCreate from "../pages/projects-create";
+import ProjectEdit from "../pages/project-edit";
+import ProjectMember from "../pages/project-member";
 import SettingsGaneral from "../pages/settings-ganeral";
 import LayoutSetting from "../layout/layoutSetting";
 import SettingsSeo from "../pages/settings-seo";
@@ -73,11 +75,9 @@ import ViewRole from "@/components/Roles/View.Roles";
 import ClientsList from "../pages/clientsList";
 import ClientsView from "../pages/clients-view";
 import ClientsCreate from "../pages/clients-create";
+import ClientEdit from "../pages/clients-edit";
 // ReportsClients have error and it is not required also
 // import ReportsClients from "../pages/reports-clients";
-import ClientEdit from "../pages/clients-edit";
-import ProjectEdit from "../pages/project-edit";
-import ProjectMember from "../pages/project-member";
 import AddDepartments from "../pages/add-departments";
 import DepartmentsList from "../pages/departments-list";
 import DepartmentsView from "../pages/department-view";
@@ -104,15 +104,15 @@ export const router = createBrowserRouter([
             },
             {
                 path: "profile",
-                element: <Profile/>
+                element: <Profile />
             },
             {
                 path: "profile/edit",
-                element: <ProfileEdit/>
+                element: <ProfileEdit />
             },
             {
                 path: "/notifications",
-                element: <AllNotifications/>
+                element: <AllNotifications />
             },
             {
                 path: "/dashboards/analytics",
@@ -238,53 +238,53 @@ export const router = createBrowserRouter([
                 path: "/help/knowledgebase",
                 element: <HelpKnowledgebase />
             },
-             {
+            {
                 path: "/teams/create",
-                element: <TeamCreate/>
+                element: <TeamCreate />
             },
-             {
+            {
                 path: "/teams/view/:id",
-                element: <TeamsView/>
+                element: <TeamsView />
             },
-             {
+            {
                 path: "/teams/edit/:id",
-                element: <TeamEdit/>
+                element: <TeamEdit />
             },
-             {
+            {
                 path: "/teams/list",
-                element: <TeamsList/>
+                element: <TeamsList />
             },
-             {
+            {
                 path: "/settings/departments/view/:id",
                 element: <DepartmentsView />
             },
-             {
+            {
                 path: "/settings/departments/edit/:id",
                 element: <DepartmentEdit />
             },
-             {
+            {
                 path: "/settings/departments/list",
-                element: <DepartmentsList/>
+                element: <DepartmentsList />
             },
-             {
+            {
                 path: "/settings/departments/create",
-                element: <AddDepartments/>
+                element: <AddDepartments />
             },
-             {
+            {
                 path: "/user/create",
-                element: <CreateUser/>
+                element: <CreateUser />
             },
-             {
+            {
                 path: "/user/list",
-                element: <UsersList/>
+                element: <UsersList />
             },
-             {
+            {
                 path: "/user/view/:id",
-                element: <UsersView/>
+                element: <UsersView />
             },
-             {
+            {
                 path: "/user/edit/:id",
-                element: <UserEditPage/>
+                element: <UserEditPage />
             },
 
         ]
@@ -319,12 +319,12 @@ export const router = createBrowserRouter([
             },
         ]
     },
-    
+
     {
         path: "/",
         element: <LayoutSetting />,
         children: [
-            
+
             {
                 path: "/settings/ganeral",
                 element: <SettingsGaneral />
@@ -377,7 +377,7 @@ export const router = createBrowserRouter([
                 path: "/settings/miscellaneous",
                 element: <SettingsMiscellaneous />
             },
-           
+
             {
                 path: "/",
                 // element: <LayoutSetting />,

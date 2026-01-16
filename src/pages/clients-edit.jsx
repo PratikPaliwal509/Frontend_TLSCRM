@@ -26,7 +26,10 @@ const ClientEdit = () => {
     });
 
     useEffect(() => {
-        verifyPagePermission('clients', 'edit', navigate);
+        const checkPermission = async () => {
+            await verifyPagePermission('clients', 'edit', navigate);
+        };
+        checkPermission();
     }, []);
     /* ================= FETCH AGENCIES ================= */
     useEffect(() => {

@@ -4,7 +4,7 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import TeamHeader from '../components/teams/TeamHeader'
 import TeamContent from '@/components/teams/TeamContent'
 import TeamMembers from '@/components/teams/TeamMembers'
-
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const TeamEdit = () => {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -22,6 +22,13 @@ const teamId = id
     is_active: true,
   })
 
+   useEffect(() => {
+      const checkPermission = async () => {
+        await verifyPagePermission('teams', 'edit', navigate);
+      };
+  
+      checkPermission();
+    }, []);
   /* ================= FETCH USERS ================= */
   useEffect(() => {
     const fetchUsers = async () => {

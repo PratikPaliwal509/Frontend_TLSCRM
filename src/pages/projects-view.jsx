@@ -43,7 +43,11 @@ const ProjectsView = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    verifyPagePermission('projects', 'view', navigate);
+    const checkPermission = async () => {
+      await verifyPagePermission('projects', 'view', navigate);
+    };
+
+    checkPermission();
   }, []);
   useEffect(() => {
     const fetchProject = async () => {

@@ -4,7 +4,7 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import TeamsViewContent from '@/components/teams/TeamsViewContent'
 import TeamHeader from '@/components/teams/TeamHeader'
 // import TeamsViewTabs from '@/components/teams/TeamsViewTabs'
-// import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
 const TeamsView = () => {
   const { id } = useParams()
@@ -12,10 +12,14 @@ const TeamsView = () => {
   const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
-
-  // useEffect(() => {
-  //   verifyPagePermission('teams', 'view', navigate)
-  // }, [])
+  
+   useEffect(() => {
+      const checkPermission = async () => {
+        await verifyPagePermission('teams', 'view', navigate);
+      };
+  
+      checkPermission();
+    }, []);
 
   useEffect(() => {
     const fetchTeam = async () => {

@@ -3,12 +3,15 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Footer from "@/components/shared/Footer";
 import PageHeaderSetting from "@/components/shared/pageHeader/PageHeaderSetting";
 import PerfectScrollbar from "react-perfect-scrollbar";
-
+import { verifyPagePermission } from '@/utils/verifyPagePermission';  
 const permissionPages = [
   { key: "dashboard", label: "Dashboard", actions: ["view"] },
   { key: "users", label: "Users", actions: ["view", "create", "edit", "delete"] },
   { key: "projects", label: "Projects", actions: ["view", "create", "edit", "delete"] },
   { key: "roles", label: "Roles", actions: ["view", "create", "edit", "delete"] },
+    { key: 'teams', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: 'notes', label: 'Notes', actions: ['view', 'create', 'edit', 'delete'] },
+    { key: 'departments', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
   { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
   { key: "clients", label: "Clients", actions: ["view", "create", "edit", "delete", "assign"] }
 ];
@@ -26,6 +29,15 @@ const EditRoleForm = () => {
     is_system_role: false,
     permissions: {}
   });
+
+  useEffect(() => {
+          const checkPermission = async () => {
+              await verifyPagePermission('roles', 'edit', navigate);
+          };  
+  
+          checkPermission();
+        }, []);
+  
 
   // ✅ Prefill from previous page
   useEffect(() => {

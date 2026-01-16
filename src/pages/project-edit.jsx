@@ -10,10 +10,14 @@ import { useEffect } from 'react'
 const ProjectEdit = () => {
   const formRef = useRef()
   const [saving, setSaving] = useState(false)
- const navigate = useNavigate();
-         useEffect(() => {
-            verifyPagePermission('projects', 'edit', navigate);
-          }, []);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkPermission = async () => {
+      await verifyPagePermission('projects', 'edit', navigate);
+    };
+
+    checkPermission();
+  }, []);
   return (
     <>
       <PageHeader>

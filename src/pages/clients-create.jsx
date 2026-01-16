@@ -23,10 +23,12 @@ const ClientsCreate = () => {
         status: 'active',
     })
 
-    useEffect(() => {
-        verifyPagePermission('clients', 'create', navigate);
-    }, []);
-
+     useEffect(() => {
+        const checkPermission = async () => {
+          await verifyPagePermission('clients', 'create', navigate);
+        };
+        checkPermission();
+      }, []);
     /* ================= FETCH AGENCIES ================= */
     useEffect(() => {
         const fetchAgencies = async () => {

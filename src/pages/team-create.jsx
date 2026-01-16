@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import TeamHeader from '../components/teams/TeamHeader'
 import TeamContent from '@/components/teams/TeamContent'
+import { verifyPagePermission } from '@/utils/verifyPagePermission';
 
 const TeamCreate = () => {
   const navigate = useNavigate()
@@ -18,6 +19,13 @@ const TeamCreate = () => {
     is_active: true,
   })
 
+  useEffect(() => {
+    const checkPermission = async () => {
+      await verifyPagePermission('teams', 'create', navigate);
+    };
+
+    checkPermission();
+  }, []);
   /* ================= FETCH USERS ================= */
   useEffect(() => {
     const fetchUsers = async () => {

@@ -51,7 +51,7 @@ const LayoutApplications = () => {
             <VideoCall />
             <ComposeMailPopUp />
             <StorageDetails />
-            <AddsNote />
+            {/* <AddsNote /> */}
             {/* <TasksDetails /> */}
             <AddTask />
         </>

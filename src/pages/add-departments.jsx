@@ -21,9 +21,9 @@ const AddDepartment = () => {
   })
 
   /* ================= VERIFY PERMISSION ================= */
-  // useEffect(() => {
-  //     verifyPagePermission('departments', 'create', navigate)
-  // }, [])
+  useEffect(() => {
+      verifyPagePermission('departments', 'create', navigate)
+  }, [])
 
   useEffect(() => {
     const fetchUsers = async () => {
