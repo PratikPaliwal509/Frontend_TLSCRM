@@ -76,6 +76,7 @@ const AddProjectMember = () => {
     setError("");
 
     try {
+      console.log("roleInProject"+roleInProject, hourlyRate)
       const res = await fetch(
         `http://localhost:5000/api/projects/${projectId}/members`,
         {

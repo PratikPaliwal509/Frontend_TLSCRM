@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import TeamHeader from '../components/teams/TeamHeader'
 import TeamContent from '@/components/teams/TeamContent'
-import { verifyPagePermission } from '@/utils/verifyPagePermission';
+import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
 const TeamCreate = () => {
   const navigate = useNavigate()
+
   const [loading, setLoading] = useState(false)
   const [users, setUsers] = useState([])
   const [departments, setDepartments] = useState([])
+  const [selectedMembers, setSelectedMembers] = useState([])
 
   const [formData, setFormData] = useState({
     team_name: '',
@@ -19,13 +21,11 @@ const TeamCreate = () => {
     is_active: true,
   })
 
+  /* ================= PERMISSION ================= */
   useEffect(() => {
-    const checkPermission = async () => {
-      await verifyPagePermission('teams', 'create', navigate);
-    };
+    verifyPagePermission('teams', 'create', navigate)
+  }, [])
 
-    checkPermission();
-  }, []);
   /* ================= FETCH USERS ================= */
   useEffect(() => {
     const fetchUsers = async () => {
@@ -38,7 +38,7 @@ const TeamCreate = () => {
         const data = await res.json()
         setUsers(data.data || [])
       } catch (err) {
-        console.error('Fetch users error:', err)
+        console.error(err)
       }
     }
     fetchUsers()
@@ -56,7 +56,7 @@ const TeamCreate = () => {
         const data = await res.json()
         setDepartments(data.data || [])
       } catch (err) {
-        console.error('Fetch departments error:', err)
+        console.error(err)
       }
     }
     fetchDepartments()
@@ -65,6 +65,20 @@ const TeamCreate = () => {
   /* ================= HANDLE INPUT ================= */
   const handleChange = (name, value) => {
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  /* ================= TEAM MEMBERS LOGIC ================= */
+  const handleSelectMember = (e) => {
+    const userId = Number(e.target.value)
+    if (!userId) return
+
+    if (!selectedMembers.includes(userId)) {
+      setSelectedMembers(prev => [...prev, userId])
+    }
+  }
+
+  const removeMember = (id) => {
+    setSelectedMembers(prev => prev.filter(u => u !== id))
   }
 
   /* ================= CREATE TEAM ================= */
@@ -83,6 +97,7 @@ const TeamCreate = () => {
           : null,
       }
 
+      // 1️⃣ Create team
       const res = await fetch('http://localhost:5000/api/teams', {
         method: 'POST',
         headers: {
@@ -93,9 +108,22 @@ const TeamCreate = () => {
       })
 
       if (!res.ok) throw await res.json()
-
       const data = await res.json()
-      navigate(`/settings/teams/view/${data.data.team_id}`)
+      const teamId = data.data.team_id
+
+      // 2️⃣ Add members
+      if (selectedMembers.length) {
+        await fetch(`http://localhost:5000/api/teams/${teamId}/members`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ user_ids: selectedMembers }),
+        })
+      }
+
+      navigate(`/teams/view/${teamId}`)
     } catch (err) {
       console.error('Create team error:', err)
     } finally {
@@ -106,20 +134,73 @@ const TeamCreate = () => {
   return (
     <>
       <PageHeader>
-        {/* <TeamCreateHeader loading={loading} onSave={handleSubmit} /> */}
-        <TeamHeader mode="create"
+        <TeamHeader
+          mode="create"
           loading={loading}
-          onSave={handleSubmit} />
+          onSave={handleSubmit}
+        />
       </PageHeader>
 
       <div className="main-content">
         <div className="row">
+          {/* LEFT SIDE – TEAM FORM */}
           <TeamContent
             formData={formData}
             onChange={handleChange}
             users={users}
             departments={departments}
           />
+
+          {/* RIGHT SIDE – TEAM MEMBERS */}
+          <div className="col-md-4">
+            <div className="card h-100">
+              <div className="card-header">
+                <h5 className="mb-0">Team Members</h5>
+              </div>
+
+              <div className="card-body">
+                {/* Add Members */}
+                <div className="form-group mb-3">
+                  <label className="form-label">Add Members</label>
+                  <select
+                    className="form-control"
+                    value=""
+                    onChange={handleSelectMember}
+                  >
+                    <option value="">Select user</option>
+                    {users.map(user => (
+                      <option key={user.user_id} value={user.user_id}>
+                        {user.first_name} {user.last_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Selected Members */}
+                {selectedMembers.length > 0 && (
+                  <div>
+                    <label className="form-label">Selected Members</label>
+                    <div className="border rounded p-2">
+                      {selectedMembers.map(id => {
+                        const user = users.find(u => u.user_id === id)
+                        return (
+                          <span
+                            key={id}
+                            className="badge bg-primary me-2 mb-2"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => removeMember(id)}
+                          >
+                            {user?.first_name} {user?.last_name} ✕
+                          </span>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </>

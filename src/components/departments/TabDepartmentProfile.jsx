@@ -91,9 +91,9 @@ const TabDepartmentProfile = ({ departments }) => {
                             Following information for this department
                         </span>
                     </h5>
-                    <a href="#" className="btn btn-sm btn-light-brand">
+                    {/* <a href="#" className="btn btn-sm btn-light-brand">
                         Add Team
-                    </a>
+                    </a> */}
                 </div>
 
                 {departmentInfoData.map((data, index) => (

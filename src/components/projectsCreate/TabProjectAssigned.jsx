@@ -13,9 +13,8 @@ const TabProjectAssigned = ({ formData = {}, setFormData }) => {
     const token = localStorage.getItem('token')
 
     fetch(
-      `http://localhost:5000/api/users/managers/${Number(
-        formData.agency_id
-      )}`,
+      `http://localhost:5000/api/users/users/by-agency`,
+      // `http://localhost:5000/api/users/managers/${Number(formData.agency_id)}`,
       // fetch(
       //   `http://localhost:5000/api/users/by-agency?agency_id=${Number(
       //     formData.agency_id
@@ -59,7 +58,7 @@ const TabProjectAssigned = ({ formData = {}, setFormData }) => {
         {managers.length > 0 ? (
           managers.map((m) => (
             <option key={m.user_id} value={m.user_id}>
-              {m.full_name}
+              {m.first_name}
             </option>
           ))
         ) : (

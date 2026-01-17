@@ -49,89 +49,89 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
     const handleChange = (option) => {
         if (!option || !option.value) return
 
-    const toastId = toast(
-    <div>
-        <div>
-            Do you want to update status to "<strong>{option.label}</strong>"?
-        </div>
+        const toastId = toast(
+            <div>
+                <div>
+                    Do you want to update status to "<strong>{option.label}</strong>"?
+                </div>
 
-        <div className="mt-2 d-flex gap-2">
-            <button
-                className="btn btn-sm btn-success"
-                onClick={async () => {
+                <div className="mt-2 d-flex gap-2">
+                    <button
+                        className="btn btn-sm btn-success"
+                        onClick={async () => {
 
-                    // ⛔ Disable buttons + show loader
-                    toast.update(toastId, {
-                        isLoading: true,
-                        render: 'Updating status...',
-                    })
+                            // ⛔ Disable buttons + show loader
+                            toast.update(toastId, {
+                                isLoading: true,
+                                render: 'Updating status...',
+                            })
 
-                    try {
-                        const res = await fetch(
-                            `http://localhost:5000/api/projects/${row.raw.project_id || row.raw.id}/status`,
-                            {
-                                method: 'PATCH',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                                },
-                                body: JSON.stringify({ status: option.value }),
+                            try {
+                                const res = await fetch(
+                                    `http://localhost:5000/api/projects/${row.raw.project_id || row.raw.id}/status`,
+                                    {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`,
+                                        },
+                                        body: JSON.stringify({ status: option.value }),
+                                    }
+                                )
+
+                                const data = await res.json()
+
+                                if (data.success) {
+                                    setSelectedOption(option)
+                                    onStatusChange(
+                                        row.raw.project_id || row.raw.id,
+                                        option.value
+                                    )
+
+                                    toast.update(toastId, {
+                                        render: 'Status updated successfully',
+                                        type: 'success',
+                                        isLoading: false,
+                                        autoClose: 2000,
+                                    })
+                                } else {
+                                    toast.update(toastId, {
+                                        render: 'Failed to update status',
+                                        type: 'error',
+                                        isLoading: false,
+                                        autoClose: 3000,
+                                    })
+                                }
+                            } catch (err) {
+                                console.error(err)
+                                toast.update(toastId, {
+                                    render: 'Error updating status',
+                                    type: 'error',
+                                    isLoading: false,
+                                    autoClose: 3000,
+                                })
                             }
-                        )
+                        }}
+                    >
+                        Yes
+                    </button>
 
-                        const data = await res.json()
-
-                        if (data.success) {
-                            setSelectedOption(option)
-                            onStatusChange(
-                                row.raw.project_id || row.raw.id,
-                                option.value
-                            )
-
-                            toast.update(toastId, {
-                                render: 'Status updated successfully',
-                                type: 'success',
-                                isLoading: false,
-                                autoClose: 2000,
-                            })
-                        } else {
-                            toast.update(toastId, {
-                                render: 'Failed to update status',
-                                type: 'error',
-                                isLoading: false,
-                                autoClose: 3000,
-                            })
-                        }
-                    } catch (err) {
-                        console.error(err)
-                        toast.update(toastId, {
-                            render: 'Error updating status',
-                            type: 'error',
-                            isLoading: false,
-                            autoClose: 3000,
-                        })
-                    }
-                }}
-            >
-                Yes
-            </button>
-
-            <button
-                className="btn btn-sm btn-danger"
-                onClick={() => toast.dismiss(toastId)}
-            >
-                No
-            </button>
-        </div>
-    </div>,
-    {
-        position: 'top-right',
-        autoClose: false,
-        closeOnClick: false,
-        closeButton: false,
-        draggable: false,
-    }
-)
+                    <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => toast.dismiss(toastId)}
+                    >
+                        No
+                    </button>
+                </div>
+            </div>,
+            {
+                position: 'top-right',
+                autoClose: false,
+                closeOnClick: false,
+                closeButton: false,
+                draggable: false,
+            }
+        )
 
 
     }
@@ -193,14 +193,41 @@ const ProjectTable = () => {
     }
 
     /* ---------- TABLE DATA ---------- */
+    // const tableData = useMemo(() => {
+    //     return projects?.map((project) => ({
+    //         id: project.project_id,
+
+    //         project: {
+    //             title: project.project_name,
+    //             description: emptyValue(project.description, 'No description provided'),
+    //         },
+
+    //         clients: {
+    //             name: project.client_id ? `Client #${project.client_id}` : 'Not Assigned',
+    //             email: '',
+    //         },
+
+    //         start_date: formatDate(project.start_date),
+    //         end_date: formatDate(project.end_date),
+
+    //         status: {
+    //             defaultSelect: getStatusOption(project.status),
+    //             options: STATUS_OPTIONS,
+    //         },
+
+    //         raw: project, // Keep original data for reference
+    //     }))
+    // }, [projects])
     const tableData = useMemo(() => {
-        return projects?.map((project) => ({
+        return projects.map((project) => ({
             id: project.project_id,
 
             project: {
                 title: project.project_name,
                 description: emptyValue(project.description, 'No description provided'),
             },
+
+            project_search: `${project.project_name} ${project.description || ''}`,
 
             clients: {
                 name: project.client_id ? `Client #${project.client_id}` : 'Not Assigned',
@@ -215,7 +242,7 @@ const ProjectTable = () => {
                 options: STATUS_OPTIONS,
             },
 
-            raw: project, // Keep original data for reference
+            raw: project,
         }))
     }, [projects])
 
@@ -241,7 +268,17 @@ const ProjectTable = () => {
         //     ),
         //     meta: { headerClassName: 'width-30' },
         // },
-
+        
+        // Add a hidden column in columns
+        {
+            accessorKey: 'project_search',
+            enableSorting: false,
+            enableColumnFilter: true,
+            enableGlobalFilter: true,
+            header: () => null,
+            cell: () => null,
+        }
+        ,
         {
             accessorKey: 'project',
             header: 'Project',
@@ -296,33 +333,33 @@ const ProjectTable = () => {
             },
         },
 
-      {
-    accessorKey: 'actions',
-    header: 'Actions',
-    cell: ({ row }) => (
-        <div className="hstack gap-2 justify-content-end">
-            {/* 👁 View */}
-            <span
-                className="avatar-text avatar-md"
-                title="View Project"
-                onClick={() => navigate(`/projects/view/${row.original.id}`)}
-                style={{ cursor: 'pointer' }}
-            >
-                <FiEye />
-            </span>
+        {
+            accessorKey: 'actions',
+            header: 'Actions',
+            cell: ({ row }) => (
+                <div className="hstack gap-2 justify-content-end">
+                    {/* 👁 View */}
+                    <span
+                        className="avatar-text avatar-md"
+                        title="View Project"
+                        onClick={() => navigate(`/projects/view/${row.original.id}`)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <FiEye />
+                    </span>
 
-            {/* ✏️ Edit */}
-            <span
-                className="avatar-text avatar-md"
-                title="Edit Project"
-                onClick={() => navigate(`/projects/edit/${row.original.id}`)}
-                style={{ cursor: 'pointer' }}
-            >
-                <FiEdit3 />
-            </span>
+                    {/* ✏️ Edit */}
+                    <span
+                        className="avatar-text avatar-md"
+                        title="Edit Project"
+                        onClick={() => navigate(`/projects/edit/${row.original.id}`)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <FiEdit3 />
+                    </span>
 
-            {/* ⋮ More Actions */}
-            {/* <Dropdown
+                    {/* ⋮ More Actions */}
+                    {/* <Dropdown
                 dropdownItems={[
                     {
                         label: 'View',
@@ -342,10 +379,10 @@ const ProjectTable = () => {
                 triggerClassName="avatar-md"
                 triggerPosition="0,21"
             /> */}
-        </div>
-    ),
-    meta: { headerClassName: 'text-end' },
-}
+                </div>
+            ),
+            meta: { headerClassName: 'text-end' },
+        }
 
     ]
 
