@@ -145,7 +145,7 @@ const InvoiceCreate = () => {
                             <div className="col-xl-3">
                                 <div className="form-group mb-3">
                                     <label htmlFor="InvoiceLabel" className="form-label">Invoice Label</label>
-                                    <input type="text" className="form-control" id="InvoiceLabel" placeholder="Duralux Invoice" />
+                                    <input type="text" className="form-control" id="InvoiceLabel" placeholder="TLS Invoice" />
                                 </div>
                             </div>
                             <div className="col-xl-3">

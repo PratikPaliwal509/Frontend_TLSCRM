@@ -36,7 +36,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/project/managed', {
+                const res = await fetch('http://localhost:5000/api/projects/managed', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()

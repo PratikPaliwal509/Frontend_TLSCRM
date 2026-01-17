@@ -7,8 +7,9 @@ const AddTimeLogAttachment = ({ taskId }) => {
 
   // Fetch existing attachments when component mounts
   useEffect(() => {
-    const id= taskId
+    
     const fetchAttachments = async () => {
+      if(taskId){
       try {
         const res = await fetch(`http://localhost:5000/api/taskAttachments/${taskId}/attachments`, {
           headers: {
@@ -16,12 +17,12 @@ const AddTimeLogAttachment = ({ taskId }) => {
           },
         });
         const data = await res.json();
-        console.log("attachments"+JSON.stringify(data))
+        console.log("attachments" + JSON.stringify(data))
         setAttachments(data.data || []);
 
       } catch (err) {
         console.error("Failed to fetch attachments:", err);
-      }
+      }}
     };
 
     fetchAttachments();
@@ -39,8 +40,8 @@ const AddTimeLogAttachment = ({ taskId }) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("upload_preset", "task_attachments"); 
-      formData.append("folder", "timelog_attachments"); 
+      formData.append("upload_preset", "task_attachments");
+      formData.append("folder", "timelog_attachments");
 
       const res = await fetch(
         "https://api.cloudinary.com/v1_1/dwghrvasx/auto/upload",
@@ -79,8 +80,8 @@ const AddTimeLogAttachment = ({ taskId }) => {
           }),
         }
       );
-
       const savedAttachment = await backendRes.json();
+      console.log("attachmnets" + JSON.stringify(savedAttachment))
       setAttachments((prev) => [...prev, savedAttachment]); // update list
       setFile(null);
     } catch (err) {
@@ -114,7 +115,7 @@ const AddTimeLogAttachment = ({ taskId }) => {
         {attachments.length === 0 && <p>No attachments yet.</p>}
         <ul className="list-group">
           {attachments.map((att) => (
-            <li key={att.id} className="list-group-item d-flex justify-content-between align-items-center">
+            <li key={att.attachment_id} className="list-group-item d-flex justify-content-between align-items-center">
               <span>{att.file_original_name}</span>
               <a
                 href={att.file_url}

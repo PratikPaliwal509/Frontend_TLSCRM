@@ -3,11 +3,12 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 // import ProjectCreateContent from '@/components/projectsCreate/ProjectCreateContent'
 // import ProjectCreateHeader from '@/components/projectsCreate/ProjectCreateHeader'
 
-// import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import AddProjectMember from '@/components/projectMembers/AddProjectMember'
 
 const projectMember = () => {
+    const navigate= useNavigate()
     useEffect(() => {
         const checkPermission = async () => {
             await verifyPagePermission('projects', 'edit', navigate);

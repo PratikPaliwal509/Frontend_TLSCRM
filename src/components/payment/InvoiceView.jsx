@@ -40,7 +40,7 @@ const invoiceServiceData = [
         quantity: 10,
     },
     {
-        name: "Duralux",
+        name: "TLS",
         description: "Admin Dashboard & Webapps Template",
         price: 50.00,
         quantity: 10,
@@ -100,7 +100,7 @@ const InvoiceView = () => {
                     <div className="px-4 pt-4">
                         <div className="d-sm-flex align-items-center justify-content-between">
                             <div>
-                                <div className="fs-24 fw-bolder font-montserrat-alt text-uppercase">Duralux</div>
+                                <div className="fs-24 fw-bolder font-montserrat-alt text-uppercase">TLS</div>
                                 <address className="text-muted">
                                     P.O. Box 18728,<br />
                                     DeLorean New York<br />

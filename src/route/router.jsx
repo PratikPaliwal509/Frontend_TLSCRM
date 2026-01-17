@@ -479,7 +479,11 @@ export const router = createBrowserRouter([
                 element: <MaintenanceCreative />
             },
         ]
-    }
+    },
+    {
+    path: "*",
+    element: <ErrorCover />
+  }
 ])
 
 

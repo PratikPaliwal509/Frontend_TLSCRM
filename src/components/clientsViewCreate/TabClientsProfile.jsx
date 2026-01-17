@@ -23,6 +23,7 @@ const GeneralCard = ({ title, icon, text }) => (
 )
 
 const TabClientsProfile = ({ client }) => {
+  console.log("client"+JSON.stringify(client))
   if (!client) return null
 
   /* -------- Lead Info (Left Section) -------- */
@@ -148,7 +149,7 @@ const TabClientsProfile = ({ client }) => {
               General information for this client
             </span>
           </h5>
-          <a href={`/clients/edit/${client.id}`} className="btn btn-sm btn-light-brand">
+          <a href={`/clients/edit/${client.client_id}`} className="btn btn-sm btn-light-brand">
             Edit Client
           </a>
         </div>

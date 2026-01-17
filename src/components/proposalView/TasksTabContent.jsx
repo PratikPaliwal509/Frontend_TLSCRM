@@ -51,7 +51,7 @@ const TasksTabContent = () => {
                     <div className="card stretch stretch-full">
                         <div className="card-body task-header d-lg-flex align-items-center justify-content-between">
                             <div className="mb-4 mb-lg-0">
-                                <h4 className="mb-3 fw-bold text-truncate-1-line">Duralux || CRM Applications & Admin Dashboar</h4>
+                                <h4 className="mb-3 fw-bold text-truncate-1-line">TLS || CRM Applications & Admin Dashboar</h4>
                                 <span className="badge bg-soft-primary text-primary me-2">In Prograss</span>
                                 <span className="badge bg-soft-warning text-warning">Recurring Task </span>
                             </div>

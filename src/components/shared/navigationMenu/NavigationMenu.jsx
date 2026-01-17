@@ -17,7 +17,7 @@ const NavigationManu = () => {
                 <div className="m-header">
                     <Link to="/" className="b-brand">
                         {/* <!-- ========   change your logo hear   ============ --> */}
-                        <img src="/images/logo-full.png" alt="logo" className="logo logo-lg" />
+                        <img src="/images/logo/techleela.png" alt="logo" className="logo logo-lg" />
                         <img src="/images/logo/techlal.png" alt="logo" className="logo logo-sm" />
                     </Link>
                 </div>
@@ -34,7 +34,7 @@ const NavigationManu = () => {
                             <div className="card-body">
                                 <i className="fs-4 text-dark"><FiSunrise /></i>
                                 <h6 className="mt-4 text-dark fw-bolder">Downloading Center</h6>
-                                <p className="fs-11 my-3 text-dark">Duralux is a production ready CRM to get started up and running easily.</p>
+                                <p className="fs-11 my-3 text-dark">TLS is a production ready CRM to get started up and running easily.</p>
                                 <Link to="#" className="btn btn-primary text-dark w-100">Download Now</Link>
                             </div>
                         </div>

@@ -3,15 +3,12 @@ import React, { useEffect, useState } from "react";
 const AddProjectMember = () => {
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
-
   const [projectId, setProjectId] = useState("");
   const [userId, setUserId] = useState("");
   const [roleInProject, setRoleInProject] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const token = localStorage.getItem("token");
 
   // 1️⃣ Fetch managed projects
@@ -19,7 +16,7 @@ const AddProjectMember = () => {
     const fetchProjects = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/project/managed",
+          "http://localhost:5000/api/projects/managed",
           {
             headers: {
               Authorization: `Bearer ${token}`,

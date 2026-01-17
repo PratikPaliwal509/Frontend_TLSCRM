@@ -6,7 +6,7 @@ const RegisterForm = ({path}) => {
     return (
         <>
             <h2 className="fs-20 fw-bolder mb-4">Register</h2>
-            <h4 className="fs-13 fw-bold mb-2">Manage all your Duralux crm</h4>
+            <h4 className="fs-13 fw-bold mb-2">Manage all your TLS crm</h4>
             <p className="fs-12 fw-medium text-muted">Let's get you all setup, so you can verify your personal
                 account and begine setting up your profile.</p>
             <form action="index.html" className="w-100 mt-4 pt-2">
@@ -38,7 +38,7 @@ const RegisterForm = ({path}) => {
                 <div className="mt-4">
                     <div className="custom-control custom-checkbox mb-2">
                         <input type="checkbox" className="custom-control-input" id="receiveMial" required />
-                        <label className="custom-control-label c-pointer text-muted" htmlFor="receiveMial" style={{ fontWeight: '400 !important' }}>Yes, I wnat to receive Duralux community
+                        <label className="custom-control-label c-pointer text-muted" htmlFor="receiveMial" style={{ fontWeight: '400 !important' }}>Yes, I wnat to receive TLS community
                             emails</label>
                     </div>
                     <div className="custom-control custom-checkbox">
