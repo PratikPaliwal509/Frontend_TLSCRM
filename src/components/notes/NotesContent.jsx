@@ -170,12 +170,10 @@ const NotesContent = () => {
                             ))}
                         </div>
                     </div>
-
-                    {/* Add Notes Modal */}
-
                     <Footer />
                 </PerfectScrollbar>
             </div>
+             {/* Add Notes Modal */}
             {showAddModal && (
                 <AddsNote
                     isOpen={showAddModal}
