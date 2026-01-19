@@ -1,13 +1,19 @@
 import React from 'react'
 import Input from '@/components/shared/Input'
+import { useState } from 'react'
 
-const DepartmentContent = ({ formData, onChange, users }) => {
-  
+const DepartmentContent = ({
+    formData,
+    onChange,
+    users,
+    departments,
+    SetIs_sub_department,
+    is_sub_department
+}) => {
+
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target
-        // Handle checkbox for is_active
-        const val = type === 'checkbox' ? checked : value
-        onChange(name, val)
+        onChange(name, type === 'checkbox' ? checked : value)
     }
 
     return (
@@ -15,53 +21,44 @@ const DepartmentContent = ({ formData, onChange, users }) => {
             <div className="card p-4">
                 <h5 className="mb-4">Department Information</h5>
 
-                {/* Department Name */}
                 <Input
                     label="Department Name"
                     name="department_name"
-                    labelId="department_name"
-                    placeholder="Enter department name"
                     value={formData.department_name}
                     onChange={handleInputChange}
                 />
 
-                {/* Department Code */}
                 <Input
                     label="Department Code"
                     name="department_code"
-                    labelId="department_code"
-                    placeholder="Enter department code"
                     value={formData.department_code}
                     onChange={handleInputChange}
                 />
 
-                {/* Description */}
                 <Input
                     label="Description"
                     name="description"
-                    labelId="description"
-                    placeholder="Enter description"
                     value={formData.description}
                     onChange={handleInputChange}
                 />
+
                 {/* Manager */}
-                <div className="row mb-4 align-items-center">
+                <div className="row mb-4">
                     <div className="col-lg-4">
                         <label className="fw-semibold">Manager</label>
                     </div>
                     <div className="col-lg-8">
                         <select
                             className="form-select"
-                            name="manager_id"
                             value={formData.manager_id}
-                            onChange={(e) => onChange('manager_id', Number(e.target.value))}
-
+                            onChange={(e) =>
+                                onChange('manager_id', Number(e.target.value))
+                            }
                         >
                             <option value="">Select Manager</option>
-
-                            {users?.map(user => (
-                                <option key={user.user_id} value={user.user_id}>
-                                    {user.first_name} {user.last_name}
+                            {users.map(u => (
+                                <option key={u.user_id} value={u.user_id}>
+                                    {u.first_name} {u.last_name}
                                 </option>
                             ))}
                         </select>
@@ -69,29 +66,82 @@ const DepartmentContent = ({ formData, onChange, users }) => {
                 </div>
 
                 {/* Status */}
-                <div className="row mb-4 align-items-center">
+                <div className="row mb-4">
                     <div className="col-lg-4">
-                        <label className="fw-semibold">Status: </label>
+                        <label className="fw-semibold">Status</label>
                     </div>
                     <div className="col-lg-8">
                         <div className="form-check form-switch">
                             <input
-                                className="form-check-input"
                                 type="checkbox"
+                                className="form-check-input"
                                 name="is_active"
-                                id="is_active"
                                 checked={formData.is_active}
                                 onChange={handleInputChange}
                             />
-                            <label
-                                className="form-check-label"
-                                htmlFor="is_active"
-                            >
+                            <label className="form-check-label">
                                 {formData.is_active ? 'Active' : 'Inactive'}
                             </label>
                         </div>
                     </div>
                 </div>
+
+                {/* Sub Department Toggle */}
+                <div className="row mb-4">
+                    <div className="col-lg-4">
+                        <label className="fw-semibold">
+                            Add as Sub-Department?
+                        </label>
+                    </div>
+                    <div className="col-lg-8">
+                        <div className="form-check form-switch">
+                            <input
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={is_sub_department}
+                                onChange={(e) => SetIs_sub_department(e.target.checked)}
+                            />
+                            <label className="form-check-label">
+                                {formData.is_sub_department ? 'Yes' : 'No'}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Parent Department Selector */}
+                {is_sub_department && (
+                    <div className="row mb-4">
+                        <div className="col-lg-4">
+                            <label className="fw-semibold">
+                                Select Parent Department
+                            </label>
+                        </div>
+                        <div className="col-lg-8">
+                            <select
+                                className="form-select"
+                                value={formData.parent_department_id || ''}
+                                onChange={(e) =>
+                                    onChange(
+                                        'parent_department_id',
+                                        e.target.value
+                                            ? Number(e.target.value)
+                                            : null
+                                    )
+                                }
+                            >
+                                <option value="">Choose Department</option>
+                                {departments.map(dep => (
+                                    <option
+                                        key={dep.department_id}
+                                        value={dep.department_id}
+                                    >
+                                        {dep.department_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )

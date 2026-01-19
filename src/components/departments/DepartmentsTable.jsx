@@ -17,7 +17,6 @@ import {
 const DepartmentsTable = () => {
   const [departments, setDepartments] = useState([])
   const [loading, setLoading] = useState(true)
-
   const navigate = useNavigate()
 
   /* ---------- Fetch Departments ---------- */

@@ -31,6 +31,15 @@ const DepartmentsViewTabs = ({ departments }) => {
                                 Profile
                             </button>
                         </li>
+                        <li className="nav-item">
+                            <button
+                                className="nav-link"
+                                data-bs-toggle="tab"
+                                data-bs-target="#subDepartmentsTab"
+                            >
+                                Sub Departments
+                            </button>
+                        </li>
 
                         {/* <li className="nav-item">
                             <button
@@ -77,11 +86,10 @@ const DepartmentsViewTabs = ({ departments }) => {
                 {/* OPTIONAL: Department Status Badge */}
                 <div className="d-none d-md-flex">
                     <span
-                        className={`badge ${
-                            departments?.status === 'active'
+                        className={`badge ${departments?.status === 'active'
                                 ? 'bg-soft-success text-success'
                                 : 'bg-soft-danger text-danger'
-                        }`}
+                            }`}
                     >
                         {departments?.status || 'active'}
                     </span>

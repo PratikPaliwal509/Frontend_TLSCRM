@@ -5,13 +5,19 @@ import DepartmentsViewHeader from '@/components/departments/DepartmentsViewHeade
 import DepartmentsViewContent from '@/components/departments/DepartmentsViewContent'
 import DepartmentsViewTabs from '@/components/departments/DepartmentsViewTabs'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
-
-const DepartmentsView= () => {
+import TabSubDepartments from '@/components/departments/TabSubDepartments'
+import { Tab } from 'bootstrap'
+const DepartmentsView = () => {
     const { id } = useParams()
     const [departments, setDepartments] = useState(null)
     const [loading, setLoading] = useState(true)
+    // const triggerTab = document.querySelector(
+    //     '[data-bs-target="#profileTab"]'
+    // )
 
     const navigate = useNavigate()
+    // const tab = new Tab(triggerTab)
+    // tab.show()
 
     useEffect(() => {
         verifyPagePermission('departments', 'view', navigate)
@@ -43,6 +49,17 @@ const DepartmentsView= () => {
 
         fetchDepartment()
     }, [id])
+
+    useEffect(() => {
+    const triggerTab = document.querySelector(
+      '[data-bs-target="#profileTab"]'
+    )
+
+    if (triggerTab) {
+      const tab = new Tab(triggerTab)
+      tab.show()
+    }
+  }, [departments])
 
     if (loading) return <p>Loading department...</p>
     if (!departments) return <p>Department not found</p>

@@ -1,7 +1,7 @@
 import React from 'react'
 import TabDepartmentProfile from './TabDepartmentProfile'
 import DepartmentsEmptyCard from './DepartmentsEmptyCard'
-
+import TabSubDepartments from './TabSubDepartments'
 const DepartmentsViewContent = ({ departments }) => {
     const notes = departments?.notes || []
     return (
@@ -16,6 +16,17 @@ const DepartmentsViewContent = ({ departments }) => {
                     description={`There are no teams created for ${departments?.name}`}
                 />
             </div> */}
+
+            {/* SUB-DEPARTMENTS TAB */}
+            <div
+                className="tab-pane fade"
+                id="subDepartmentsTab"
+                role="tabpanel"
+            >
+                <TabSubDepartments
+                    departmentId={departments?.department_id}
+                />
+            </div>
 
             {/* MEMBERS TAB */}
             <div className="tab-pane fade" id="membersTab" role="tabpanel">
