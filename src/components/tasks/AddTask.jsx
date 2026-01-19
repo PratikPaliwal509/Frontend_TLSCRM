@@ -9,14 +9,13 @@ import {
     taskStatusOptions
 } from '@/utils/options'
 import { toast } from 'react-toastify';
-
+import { Modal } from 'bootstrap'
 const AddTask = () => {
     const token = localStorage.getItem('token')
     const [projects, setProjects] = useState([])
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
     // const [isOpen, setIsOpen] = useState(false);
-
     const [formData, setFormData] = useState({
         project_id: '',
         task_title: '',
@@ -29,6 +28,8 @@ const AddTask = () => {
         labels: [],
         assignees: [],
     })
+
+
 
     /* =========================
        Fetch Managed Projects
@@ -74,9 +75,20 @@ const AddTask = () => {
         fetchUsers()
     }, [token])
 
+
+    const closeModal = () => {
+        const modalEl = document.getElementById('addNewTasks')
+
+        if (modalEl) {
+            const modalInstance =
+                Modal.getInstance(modalEl) || new Modal(modalEl)
+            modalInstance.hide()
+        }
+    }
     /* =========================
        Create Task + Assign Users
     ========================== */
+
     const handleCreateTask = async () => {
         if (!formData.project_id || !formData.task_title) {
             // alert('Project and Task title are required')
@@ -141,6 +153,7 @@ const AddTask = () => {
                 labels: [],
                 assignees: [],
             })
+            closeModal()
             // setIsOpen(false);
 
 

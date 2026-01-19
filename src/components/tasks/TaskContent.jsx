@@ -84,6 +84,7 @@ const TaskContent = () => {
                     created_at: task.created_at,
                     task_type: task.task_type,
                     project_id: task.project_id,
+                    assignments: task?.assignments,
                 }))
                 : []
             setTasks(formattedTasks)

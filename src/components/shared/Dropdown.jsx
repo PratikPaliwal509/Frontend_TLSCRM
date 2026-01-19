@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Checkbox from './Checkbox'
 import { FiMoreVertical } from 'react-icons/fi'
 
+// This dropdown component is used by task list(TaskContent)
 const Dropdown = ({
     triggerPosition,
     triggerClass = "avatar-sm",
@@ -20,7 +21,8 @@ const Dropdown = ({
     isAvatar = true,
     onClick, // legacy support
     active,
-    id
+    id,
+    onDeleteAssignment
 }) => {
 
     const handleItemClick = (item) => {

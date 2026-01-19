@@ -48,7 +48,6 @@ const TasksDetails = ({ task }) => {
     const start_date = task?.start_date || null;
     const checklist = task?.checklist || [];
     const project_id = task?.project_id || '';
-
     const selectedTags = taskLabelsOptions.filter(opt =>
         tags?.includes(opt.value)
 
@@ -56,6 +55,7 @@ const TasksDetails = ({ task }) => {
 
     const [users, setUsers] = useState([])
     const [assignees, setAssignees] = useState([])
+    // const [assignees, setAssignees] = useState([])
     const [loadingUsers, setLoadingUsers] = useState(false)
     const token = localStorage.getItem("token")
     const assignedUserIds = Array.isArray(task?.assigned_to)
@@ -95,8 +95,23 @@ const TasksDetails = ({ task }) => {
     }
 
     useEffect(() => {
-        if (id) fetchComments()
+        if (id) {
+            fetchComments()
+        }
+
     }, [id])
+    useEffect(() => {
+        if (!task?.assignments) return
+
+        const normalized = task.assignments.map(a => ({
+            user_id: a.user.user_id,
+            full_name: a.user.full_name,
+            avatar: a.user.avatar || '/images/avatar/1.png',
+        }))
+
+        setAssignees(normalized)
+    }, [task])
+
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.focus();
@@ -139,7 +154,7 @@ const TasksDetails = ({ task }) => {
                     (u) => !assignedUserIds.includes(u.value)
                 )
 
-                setAssignees(selected)
+                // setAssignees(selected)
                 setUsers(remaining)
             } catch (error) {
                 console.error(error)
@@ -161,10 +176,11 @@ const TasksDetails = ({ task }) => {
         if (!user) return
 
         // prevent duplicate
-        if (assignees.some((a) => a.value === userId)) {
+        if (assignees.some(a => a.user_id === userId)) {
             topTost('User already assigned', 'warning')
             return
         }
+
 
         const confirmed = window.confirm(
             `Do you want to assign ${user.label} to this task?`
@@ -190,7 +206,16 @@ const TasksDetails = ({ task }) => {
 
             if (!res.ok) throw new Error()
 
-            setAssignees((prev) => [...prev, user])
+            setAssignees(prev => [
+                ...prev,
+                {
+                    user_id: user.value,
+                    full_name: user.label,
+                    avatar: user.img || '/images/avatar/1.png',
+                }
+            ])
+
+
             setUsers((prev) => prev.filter((u) => u.value !== userId))
 
             topTost('User assigned successfully', 'success')
@@ -213,7 +238,7 @@ const TasksDetails = ({ task }) => {
         >
             <div
                 className="offcanvas-header border-bottom"
-                style={{ paddingTop: 20, paddingBottom: 20,  display: 'flex',   justifyContent: 'space-between' }}
+                style={{ paddingTop: 20, paddingBottom: 20, display: 'flex', justifyContent: 'space-between' }}
             >
                 <div className="d-flex align-items-center">
                     <div
@@ -236,7 +261,7 @@ const TasksDetails = ({ task }) => {
                     </a>
                 </div>
                 <div className="d-none d-md-flex gap-1 align-items-center justify-content-center">
-                    <TaskTimer taskId={id} project_id={project_id}/>
+                    <TaskTimer taskId={id} project_id={project_id} />
                     <a href="#"
                         className="d-none d-lg-flex align-items-center fs-9 fw-bold text-uppercase text-dark py-2 px-3 border border-gray-2 rounded"
                     >
@@ -346,18 +371,22 @@ const TasksDetails = ({ task }) => {
 
                         {/* Assigned Users Preview */}
                         <div className="d-flex gap-2 mt-2 flex-wrap">
-                            {assignees.map((user) => (
-                                <span
-                                    key={user.value}
-                                    className="badge bg-light text-dark d-flex align-items-center gap-2"
-                                >
-                                    <img
-                                        src={user.img || '/images/avatar/1.png'}
-                                        className="avatar avatar-xs rounded-circle"
-                                    />
-                                    {user.label}
-                                </span>
-                            ))}
+                            {<div className="d-flex gap-2 mt-2 flex-wrap">
+                                {assignees.map(user => (
+                                    <span
+                                        key={user.user_id}
+                                        className="badge bg-light text-dark d-flex align-items-center gap-2"
+                                    >
+                                        <img
+                                            src={user.avatar}
+                                            className="avatar avatar-xs rounded-circle"
+                                            alt={user.full_name}
+                                        />
+                                        {user.full_name}
+                                    </span>
+                                ))}
+                            </div>
+                            }
                         </div>
                     </div>
 
@@ -370,10 +399,10 @@ const TasksDetails = ({ task }) => {
 
                 </div>
                 <hr className="my-5" />
-                
+
                 <TaskTimeLogDetails taskId={id} project_id={project_id} />
                 <hr className="my-5" />
-                <AddAttachment taskId={task?.id}/>
+                <AddAttachment taskId={task?.id} />
                 <hr className="my-5" />
                 <div className="checklist">
                     <div className="d-flex justify-content-between mb-4">
@@ -415,7 +444,7 @@ const TasksDetails = ({ task }) => {
                             <FiInfo />
                         </a>
                     </div>
-                    <Comments comments={comments} loading={loading} setComments={setComments}/>
+                    <Comments comments={comments} loading={loading} setComments={setComments} />
                     {/* <Comments taskID={id} /> */}
                     <AddComment
                         taskID={id}
