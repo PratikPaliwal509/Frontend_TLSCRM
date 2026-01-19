@@ -42,6 +42,17 @@ const ProjectViewTabItems = ({ tabs = defaultTabs }) => {
                 </button>
               </li>
             ))}
+            <li className="nav-item" role="presentation" key={3}>
+              <button
+                className="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#membersTab"
+                type="button"
+              >
+                Members
+              </button>
+
+            </li>
           </ul>
         </div>
       </div>

@@ -230,6 +230,33 @@ const TasksDetails = ({ task }) => {
     const handleClick = () => {
         topTost()
     };
+
+    const handleRemoveAssignee = async (userId) => {
+        if (!window.confirm('Remove this user from task?')) return
+
+        try {
+            const res = await fetch(
+                `http://localhost:5000/api/tasks/${id}/assignments/${userId}/remove`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            if (!res.ok) throw new Error()
+
+            // ✅ remove from UI
+            setAssignees(prev => prev.filter(u => u.user_id !== userId))
+
+            topTost('User removed from task', 'success')
+        } catch (err) {
+            console.error(err)
+            topTost('Failed to remove user', 'error')
+        }
+    }
+
     return (
         <div
             className="offcanvas offcanvas-end w-50"
@@ -383,6 +410,14 @@ const TasksDetails = ({ task }) => {
                                             alt={user.full_name}
                                         />
                                         {user.full_name}
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-link text-danger p-0 ms-1"
+                                            title="Remove assignee"
+                                            onClick={() => handleRemoveAssignee(user.user_id)}
+                                        >
+                                            ✕
+                                        </button>
                                     </span>
                                 ))}
                             </div>
