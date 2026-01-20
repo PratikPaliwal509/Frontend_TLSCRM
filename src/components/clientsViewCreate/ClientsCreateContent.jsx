@@ -4,24 +4,35 @@ import SelectDropdown from '@/components/shared/SelectDropdown'
 import Input from '@/components/shared/Input'
 
 const ClientsCreateContent = ({ formData, agencies, onChange }) => {
+    console.log("agencyId" + JSON.stringify(agencies))
     return (
         <div className="col-lg-12">
             <div className="card stretch stretch-full">
                 <div className="card-body">
 
                     {/* AGENCY */}
+                    {/* AGENCY */}
                     <div className="mb-4">
                         <label className="form-label">Agency</label>
-                        <SelectDropdown
-                            options={agencies.map(a => ({
-                                label: a.agency_name || '',   // 🔥 SAFETY
-                                value: a.agency_id,
-                            }))}
-                            selectedOption={formData.agency_id}
-                            onSelectOption={(opt) => onChange('agency_id', opt.value)}
-                        />
 
+                        <select
+                            className="form-select"
+                            value={formData.agency_id || ""}   // 🔥 controlled value
+                            onChange={(e) => onChange('agency_id', Number(e.target.value))}
+                        >
+                            <option value="">Select Agency</option>
+
+                            {agencies.map((agency) => (
+                                <option
+                                    key={agency.agency_id}
+                                    value={agency.agency_id}
+                                >
+                                    {agency.agency_name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
+
 
                     <Input
                         label="Company Name"
