@@ -10,21 +10,24 @@ export const verifyPagePermission = async (
     const token = localStorage.getItem('token')
     const user = JSON.parse(localStorage.getItem('user') || '{}')
 
-    // ❌ Basic auth validation
+    /* ============================
+       BASIC AUTH VALIDATION
+    ============================ */
     if (!token || !user?.user_id || !user?.role_id) {
       localStorage.clear()
       navigate(loginPath, { replace: true })
       return false
     }
 
-    // ❌ Inactive user
     if (user.is_active === false) {
       localStorage.clear()
       navigate(loginPath, { replace: true })
       return false
     }
 
-    // 🔹 Fetch role permissions
+    /* ============================
+       FETCH ROLE
+    ============================ */
     const response = await fetch(
       `http://localhost:5000/api/roles/${user.role_id}`,
       {
@@ -33,7 +36,7 @@ export const verifyPagePermission = async (
         },
       }
     )
-    // ❌ Token invalid or forbidden
+
     if (response.status === 401 || response.status === 403) {
       localStorage.clear()
       navigate(loginPath, { replace: true })
@@ -45,15 +48,46 @@ export const verifyPagePermission = async (
     const result = await response.json()
     const permissions = result?.data?.permissions || {}
 
-    // ❌ Permission not allowed
-    if (!permissions?.[moduleKey]?.includes(action)) {
-      localStorage.clear()
+    /* ============================
+       SUPER ADMIN OVERRIDE (OPTIONAL)
+       You can remove this if not needed
+    ============================ */
+    if (result?.data?.is_system_role === true) {
+      return true
+    }
+
+    const modulePermissions = permissions?.[moduleKey]
+
+    if (!modulePermissions) {
       navigate(loginPath, { replace: true })
       return false
     }
 
-    // ✅ Page access allowed
-    return true
+    /* ============================
+       VIEW PERMISSION (SCOPE BASED)
+    ============================ */
+    if (action === 'view') {
+      // view must exist and be a valid scope string
+      if (typeof modulePermissions.view === 'string' && modulePermissions.view.length > 0) {
+        return true
+      }
+
+      navigate(loginPath, { replace: true })
+      return false
+    }
+
+    /* ============================
+       OTHER ACTIONS (BOOLEAN)
+    ============================ */
+    if (modulePermissions?.[action] === true) {
+      return true
+    }
+
+    /* ============================
+       NOT ALLOWED
+    ============================ */
+    navigate(loginPath, { replace: true })
+    return false
   } catch (error) {
     console.error('verifyPagePermission error:', error)
     localStorage.clear()

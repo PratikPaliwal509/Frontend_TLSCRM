@@ -3,17 +3,38 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Footer from "@/components/shared/Footer";
 import PageHeaderSetting from "@/components/shared/pageHeader/PageHeaderSetting";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { verifyPagePermission } from '@/utils/verifyPagePermission';  
+import { verifyPagePermission } from "@/utils/verifyPagePermission";
+
+/* ============================
+   VIEW SCOPES CONFIG
+============================ */
+const VIEW_SCOPES = {
+  clients: ["all", "agency", "department", "team", "assigned", "own"],
+  projects: ["all", "agency", "department", "team", "assigned", "own"],
+};
+
+/* ============================
+   PERMISSION CONFIG
+============================ */
 const permissionPages = [
   { key: "dashboard", label: "Dashboard", actions: ["view"] },
   { key: "users", label: "Users", actions: ["view", "create", "edit", "delete"] },
-  { key: "projects", label: "Projects", actions: ["view", "create", "edit", "delete"] },
-  { key: "roles", label: "Roles", actions: ["view", "create", "edit", "delete"] },
-    { key: 'teams', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
-    { key: 'notes', label: 'Notes', actions: ['view', 'create', 'edit', 'delete'] },
-    { key: 'departments', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
+  {
+    key: "clients",
+    label: "Clients",
+    actions: ["view", "create", "edit", "delete", "assign"],
+    viewScopes: VIEW_SCOPES.clients,
+  },
+  {
+    key: "projects",
+    label: "Projects",
+    actions: ["view", "create", "edit", "delete"],
+    viewScopes: VIEW_SCOPES.projects,
+  },
   { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
-  { key: "clients", label: "Clients", actions: ["view", "create", "edit", "delete", "assign"] }
+  { key: "teams", label: "Teams", actions: ["view", "create", "edit", "delete"] },
+  { key: "departments", label: "Departments", actions: ["view", "create", "edit", "delete"] },
+  { key: "roles", label: "Roles", actions: ["view", "create", "edit", "delete"] },
 ];
 
 const EditRoleForm = () => {
@@ -27,30 +48,33 @@ const EditRoleForm = () => {
     role_name: "",
     role_description: "",
     is_system_role: false,
-    permissions: {}
+    permissions: {},
   });
 
+  /* ============================
+     PAGE PERMISSION CHECK
+  ============================ */
   useEffect(() => {
-          const checkPermission = async () => {
-              await verifyPagePermission('roles', 'edit', navigate);
-          };  
-  
-          checkPermission();
-        }, []);
-  
+    verifyPagePermission("roles", "edit", navigate);
+  }, []);
 
-  // ✅ Prefill from previous page
+  /* ============================
+     PREFILL ROLE
+  ============================ */
   useEffect(() => {
     if (role) {
       setFormData({
         role_name: role.role_name || "",
         role_description: role.role_description || "",
         is_system_role: role.is_system_role || false,
-        permissions: role.permissions || {}
+        permissions: role.permissions || {},
       });
     }
   }, [role]);
 
+  /* ============================
+     SAFETY
+  ============================ */
   if (!role) {
     return (
       <div className="text-center p-5 text-muted">
@@ -63,60 +87,67 @@ const EditRoleForm = () => {
     );
   }
 
-  const handlePermissionChange = (page, action) => {
-    setFormData(prev => {
-      const existingActions = prev.permissions?.[page] || [];
-
-      const updatedActions = existingActions.includes(action)
-        ? existingActions.filter(a => a !== action) // remove
-        : [...existingActions, action]; // add
-
-      return {
-        ...prev,
-        permissions: {
-          ...prev.permissions,
-          [page]: updatedActions
-        }
-      };
-    });
+  /* ============================
+     HANDLERS
+  ============================ */
+  const toggleActionPermission = (page, action) => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: {
+        ...prev.permissions,
+        [page]: {
+          ...prev.permissions?.[page],
+          [action]: !prev.permissions?.[page]?.[action],
+        },
+      },
+    }));
   };
 
+  const handleViewScopeChange = (page, scope) => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: {
+        ...prev.permissions,
+        [page]: {
+          ...prev.permissions?.[page],
+          view: scope,
+        },
+      },
+    }));
+  };
 
+  /* ============================
+     UPDATE ROLE
+  ============================ */
   const handleUpdate = async () => {
-    const token = localStorage.getItem("token");
-
-    const payload = {
-      role_name: formData.role_name,
-      role_description: formData.role_description,
-      permissions: formData.permissions,
-      is_system_role: formData.is_system_role
-    };
-
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/roles/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:5000/api/roles/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
       const data = await res.json();
 
-      if (data.success) {
-        navigate(-1);
-      } else {
-        console.error("Update failed:", data);
+      if (!res.ok) {
+        alert(data.message || "Update failed");
+        return;
       }
+
+      navigate(-1);
     } catch (err) {
-      console.error("Update error:", err);
+      alert(err.message);
     }
   };
 
+  /* ============================
+     RENDER
+  ============================ */
   return (
     <div className="content-area">
       <PerfectScrollbar>
@@ -135,26 +166,25 @@ const EditRoleForm = () => {
               </div>
 
               {/* ROLE NAME */}
-              <div className="form-group mb-4">
+              <div className="mb-4">
                 <label className="form-label">Role Name</label>
                 <input
-                  type="text"
                   className="form-control"
                   value={formData.role_name}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, role_name: e.target.value })
                   }
                 />
               </div>
 
               {/* ROLE DESCRIPTION */}
-              <div className="form-group mb-5">
+              <div className="mb-5">
                 <label className="form-label">Role Description</label>
                 <textarea
                   className="form-control"
                   rows={4}
                   value={formData.role_description}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, role_description: e.target.value })
                   }
                 />
@@ -163,34 +193,59 @@ const EditRoleForm = () => {
               <hr className="my-5" />
 
               {/* PERMISSIONS */}
-              <div className="mb-4">
-                <h4 className="fw-bold">Permissions</h4>
-                <div className="fs-12 text-muted">
-                  Update permissions for this role
-                </div>
-              </div>
+              <h5 className="fw-bold mb-4">Permissions</h5>
 
               {permissionPages.map(page => (
-                <div key={page.key} className="mb-4">
+                <div key={page.key} className="border rounded p-3 mb-4">
                   <div className="fw-semibold mb-2">{page.label}</div>
 
-                  <div className="d-flex flex-wrap gap-4">
-                    {page.actions.map(action => (
-                      <div className="form-check" key={action}>
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          checked={formData.permissions?.[page.key]?.includes(action) || false}
-                          onChange={() => handlePermissionChange(page.key, action)}
-                        />
+                  {/* ACTIONS */}
+                  <div className="d-flex flex-wrap gap-4 mb-2">
+                    {page.actions.map(action => {
+                      if (action === "view" && page.viewScopes) return null;
 
-
-                        <label className="form-check-label text-capitalize">
-                          {action}
-                        </label>
-                      </div>
-                    ))}
+                      return (
+                        <div className="form-check" key={action}>
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={
+                              !!formData.permissions?.[page.key]?.[action]
+                            }
+                            onChange={() =>
+                              toggleActionPermission(page.key, action)
+                            }
+                          />
+                          <label className="form-check-label text-capitalize">
+                            {action}
+                          </label>
+                        </div>
+                      );
+                    })}
                   </div>
+
+                  {/* VIEW SCOPE */}
+                  {page.viewScopes && (
+                    <div className="mt-2">
+                      <label className="form-label fs-12 text-muted">
+                        View Access Scope
+                      </label>
+                      <select
+                        className="form-select"
+                        value={formData.permissions?.[page.key]?.view || ""}
+                        onChange={e =>
+                          handleViewScopeChange(page.key, e.target.value)
+                        }
+                      >
+                        <option value="">Select scope</option>
+                        {page.viewScopes.map(scope => (
+                          <option key={scope} value={scope}>
+                            {scope.toUpperCase()}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               ))}
 
@@ -205,7 +260,7 @@ const EditRoleForm = () => {
                   onChange={() =>
                     setFormData({
                       ...formData,
-                      is_system_role: !formData.is_system_role
+                      is_system_role: !formData.is_system_role,
                     })
                   }
                 />
@@ -226,7 +281,7 @@ const EditRoleForm = () => {
                   Cancel
                 </button>
                 <button
-                  className="btn mt-2 btn-primary"
+                  className="btn btn-primary"
                   onClick={handleUpdate}
                 >
                   Update Role
