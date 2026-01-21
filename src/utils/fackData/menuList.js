@@ -339,13 +339,13 @@ export const menuList = [
             {
                 id: 1,
                 name: "Role List",
-                path: "/settings/roles",
+                path: "/roles/list",
                 subdropdownMenu: false
             },
             {
                 id: 2,
                 name: "Add Role",
-                path: "/settings/roles/create",
+                path: "/roles/create",
                 subdropdownMenu: false
             },
         ]

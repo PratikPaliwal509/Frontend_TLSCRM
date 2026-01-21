@@ -68,10 +68,12 @@ import OtpCover from "../pages/otp-cover";
 // import WidgetsCharts from "../pages/widgets-charts";
 // import WidgetsStatistics from "../pages/widgets-statistics";
 // import WidgetsMiscellaneous from "../pages/widgets-miscellaneous";
-import AddRoles from "@/components/Roles/AddRoles";
-import RoleList from "@/components/Roles/RoleList";
-import EditRole from "@/components/Roles/EditRoles";
-import ViewRole from "@/components/Roles/View.Roles";
+
+// Removed this roles, added new roles pages
+// import AddRoles from "@/components/Roles/AddRoles";
+// import RoleList from "@/components/Roles/RoleList";
+// import EditRole from "@/components/Roles/EditRoles";
+// import ViewRole from "@/components/Roles/View.Roles";
 import ClientsList from "../pages/clientsList";
 import ClientsView from "../pages/clients-view";
 import ClientsCreate from "../pages/clients-create";
@@ -93,6 +95,10 @@ import CreateUser from "../pages/user-add";
 import UsersList from "../pages/user-list";
 import UsersView from "../pages/user-view";
 import UserEditPage from "../pages/user-edit";
+import RolesList from "../pages/role-list";
+import RolesCreate from "../pages/role-add";
+import RolesEdit from "../pages/role-edit";
+import RoleView from "../pages/role-view";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -286,6 +292,22 @@ export const router = createBrowserRouter([
                 path: "/user/edit/:id",
                 element: <UserEditPage />
             },
+            {
+                path:"/roles/list",
+                element:<RolesList/>
+            },
+            {
+                path:"/roles/create",
+                element:<RolesCreate/>
+            },
+            {
+                path:"/roles/edit/:id",
+                element:<RolesEdit/>
+            },
+            {
+                path:"/roles/view/:id",
+                element:<RoleView/>
+            },
 
         ]
     },
@@ -378,28 +400,28 @@ export const router = createBrowserRouter([
             //     element: <SettingsMiscellaneous />
             },
 
-            {
-                path: "/",
-                // element: <LayoutSetting />,
-                children: [
-                    {
-                        path: "/settings/roles",
-                        element: <RoleList />
-                    },
-                    {
-                        path: "/settings/roles/create",
-                        element: <AddRoles />
-                    },
-                    {
-                        path: "/settings/roles/edit/:id",
-                        element: <EditRole />
-                    },
-                    {
-                        path: "/settings/roles/view/:id",
-                        element: <ViewRole />
-                    },
-                ]
-            },
+            // {
+            //     path: "/",
+            //     // element: <LayoutSetting />,
+            //     children: [
+            //         {
+            //             path: "/settings/roles",
+            //             element: <RoleList />
+            //         },
+            //         {
+            //             path: "/settings/roles/create",
+            //             element: <AddRoles />
+            //         },
+            //         {
+            //             path: "/settings/roles/edit/:id",
+            //             element: <EditRole />
+            //         },
+            //         {
+            //             path: "/settings/roles/view/:id",
+            //             element: <ViewRole />
+            //         },
+            //     ]
+            // },
         ]
     },
     {

@@ -11,6 +11,8 @@ import { verifyPagePermission } from "@/utils/verifyPagePermission";
 const VIEW_SCOPES = {
   clients: ["all", "agency", "department", "team", "assigned", "own"],
   projects: ["all", "department", "team", "assigned"],
+   teams: ['all', 'agency', 'department', 'team', 'own'],
+  departments: ['all', 'agency', 'department', 'team', 'own'],
 };
 
 /* ============================
@@ -32,8 +34,18 @@ const permissionPages = [
     viewScopes: VIEW_SCOPES.projects,
   },
   { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
-  { key: "teams", label: "Teams", actions: ["view", "create", "edit", "delete"] },
-  { key: "departments", label: "Departments", actions: ["view", "create", "edit", "delete"] },
+  {
+    key: 'teams',
+    label: 'Teams',
+    actions: ['view', 'create', 'edit', 'delete'],
+    viewScopes: VIEW_SCOPES.teams,
+  },
+  {
+    key: 'departments',
+    label: 'Departments',
+    actions: ['view', 'create', 'edit', 'delete'],
+    viewScopes: VIEW_SCOPES.departments,
+  },
   { key: "roles", label: "Roles", actions: ["view", "create", "edit", "delete"] },
 ];
 
