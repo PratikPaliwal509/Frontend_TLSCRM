@@ -6,7 +6,7 @@ const TeamContent = ({ formData, onChange, users, departments }) => {
     const { name, value, type, checked } = e.target
     onChange(name, type === 'checkbox' ? checked : value)
   }
-
+// console.log('TeamContent formData:', formData)
   return (
     <div className="col-12">
       <div className="card p-4">

@@ -8,7 +8,7 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const TeamEdit = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-const teamId = id
+  const teamId = id
   const [loading, setLoading] = useState(false)
   const [users, setUsers] = useState([])
   const [departments, setDepartments] = useState([])
@@ -22,13 +22,13 @@ const teamId = id
     is_active: true,
   })
 
-   useEffect(() => {
-      const checkPermission = async () => {
-        await verifyPagePermission('teams', 'edit', navigate);
-      };
-  
-      checkPermission();
-    }, []);
+  useEffect(() => {
+    const checkPermission = async () => {
+      await verifyPagePermission('teams', 'edit', navigate);
+    };
+
+    checkPermission();
+  }, []);
   /* ================= FETCH USERS ================= */
   useEffect(() => {
     const fetchUsers = async () => {
@@ -68,7 +68,7 @@ const teamId = id
       )
       const data = await res.json()
       const team = data.data
-
+      console.log('Fetched team:', team)
       setFormData({
         team_name: team.team_name,
         description: team.description || '',
@@ -78,6 +78,15 @@ const teamId = id
       })
 
       setTeamMembers(team.members || [])
+
+      setUsers(prevUsers => [
+        ...prevUsers,
+        ...team.members.filter(
+          member => !prevUsers.some(user => user.user_id === member.user_id)
+        )
+      ])
+
+
     }
 
     fetchTeam()

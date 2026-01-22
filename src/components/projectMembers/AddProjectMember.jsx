@@ -16,7 +16,8 @@ const AddProjectMember = () => {
     const fetchProjects = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/projects/managed",
+          // "http://localhost:5000/api/projects/managed",
+          "http://localhost:5000/api/projects",
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -10,7 +10,9 @@ const DepartmentContent = ({
     SetIs_sub_department,
     is_sub_department
 }) => {
-
+    console.log('Departments List:', departments);
+    console.log('formData List:', formData);
+    console.log('is_sub_department:', is_sub_department);
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target
         onChange(name, type === 'checkbox' ? checked : value)
@@ -102,7 +104,7 @@ const DepartmentContent = ({
                                 onChange={(e) => SetIs_sub_department(e.target.checked)}
                             />
                             <label className="form-check-label">
-                                {formData.is_sub_department ? 'Yes' : 'No'}
+                                {is_sub_department ? 'Yes' : 'No'}
                             </label>
                         </div>
                     </div>
@@ -119,17 +121,16 @@ const DepartmentContent = ({
                         <div className="col-lg-8">
                             <select
                                 className="form-select"
-                                value={formData.parent_department_id || ''}
+                                value={formData.parent_department_id ?? ''}
                                 onChange={(e) =>
                                     onChange(
                                         'parent_department_id',
-                                        e.target.value
-                                            ? Number(e.target.value)
-                                            : null
+                                        e.target.value === '' ? null : Number(e.target.value)
                                     )
                                 }
                             >
                                 <option value="">Choose Department</option>
+
                                 {departments.map(dep => (
                                     <option
                                         key={dep.department_id}
@@ -139,6 +140,7 @@ const DepartmentContent = ({
                                     </option>
                                 ))}
                             </select>
+
                         </div>
                     </div>
                 )}

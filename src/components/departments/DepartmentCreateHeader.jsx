@@ -15,7 +15,7 @@ const DepartmentCreateHeader = ({ loading, onSave }) => {
 
             {/* Actions */}
             <div className="d-flex gap-2">
-                <Link to="/departments" className="btn btn-light">
+                <Link to="/settings/departments/list" className="btn btn-light">
                     <FiArrowLeft className="me-2" />
                     Back
                 </Link>
