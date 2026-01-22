@@ -13,6 +13,7 @@ const VIEW_SCOPES = {
   projects: ["all", "agency", "department", "team", "assigned", "own"],
   teams: ['all', 'agency', 'department', 'team', 'own'],
   departments: ['all', 'agency', 'department', 'team', 'own'],
+  tasks: ['all', 'department', 'team', 'assigned', 'own',]
 };
 
 /* ============================
@@ -33,7 +34,12 @@ const permissionPages = [
     actions: ["view", "create", "edit", "delete"],
     viewScopes: VIEW_SCOPES.projects,
   },
-  { key: "tasks", label: "Tasks", actions: ["view", "create", "edit", "delete", "assign"] },
+  {
+    key: 'tasks',
+    label: 'Tasks',
+    actions: ['view', 'create', 'edit', 'delete', 'assign'],
+    viewScopes: VIEW_SCOPES.tasks,
+  },
   {
     key: 'teams',
     label: 'Teams',

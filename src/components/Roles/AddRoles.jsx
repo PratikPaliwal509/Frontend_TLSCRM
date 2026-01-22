@@ -11,8 +11,9 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission';
 const VIEW_SCOPES = {
     clients: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
     projects: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
-       teams: ['all', 'agency', 'department', 'team', 'own'],
+    teams: ['all', 'agency', 'department', 'team', 'own'],
     departments: ['all', 'agency', 'department', 'team', 'own'],
+    tasks: ['all', 'department', 'team', 'assigned', 'own']
 };
 
 /* ============================
@@ -33,19 +34,25 @@ const permissionPages = [
         actions: ['view', 'create', 'edit', 'delete'],
         viewScopes: VIEW_SCOPES.projects,
     },
-    { key: 'tasks', label: 'Tasks', actions: ['view', 'create', 'edit', 'delete', 'assign'] },
-   {
-    key: 'teams',
-    label: 'Teams',
-    actions: ['view', 'create', 'edit', 'delete'],
-    viewScopes: VIEW_SCOPES.teams,
-},
-{
-    key: 'departments',
-    label: 'Departments',
-    actions: ['view', 'create', 'edit', 'delete'],
-    viewScopes: VIEW_SCOPES.departments,
-},
+    {
+        key: 'tasks',
+        label: 'Tasks',
+        actions: ['view', 'create', 'edit', 'delete', 'assign'],
+        viewScopes: VIEW_SCOPES.tasks,
+    },
+    // { key: 'tasks', label: 'Tasks', actions: ['view', 'create', 'edit', 'delete', 'assign'] },
+    {
+        key: 'teams',
+        label: 'Teams',
+        actions: ['view', 'create', 'edit', 'delete'],
+        viewScopes: VIEW_SCOPES.teams,
+    },
+    {
+        key: 'departments',
+        label: 'Departments',
+        actions: ['view', 'create', 'edit', 'delete'],
+        viewScopes: VIEW_SCOPES.departments,
+    },
 
     { key: 'roles', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
 ];
@@ -214,7 +221,7 @@ const AddRoleForm = () => {
                                                             type="checkbox"
                                                             checked={
                                                                 !!formData.permissions?.[
-                                                                    page.key
+                                                                page.key
                                                                 ]?.[action]
                                                             }
                                                             onChange={() =>
