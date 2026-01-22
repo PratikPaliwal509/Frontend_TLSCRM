@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { FiStar } from 'react-icons/fi'
+import { FiMoreVertical, FiStar } from 'react-icons/fi'
 import Dropdown from '@/components/shared/Dropdown'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import TaskHeader from './TaskHeader'
@@ -236,8 +236,60 @@ const List = ({
                         alt="user"
                         className="avatar-image avatar-md"
                     />
+                    <div className="dropdown">
+                        <button
+                            className="btn p-0 border-0 bg-transparent"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <FiMoreVertical size={18} />
+                        </button>
 
-                    <Dropdown dropdownItems={actions} />
+                        <ul className="dropdown-menu dropdown-menu-end">
+                            {/* <li>
+                                <button
+                                    className="dropdown-item"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        console.log('Edit Task', task.id)
+                                    }}
+                                >
+                                    Edit Task
+                                </button>
+                            </li> */}
+
+                            <li>
+                                <a  href="#"
+                            className="single-task-list-link"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#tasksDetailsOffcanvas"
+                            onClick={onSelect}>
+                                <button
+                                
+                                    className="dropdown-item"
+                                   >
+                                    View Task
+                                </button>
+                                </a>
+                            </li>
+
+                            <li>
+                                <button
+                                    className="dropdown-item text-danger"
+                                    onClick={(e) => {
+                                        // e.stopPropagation()
+                                        console.log('Delete Task', task.id)
+                                    }}
+                                >
+                                    Delete Task
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* <Dropdown dropdownItems={actions} /> */}
                 </div>
             </div>
         </li>
