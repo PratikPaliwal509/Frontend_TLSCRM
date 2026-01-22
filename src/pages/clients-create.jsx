@@ -6,6 +6,8 @@ import ClientsCreateContent from '@/components/clientsViewCreate/ClientsCreateCo
 
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+// import { c } from 'vite/dist/node/types.d-aGj9QkWt'
+// import { add } from 'date-fns'
 const ClientsCreate = () => {
     const [agencies, setAgencies] = useState([])
     const [loading, setLoading] = useState(false)
@@ -91,6 +93,11 @@ const ClientsCreate = () => {
                 primary_contact_email: '',
                 primary_contact_phone: '',
                 country: '',
+                state:'',
+                city:'',
+                address:'',
+                postal_code:'',
+                notes:'',
                 status: 'active',
             })
             if (!response.ok) {

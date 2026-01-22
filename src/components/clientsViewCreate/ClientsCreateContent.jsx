@@ -90,6 +90,37 @@ const ClientsCreateContent = ({ formData, agencies, onChange }) => {
                         value={formData.country}
                         onChange={(e) => onChange('country', e.target.value)}
                     />
+                    <Input
+                        label="State"
+                        placeholder="State"
+                        value={formData.state}
+                        onChange={(e) => onChange('state', e.target.value)}
+                    />
+                    <Input
+                        label="City"
+                        placeholder="City"
+                        value={formData.city}
+                        onChange={(e) => onChange('city', e.target.value)}
+                    />
+                    <Input
+                        label="Postal Code"
+                        placeholder="Postal Code"
+                        value={formData.postal_code}
+                        onChange={(e) => onChange('postal_code', e.target.value)}
+                    />
+
+                    <Input
+                        label="Address"
+                        placeholder="Enter Address"
+                        value={formData.address}
+                        onChange={(e) => onChange('address', e.target.value)}
+                    />
+                    <Input
+                        label="Notes"
+                        placeholder="Enter Notes"
+                        value={formData.notes}
+                        onChange={(e) => onChange('notes', e.target.value)}
+                    />
                 </div>
             </div>
         </div>
