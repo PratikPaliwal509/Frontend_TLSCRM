@@ -17,7 +17,7 @@ const AddTimeLogAttachment = ({ taskId }) => {
           },
         });
         const data = await res.json();
-        console.log("attachments" + JSON.stringify(data))
+        // console.log("attachments" + JSON.stringify(data))
         setAttachments(data.data || []);
 
       } catch (err) {
