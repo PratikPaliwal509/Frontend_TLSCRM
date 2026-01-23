@@ -7,6 +7,13 @@ const TabProjectDetails = ({ formData = {}, setFormData }) => {
   const [startDate, setStartDate] = useState(formData.start_date ? new Date(formData.start_date) : new Date())
   const [endDate, setEndDate] = useState(formData.end_date ? new Date(formData.end_date) : null)
 
+  const projectTypesOptions = [
+        { label: 'Software', value: 'SOFTWARE' },
+        { label: 'Hardware', value: 'HARDWARE' },
+        { label: 'Consulting', value: 'CONSULTING' },
+    ]
+
+
   useEffect(() => {
     // Sync editor value with formData
     setValue(formData.description || '')
@@ -15,6 +22,17 @@ const TabProjectDetails = ({ formData = {}, setFormData }) => {
   const handleChange = (field, val) => {
     setFormData({ ...formData, [field]: val })
   }
+
+  const handleProjectTypeChange = (e) => {
+  const { value } = e.target
+
+  setFormData(prev => ({
+    ...prev,
+    project_type: value,
+    task_prefix: value ? value.substring(0, 3).toUpperCase() : '',
+    estimated_hours: '',
+  }))
+}
 
   return (
     <section className="step-body mt-4 body current">
@@ -39,7 +57,39 @@ const TabProjectDetails = ({ formData = {}, setFormData }) => {
               required
             />
           </div>
+          {/* Project Type */}
+          {/* <div className="mb-4">
+            <label htmlFor="projectType" className="form-label">
+              Project Type <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="projectType"
+              value={formData.project_type || ''}
+              onChange={(e) => handleChange('project_type', e.target.value)}
+              required
+            />
+          </div> */}
           <div className="mb-4">
+            <label className="form-label">
+              Project Type <span className="text-danger">*</span>
+            </label>
+
+            <select
+              className="form-control"
+              value={formData.project_type}
+              onChange={handleProjectTypeChange}
+            >
+              <option value="">Select Project Type</option>
+              {projectTypesOptions.map(p => (
+                <option key={p.value} value={p.value}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* <div className="mb-4">
             <label htmlFor="projectCode" className="form-label">
               Project Code <span className="text-danger">*</span>
             </label>
@@ -51,7 +101,7 @@ const TabProjectDetails = ({ formData = {}, setFormData }) => {
               onChange={(e) => handleChange('project_code', e.target.value)}
               required
             />
-          </div>
+          </div> */}
 
           {/* Project Description */}
           <div className="mb-4">

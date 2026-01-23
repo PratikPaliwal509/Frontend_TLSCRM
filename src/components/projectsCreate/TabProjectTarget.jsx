@@ -55,6 +55,24 @@ const TabProjectTarget = ({ formData, setFormData }) => {
             notes: e.target.value,
         }))
     }
+const handleEstimatedHoursChange = (e) => {
+    let value = e.target.value
+
+    if (value === '') {
+        setFormData(prev => ({ ...prev, estimated_hours: '' }))
+        return
+    }
+
+    if (!/^\d*\.?\d*$/.test(value)) return
+
+    const num = Number(value)
+    if (num < 0 || num > 10000) return
+
+    setFormData(prev => ({
+        ...prev,
+        estimated_hours: value,
+    }))
+}
 
     return (
         <section className="step-body mt-4 body current">
@@ -134,6 +152,20 @@ const TabProjectTarget = ({ formData, setFormData }) => {
                             </select>
                         </div>
 
+                        {/* Estimated Hours */}
+                        <div className="mb-4">
+                            <label className="form-label">
+                                Estimated Hours
+                            </label>
+
+                            <input
+                                className="form-control"
+                                value={formData.estimated_hours}
+                                onChange={handleEstimatedHoursChange}
+                                placeholder="Add estimated hours..."
+                                rows={4}
+                            />
+                        </div>
                         {/* NOTES */}
                         <div className="mb-4">
                             <label className="form-label">

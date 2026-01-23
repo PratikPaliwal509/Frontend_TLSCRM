@@ -26,6 +26,7 @@ const ProjectCreateContent = () => {
         project_name: '',
         description: '',
         project_code: '',
+        project_type: '',
         priority: '',
         start_date: new Date(),
         end_date: null,
@@ -44,6 +45,7 @@ const ProjectCreateContent = () => {
         estimated_hours: null,
         budget_amount: null,
         budget_currency: 'USD',
+        estimated_hours: null,
         // optional / extra fields can be added here
     })
 
