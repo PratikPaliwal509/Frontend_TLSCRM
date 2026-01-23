@@ -15,6 +15,9 @@ import AddComment from './AddComment';
 import TaskTimer from '@/components/TaskTimer'
 import TaskTimeLogDetails from '../TaskTimeLogDetails';
 import AddAttachment from './TaskAttachment';
+import useVerifyRole from '@/utils/canRemoveAssognee'
+
+
 const detailsMoreOptions = [
     { label: "Make Unread", icon: <FiEyeOff /> },
     { label: "Filter Messages", icon: <FiSliders /> },
@@ -35,6 +38,7 @@ const detailsMoreOptions = [
 
 
 const TasksDetails = ({ task }) => {
+    const { canRemoveAssignee } = useVerifyRole()
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
     const id = task?.id;
@@ -58,6 +62,7 @@ const TasksDetails = ({ task }) => {
     // const [assignees, setAssignees] = useState([])
     const [loadingUsers, setLoadingUsers] = useState(false)
     const token = localStorage.getItem("token")
+    console.log("task in details:", task)
     const assignedUserIds = Array.isArray(task?.assigned_to)
         ? task.assigned_to.map((u) =>
             typeof u === 'object' ? u.user_id : u
@@ -107,6 +112,7 @@ const TasksDetails = ({ task }) => {
             user_id: a.user.user_id,
             full_name: a.user.full_name,
             avatar: a.user.avatar || '/images/avatar/1.png',
+            assigned_by: a.assigned_by,
         }))
 
         setAssignees(normalized)
@@ -205,13 +211,15 @@ const TasksDetails = ({ task }) => {
             )
 
             if (!res.ok) throw new Error()
-
+                console.log('User to be assigned:', user)
+            console.log("response:", JSON.stringify(res))
             setAssignees(prev => [
                 ...prev,
                 {
                     user_id: user.value,
                     full_name: user.label,
                     avatar: user.img || '/images/avatar/1.png',
+                    assigned_by: user.value  || null, // You can set this value accordingly
                 }
             ])
 
@@ -263,6 +271,7 @@ const TasksDetails = ({ task }) => {
             tabIndex={-1}
             id="tasksDetailsOffcanvas"
         >
+
             <div
                 className="offcanvas-header border-bottom"
                 style={{ paddingTop: 20, paddingBottom: 20, display: 'flex', justifyContent: 'space-between' }}
@@ -378,7 +387,7 @@ const TasksDetails = ({ task }) => {
                         </div>
                     </div> */}
                     <div className="col-sm-6">
-                        <label className="form-label">Assignee</label>
+                        <label className="form-label">Assignee:</label>
 
                         <select
                             className="form-select"
@@ -410,14 +419,26 @@ const TasksDetails = ({ task }) => {
                                             alt={user.full_name}
                                         />
                                         {user.full_name}
-                                        <button
+                                        <span>{canRemoveAssignee({
+                                            taskCreatedBy: task.created_by,
+                                            assignedBy: user?.assigned_by,
+                                        }) && (
+                                                <button
+                                                    className="btn btn-sm btn-link text-danger"
+                                                    onClick={() => handleRemoveAssignee(user.user_id)}
+                                                >
+                                                    ✕
+                                                </button>
+                                            )}</span>
+
+                                        {/* <button
                                             type="button"
                                             className="btn btn-sm btn-link text-danger p-0 ms-1"
                                             title="Remove assignee"
                                             onClick={() => handleRemoveAssignee(user.user_id)}
                                         >
                                             ✕
-                                        </button>
+                                        </button> */}
                                     </span>
                                 ))}
                             </div>
