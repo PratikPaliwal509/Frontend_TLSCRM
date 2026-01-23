@@ -21,16 +21,27 @@ const ClientsCreate = () => {
         primary_contact_name: '',
         primary_contact_email: '',
         primary_contact_phone: '',
+        billing_email: '',
         country: '',
+        state: '',
+        city: '',
+        postal_code: '',
+        address: '',
+        billing_address: '',
+        notes: '',
+        brand_colors: {},              // 👈 IMPORTANT
+        brand_guidelines_url: '',
         status: 'active',
+        tax_id: '',
     })
 
-     useEffect(() => {
+
+    useEffect(() => {
         const checkPermission = async () => {
-          await verifyPagePermission('clients', 'create', navigate);
+            await verifyPagePermission('clients', 'create', navigate);
         };
         checkPermission();
-      }, []);
+    }, []);
     /* ================= FETCH AGENCIES ================= */
     useEffect(() => {
         const fetchAgencies = async () => {
@@ -82,7 +93,7 @@ const ClientsCreate = () => {
                     status: type === 'draft' ? 'inactive' : 'active',
                 }),
             })
-            console.log("formdata"+JSON.stringify(formData))
+            console.log("formdata" + JSON.stringify(formData))
             setFormData({
                 agency_id: '',
                 company_name: '',
@@ -93,12 +104,15 @@ const ClientsCreate = () => {
                 primary_contact_email: '',
                 primary_contact_phone: '',
                 country: '',
-                state:'',
-                city:'',
-                address:'',
-                postal_code:'',
-                notes:'',
+                state: '',
+                city: '',
+                address: '',
+                postal_code: '',
+                notes: '',
                 status: 'active',
+                tax_id: '',
+                billing_address: '',
+                brand_guidelines_url: '',
             })
             if (!response.ok) {
                 const errorData = await response.json()
