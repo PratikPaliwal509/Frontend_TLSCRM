@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import {
     FiBellOff,
     FiEyeOff,
@@ -6,6 +6,7 @@ import {
     FiSlash,
 } from 'react-icons/fi'
 import Dropdown from '../shared/Dropdown'
+import Comments from '../Comments'
 
 const CommentCard = ({
     comment_id,
@@ -17,16 +18,23 @@ const CommentCard = ({
     task_id,
     setComments
 }) => {
+
+    const [isEditing, setIsEditing] = useState(false)
+    const [editText, setEditText] = useState(comment_text)
+
     // console.log('Rendering CommentCard:', comment_id, comment_text, replies)
     /* =========================
        DROPDOWN OPTIONS
     ========================== */
     const commentOptions = [
+        { label: 'Edit', onClick: () => handleEdit() },
+        { label: 'Delete', onClick: () => handleDelete() },
         { label: 'Mute', icon: <FiBellOff /> },
         { label: 'Hide', icon: <FiEyeOff /> },
         { label: 'Block', icon: <FiSlash /> },
         { label: 'Report', icon: <FiFlag /> },
     ]
+
 
     /* =========================
        STATE
@@ -43,6 +51,9 @@ const CommentCard = ({
     const [cursorPosition, setCursorPosition] = useState(0)
 
     const token = localStorage.getItem('token')
+    useEffect(() => {
+        setEditText(comment_text)
+    }, [comment_text])
 
     /* =========================
        USERS FOR @MENTION
@@ -134,21 +145,100 @@ const CommentCard = ({
         }
     }
 
-// const renderCommentText = (text, mentionedUsers = []) => {
-//     return (
-//         <>
-//             {mentionedUsers.map(u => (
-//                 <span
-//                     key={u.user_id}
-//                     className="text-primary fw-semibold me-1"
-//                 >
-//                     @{u.full_name.replace(/\s+/g, '')}
-//                 </span>
-//             ))}
-//             <span>{text}</span>
-//         </>
-//     )
-// }
+    // const renderCommentText = (text, mentionedUsers = []) => {
+    //     return (
+    //         <>
+    //             {mentionedUsers.map(u => (
+    //                 <span
+    //                     key={u.user_id}
+    //                     className="text-primary fw-semibold me-1"
+    //                 >
+    //                     @{u.full_name.replace(/\s+/g, '')}
+    //                 </span>
+    //             ))}
+    //             <span>{text}</span>
+    //         </>
+    //     )
+    // }
+    const handleEdit = () => {
+        setIsEditing(true)
+        setEditText(comment_text)
+    }
+    const submitEdit = async () => {
+        if (!editText.trim()) return
+
+        try {
+            const res = await fetch(
+                `http://localhost:5000/api/tasksComments/comments/${comment_id}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ comment_text: editText }),
+                }
+            )
+
+            if (!res.ok) throw new Error('Failed to update comment')
+
+            const result = await res.json()
+
+            // Recursive function to find and update comment at any nesting level
+            const updateCommentRecursive = (comments) => {
+                return comments.map(c => {
+                    if (c.comment_id === comment_id) {
+                        return { ...c, comment_text: editText }
+                    }
+                    // Check nested replies
+                    if (c.replies && c.replies.length > 0) {
+                        return { ...c, replies: updateCommentRecursive(c.replies) }
+                    }
+                    return c
+                })
+            }
+
+            setComments(prev => updateCommentRecursive(prev))
+
+            setIsEditing(false)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    const handleDelete = async () => {
+        if (!window.confirm('Delete this comment?')) return
+
+        try {
+            const res = await fetch(
+                `http://localhost:5000/api/tasksComments/comments/${comment_id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            if (!res.ok) throw new Error('Failed to delete comment')
+
+            // Recursive function to find and delete comment at any nesting level
+            const deleteCommentRecursive = (comments) => {
+                return comments
+                    .filter(c => c.comment_id !== comment_id)
+                    .map(c => {
+                        if (c.replies && c.replies.length > 0) {
+                            return { ...c, replies: deleteCommentRecursive(c.replies) }
+                        }
+                        return c
+                    })
+            }
+
+            setComments(prev => deleteCommentRecursive(prev))
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     return (
         <div className="d-flex mb-4">
@@ -173,11 +263,42 @@ const CommentCard = ({
 
                 {/* Comment */}
                 <div className="d-flex align-items-start">
-                    <p className="fs-12 text-dark p-3 bg-gray-200 rounded-3 mb-0">
-                        { comment_text}
-                           {/* {renderCommentText(comment_text, replies?.mentioned_users || [])} */}
-                        {/* {replies[1]?.mentioned_users?JSON.stringify(replies[1]?.mentioned_users[0]):""} */}
-                    </p>
+                    {/* <p className="fs-12 text-dark p-3 bg-gray-200 rounded-3 mb-0">
+                        { comment_text} */}
+                    {/* {renderCommentText(comment_text, replies?.mentioned_users || [])} */}
+                    {/* {replies[1]?.mentioned_users?JSON.stringify(replies[1]?.mentioned_users[0]):""} */}
+                    {/* </p>
+                     */}
+                    {isEditing ? (
+                        <div className="w-100">
+                            <textarea
+                                className="form-control"
+                                rows={3}
+                                value={editText}
+                                onChange={e => setEditText(e.target.value)}
+                            />
+
+                            <div className="mt-2">
+                                <button
+                                    className="btn btn-sm btn-primary me-2"
+                                    onClick={submitEdit}
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-secondary"
+                                    onClick={() => setIsEditing(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="fs-12 text-dark p-3 bg-gray-200 rounded-3 mb-0">
+                            {comment_text}
+                        </p>
+                    )}
+
 
                     <Dropdown
                         dropdownItems={commentOptions}
