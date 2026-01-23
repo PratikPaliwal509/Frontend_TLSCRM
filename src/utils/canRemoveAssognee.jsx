@@ -70,7 +70,39 @@ const useVerifyRole = () => {
         [currentUser]
     )
 
-    return { canRemoveAssignee, currentUser }
+   /* ---------------- ATTACHMENT REMOVE ---------------- */
+  const canRemoveAttachment = useCallback(
+    ({ taskCreatedBy, attachmentCreatedBy }) => {
+      if (!currentUser) return false
+
+      const role =
+        currentUser.role_name || currentUser?.role?.role_name
+
+      if (
+        ['Admin', 'Super Admin', 'Project Manager'].includes(role)
+      ) {
+        return true
+      }
+
+      // task owner
+      if (currentUser.user_id === taskCreatedBy) return true
+
+      // attachment uploader
+      if (currentUser.user_id === attachmentCreatedBy) return true
+
+      return false
+    },
+    [currentUser]
+  )
+
+  return {
+    currentUser,
+    canRemoveAssignee,
+    canRemoveAttachment,
+  }
+
 }
+
+
 
 export default useVerifyRole

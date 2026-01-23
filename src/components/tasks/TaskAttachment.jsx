@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from "react";
-
-const AddTimeLogAttachment = ({ taskId }) => {
+const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
+  console.log("taskCreatedBy" + taskCreatedBy, taskId)
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [attachments, setAttachments] = useState([]);
-
   // Fetch existing attachments when component mounts
-  useEffect(() => {
-    
-    const fetchAttachments = async () => {
-      if(taskId){
-      try {
-        const res = await fetch(`http://localhost:5000/api/taskAttachments/${taskId}/attachments`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await res.json();
-        // console.log("attachments" + JSON.stringify(data))
-        setAttachments(data.data || []);
 
-      } catch (err) {
-        console.error("Failed to fetch attachments:", err);
-      }}
+  useEffect(() => {
+
+    const fetchAttachments = async () => {
+      if (taskId) {
+        try {
+          const res = await fetch(`http://localhost:5000/api/taskAttachments/${taskId}/attachments`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          const data = await res.json();
+          // console.log("attachments" + JSON.stringify(data))
+          setAttachments(data.data || []);
+
+        } catch (err) {
+          console.error("Failed to fetch attachments:", err);
+        }
+      }
     };
 
     fetchAttachments();
@@ -82,7 +83,7 @@ const AddTimeLogAttachment = ({ taskId }) => {
       );
       const savedAttachment = await backendRes.json();
       console.log("attachmnets" + JSON.stringify(savedAttachment))
-      setAttachments((prev) => [...prev, savedAttachment]); // update list
+      setAttachments((prev) => [...prev, savedAttachment.data]); // update list
       setFile(null);
     } catch (err) {
       alert(err.message);
@@ -90,6 +91,47 @@ const AddTimeLogAttachment = ({ taskId }) => {
       setLoading(false);
     }
   };
+
+  const handleDeleteAttachment = async (attachmentId) => {
+    if (!attachmentId) return
+
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this attachment?'
+    )
+
+    if (!confirmDelete) return
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/taskAttachments/attachments/${attachmentId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      )
+
+      const result = await res.json()
+
+      if (!res.ok) {
+        throw new Error(result?.message || 'Failed to delete attachment')
+      }
+
+      // ✅ Update UI (remove attachment from state)
+      setAttachments(prev =>
+        prev.filter(att => att.attachment_id !== attachmentId)
+      )
+
+      // topTost('Attachment deleted successfully', 'success')
+      console.log('Attachment deleted successfully')
+    } catch (error) {
+      console.error(error)
+      // topTost(error.message || 'Something went wrong', 'error')
+      console.error(error.message || 'Something went wrong')
+    }
+  }
+
 
   return (
     <div className="card p-3">
@@ -117,14 +159,23 @@ const AddTimeLogAttachment = ({ taskId }) => {
           {attachments.map((att) => (
             <li key={att.attachment_id} className="list-group-item d-flex justify-content-between align-items-center">
               <span>{att.file_original_name}</span>
-              <a
-                href={att.file_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-sm btn-outline-primary"
-              >
-                Open
-              </a>
+              <div className=" d-flex flex-row">
+                <a
+                  href={att.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm m-2 btn-outline-primary"
+                >
+                  Open
+                </a>
+                <button
+                  className="btn btn-sm m-2 btn-outline-danger"
+                  onClick={() => handleDeleteAttachment(att.attachment_id)}
+                >
+                  Delete
+                </button>
+
+              </div>
             </li>
           ))}
         </ul>

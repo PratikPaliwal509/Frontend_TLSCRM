@@ -29,10 +29,10 @@ const CommentCard = ({
     const commentOptions = [
         { label: 'Edit', onClick: () => handleEdit() },
         { label: 'Delete', onClick: () => handleDelete() },
-        { label: 'Mute', icon: <FiBellOff /> },
-        { label: 'Hide', icon: <FiEyeOff /> },
-        { label: 'Block', icon: <FiSlash /> },
-        { label: 'Report', icon: <FiFlag /> },
+        // { label: 'Mute', icon: <FiBellOff /> },
+        // { label: 'Hide', icon: <FiEyeOff /> },
+        // { label: 'Block', icon: <FiSlash /> },
+        // { label: 'Report', icon: <FiFlag /> },
     ]
 
 
