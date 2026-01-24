@@ -10,7 +10,7 @@ import { verifyPagePermission } from "@/utils/verifyPagePermission";
 ============================ */
 const VIEW_SCOPES = {
   clients: ["all", "agency", "department", "team", "assigned", "own"],
-  projects: ["all", "department", "team", "assigned"],
+  projects: ["all", "agency", "department", "team", "assigned"],
   tasks: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
    teams: ['all', 'agency', 'department', 'team', 'own'],
   departments: ['all', 'agency', 'department', 'team', 'own'],

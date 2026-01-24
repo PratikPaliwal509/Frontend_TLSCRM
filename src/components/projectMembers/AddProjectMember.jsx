@@ -28,7 +28,8 @@ const AddProjectMember = () => {
         if (!res.ok) throw new Error("Failed to fetch projects");
 
         const data = await res.json();
-        setProjects(data);
+        console.log(data);
+        setProjects(data.data);
       } catch (err) {
         console.error(err);
         setError("Failed to load projects");
@@ -56,7 +57,7 @@ const AddProjectMember = () => {
         if (!res.ok) throw new Error("Failed to fetch users");
 
         const data = await res.json();
-        setUsers(data);
+        setUsers(data.data);
       } catch (err) {
         console.error(err);
         setError("Failed to load users");
