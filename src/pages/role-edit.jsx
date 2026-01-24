@@ -12,6 +12,7 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission';
 const VIEW_SCOPES = {
   clients: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
   projects: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
+  tasks: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
   teams: ['all', 'agency', 'department', 'team', 'own'],
   departments: ['all', 'agency', 'department', 'team', 'own'],
 };
@@ -34,7 +35,12 @@ const permissionPages = [
     actions: ['view', 'create', 'edit', 'delete'],
     viewScopes: VIEW_SCOPES.projects,
   },
-  { key: 'tasks', label: 'Tasks', actions: ['view', 'create', 'edit', 'delete', 'assign'] },
+  {
+    key: 'tasks',
+    label: 'Tasks',
+    actions: ['view', 'create', 'edit', 'delete', 'assign'],
+    viewScopes: VIEW_SCOPES.tasks,
+  },
   {
     key: 'teams',
     label: 'Teams',
@@ -175,19 +181,19 @@ const RolesEdit = () => {
   return (<>
     <PageHeader>
       <RolesEditHeader loading={loading} onUpdate={handleUpdate} />
-          </PageHeader>
-      <div className="main-content">
-        <div className="row">
-          <RolesEditContent
-            formData={formData}
-            permissionPages={permissionPages}
-            onChange={handleChange}
-            onToggleAction={toggleActionPermission}
-            onViewScopeChange={handleViewScopeChange}
-          />
-        </div>
+    </PageHeader>
+    <div className="main-content">
+      <div className="row">
+        <RolesEditContent
+          formData={formData}
+          permissionPages={permissionPages}
+          onChange={handleChange}
+          onToggleAction={toggleActionPermission}
+          onViewScopeChange={handleViewScopeChange}
+        />
       </div>
-</>
+    </div>
+  </>
   );
 };
 

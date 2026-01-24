@@ -36,7 +36,7 @@ const RolesViewContent = ({ role }) => {
             {/* ACTIONS */}
             <div className="d-flex flex-wrap gap-3 mb-2">
               {['view', 'create', 'edit', 'delete', 'assign'].map(action => {
-                if (action === 'view' && ['clients','projects','teams','departments'].includes(page)) return null;
+                if (action === 'view' && ['clients','projects', 'tasks','teams','departments'].includes(page)) return null;
                 return (
                   <div className="form-check" key={action}>
                     <input type="checkbox" className="form-check-input" checked={getAction(page, action)} readOnly />
@@ -47,7 +47,7 @@ const RolesViewContent = ({ role }) => {
             </div>
 
             {/* VIEW SCOPE */}
-            {['clients','projects','teams','departments'].includes(page) && (
+            {['clients','projects', 'tasks','teams','departments'].includes(page) && (
               <div className="mt-2">
                 <label className="form-label fs-12 text-muted">View Access Scope</label>
                 <div className="form-control bg-light">{getViewScope(page).toUpperCase()}</div>

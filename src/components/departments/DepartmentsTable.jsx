@@ -93,6 +93,11 @@ const DepartmentsTable = () => {
     {
       accessorKey: 'description',
       header: 'Description',
+      cell: (info) => (
+    <div style={{ width: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      {info.getValue()}
+    </div>
+  ),
     },
     {
       accessorKey: 'teams',
