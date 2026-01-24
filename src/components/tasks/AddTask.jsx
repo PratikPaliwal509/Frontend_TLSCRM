@@ -15,6 +15,8 @@ const AddTask = () => {
     const [projects, setProjects] = useState([])
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
+    const [tasks, setTasks] = useState([])
+
     // const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
         project_id: '',
@@ -27,8 +29,22 @@ const AddTask = () => {
         priority: 'medium',
         labels: [],
         assignees: [],
+        task_type: '',
+        is_milestone: false,
+        depends_on: [],
+        blocks: [],
+
     })
 
+    const taskTypeOptions = [
+        { label: 'Feature', value: 'feature' },
+        { label: 'Bug', value: 'bug' },
+        { label: 'Design', value: 'design' },
+        { label: 'Meeting', value: 'meeting' },
+        { label: 'Review', value: 'review' },
+        { label: 'Deployment', value: 'deployment' },
+        { label: 'Support', value: 'support' },
+    ]
 
 
     /* =========================
@@ -49,6 +65,28 @@ const AddTask = () => {
         }
 
         fetchProjects()
+    }, [token])
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/api/tasks', {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                const data = await res.json()
+
+                const options = (data?.data || data || []).map(t => ({
+                    label: t.task_title,
+                    value: t.task_id,
+                }))
+
+                setTasks(options)
+            } catch (err) {
+                console.error('Fetch tasks error', err)
+            }
+        }
+
+        fetchTasks()
     }, [token])
 
     /* =========================
@@ -117,6 +155,10 @@ const AddTask = () => {
                     status: formData.status,
                     priority: formData.priority,
                     labels: formData.labels.map(l => l.value),
+                    task_type: formData.task_type,
+                    is_milestone: formData.is_milestone,
+                    depends_on: formData.depends_on.map(d => d.value),
+                    blocks: formData.blocks.map(b => b.value),
                 }),
             })
 
@@ -126,6 +168,7 @@ const AddTask = () => {
             const taskId = taskRes?.data?.task_id || taskRes?.task_id
 
             /* -------- Assign Users -------- */
+            console.log("formData.assignees.length" + formData.assignees.length)
             if (formData.assignees.length > 0) {
                 await fetch(`http://localhost:5000/api/tasks/${taskId}/assign`, {
                     method: 'POST',
@@ -153,6 +196,10 @@ const AddTask = () => {
                 priority: 'medium',
                 labels: [],
                 assignees: [],
+                task_type: '',
+                is_milestone: false,
+                depends_on: [],
+                blocks: [],
             })
             closeModal()
             // setIsOpen(false);
@@ -166,6 +213,47 @@ const AddTask = () => {
             setLoading(false)
         }
     }
+    const dependsOnOptions = tasks.filter(
+        t => !(formData.blocks || []).some(b => b.value === t.value)
+    )
+
+    const blocksOptions = tasks.filter(
+        t => !(formData.depends_on || []).some(d => d.value === t.value)
+    )
+
+    const toggleDependsOn = (task) => {
+        const exists = formData.depends_on.some(d => d.value === task.value)
+
+        setFormData({
+            ...formData,
+            depends_on: exists
+                ? formData.depends_on.filter(d => d.value !== task.value)
+                : [...formData.depends_on, task],
+        })
+    }
+
+    const toggleBlocks = (task) => {
+        const exists = formData.blocks.some(b => b.value === task.value)
+
+        setFormData({
+            ...formData,
+            blocks: exists
+                ? formData.blocks.filter(b => b.value !== task.value)
+                : [...formData.blocks, task],
+        })
+    }
+
+    const toggleAssignee = (user) => {
+        const exists = formData.assignees.some(a => a.value === user.value)
+
+        setFormData({
+            ...formData,
+            assignees: exists
+                ? formData.assignees.filter(a => a.value !== user.value)
+                : [...formData.assignees, user],
+        })
+    }
+
 
     return (<>
         <div className="modal fade" id="addNewTasks" tabIndex="-1">
@@ -298,7 +386,7 @@ const AddTask = () => {
                         </div>
 
                         {/* Assignees */}
-                        <div className="mb-4">
+                        {/* <div className="mb-4">
                             <label className="form-label">Assignees</label>
                             <MultiSelectImg
                                 options={users}
@@ -307,7 +395,134 @@ const AddTask = () => {
                                     setFormData({ ...formData, assignees: v })
                                 }
                             />
+                        </div> */}
+                        <div className="mb-4">
+                            <label className="form-label">Assignees</label>
+
+                            <div className="border rounded p-2" style={{ maxHeight: 180, overflowY: 'auto' }}>
+                                {users.map(user => (
+                                    <div
+                                        key={user.value}
+                                        className="form-check d-flex align-items-center gap-2 mb-1"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id={`assignee-${user.value}`}
+                                            checked={formData.assignees.some(a => a.value === user.value)}
+                                            onChange={() => toggleAssignee(user)}
+                                        />
+
+                                        {user.img ? (
+                                            <img
+                                                src={user.img}
+                                                alt={user.label}
+                                                width="28"
+                                                height="28"
+                                                className="rounded-circle"
+                                            />
+                                        ) : (
+                                            <div
+                                                className="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                                                style={{ width: 28, height: 28, fontSize: 12 }}
+                                            >
+                                                {user.label.charAt(0).toUpperCase()}
+                                            </div>
+                                        )}
+
+                                        <label
+                                            htmlFor={`assignee-${user.value}`}
+                                            className="form-check-label"
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {user.label}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
+
+                        <div className="mb-4">
+                            <label className="form-label">Task Type</label>
+                            <select
+                                className="form-control"
+                                value={formData.task_type}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, task_type: e.target.value })
+                                }
+                            >
+                                <option value="">Select Task Type</option>
+                                {taskTypeOptions.map((t) => (
+                                    <option key={t.value} value={t.value}>
+                                        {t.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="form-check mb-4">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="isMilestone"
+                                checked={formData.is_milestone}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, is_milestone: e.target.checked })
+                                }
+                            />
+                            <label className="form-check-label" htmlFor="isMilestone">
+                                Mark as Milestone
+                            </label>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="form-label">Depends On</label>
+
+                            <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
+                                {dependsOnOptions.map(task => (
+                                    <div key={task.value} className="form-check">
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id={`depends-${task.value}`}
+                                            checked={formData.depends_on.some(d => d.value === task.value)}
+                                            onChange={() => toggleDependsOn(task)}
+                                        />
+                                        <label
+                                            className="form-check-label"
+                                            htmlFor={`depends-${task.value}`}
+                                        >
+                                            {task.label}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="form-label">Blocks</label>
+
+                            <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
+                                {blocksOptions.map(task => (
+                                    <div key={task.value} className="form-check">
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id={`blocks-${task.value}`}
+                                            checked={formData.blocks.some(b => b.value === task.value)}
+                                            onChange={() => toggleBlocks(task)}
+                                        />
+                                        <label
+                                            className="form-check-label"
+                                            htmlFor={`blocks-${task.value}`}
+                                        >
+                                            {task.label}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
 
 
                     </div>
