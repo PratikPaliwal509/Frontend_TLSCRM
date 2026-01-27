@@ -386,7 +386,9 @@ const TasksDetails = ({ task }) => {
                             />
                         </div>
                     </div> */}
+
                     <div className="col-sm-6">
+                        {/* when you are showing assignee show only those who are preiously not added to same task  */}
                         <label className="form-label">Assignee:</label>
 
                         <select

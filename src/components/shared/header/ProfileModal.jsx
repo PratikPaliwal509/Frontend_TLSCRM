@@ -17,24 +17,24 @@ const ProfileModal = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-
-  // 🔹 FETCH USER DETAILS
   useEffect(() => {
+    
     const fetchUser = async () => {
+      
       try {
-        const res = await fetch("http://localhost:5000/api/users/users/by-agency", {
-        // const res = await fetch("http://localhost:5000/api/users/", {
+        const res = await fetch("http://localhost:5000/api/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         const json = await res.json();
-        console.log(JSON.stringify(json.data[0]))
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-  setUser(json.data[0]);
-}
-
+        console.log("user data", JSON.stringify(json));
+        if (res.ok && json.success) {
+          setUser(json.data); // ✅ SINGLE OBJECT
+        } else {
+          console.error(json.message);
+        }
       } catch (err) {
         console.error("Failed to fetch user", err);
       }
@@ -48,13 +48,14 @@ const ProfileModal = () => {
     localStorage.removeItem("token");
     navigate("/authentication/login");
   };
-if (!user) {
-  return (
-    <div className="dropdown nxl-h-item">
-      <span className="px-3 text-muted">Loading...</span>
-    </div>
-  );
-}
+
+  if (!user) {
+    return (
+      <div className="dropdown nxl-h-item">
+        <span className="px-3 text-muted">Loading...</span>
+      </div>
+    );
+  }
 
 
   return (
@@ -92,7 +93,7 @@ if (!user) {
           <a href="#" className="dropdown-item" data-bs-toggle="dropdown">
             <span className="hstack">
               <i className="wd-10 ht-10 bg-success rounded-circle me-2"></i>
-              <span>Active</span>
+              <span>{user?.is_active ? "Active" : "Inactive"}</span>
             </span>
             <i className="ms-auto"><FiChevronRight /></i>
           </a>

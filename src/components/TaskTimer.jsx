@@ -147,8 +147,8 @@ const TaskTimer = ({ taskId, project_id }) => {
 
   return (
     <div className="timer-card">
-      <div className="timer-card">
-        <div className="timer-time">
+      <div className="timer-card me-2 ">
+        <div className="timer-time ">
           {isCompleted
             ? formatTime(totalTime)
             : formatTime(seconds)}
@@ -156,7 +156,7 @@ const TaskTimer = ({ taskId, project_id }) => {
 
         {!isCompleted && (
           <button
-            className={`timer-btn ${running ? "stop" : "start"}`}
+            className={`timer-btn btn-primary rounded-2 border-0 px-2 ms-1  ${running ? "stop" : "start"}`}
             onClick={running ? handleStop : handleStart}
           >
             {running ? "Stop" : "Start"}

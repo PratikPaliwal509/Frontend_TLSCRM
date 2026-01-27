@@ -202,7 +202,7 @@ const Header = () => {
                                 <FiSun size={20} />
                             </div>
                         </div> */}
-                        <TimesheetsModal />
+                        {/* <TimesheetsModal /> */}
                         <NotificationsModal />
                         <ProfileModal />
                     </div>

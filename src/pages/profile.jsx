@@ -22,7 +22,7 @@ const navigate = useNavigate();
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/users/users/by-agency", {
+                const res = await fetch("http://localhost:5000/api/users/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -31,9 +31,10 @@ const navigate = useNavigate();
                 const json = await res.json();
 
                 // ⚠️ your API returns array
-                if (json.success && Array.isArray(json.data)) {
-                    setUser(json.data[0]);
-                }
+              if (json.success && json.data) {
+  setUser(json.data);
+}
+
             } catch (err) {
                 console.error("Failed to fetch profile", err);
             }
@@ -41,31 +42,33 @@ const navigate = useNavigate();
 
         if (token) fetchUser();
     }, [token]);
-    const handleDeleteAccount = async () => {
-        const confirmDelete = window.confirm(
-            "Are you sure? This action will permanently delete your account."
-        );
 
-        if (!confirmDelete) return;
+   const handleDeleteAccount = async () => {
+  const confirmDelete = window.confirm(
+    "Are you sure? This action will permanently delete your account."
+  );
 
-        try {
-            const res = await fetch("http://localhost:5000/api/users/me", {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+  if (!confirmDelete) return;
 
-            if (res.ok) {
-                localStorage.removeItem("token");
-                navigate("/authentication/login");
-            } else {
-                alert("Failed to delete account");
-            }
-        } catch (err) {
-            console.error("Delete failed", err);
-        }
-    };
+  try {
+    const res = await fetch("http://localhost:5000/api/users/me", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      localStorage.removeItem("token");
+      navigate("/authentication/login");
+    } else {
+      alert("Failed to delete account");
+    }
+  } catch (err) {
+    console.error("Delete failed", err);
+  }
+};
+
     const handleEditProfile = () => {
         navigate("/profile/edit");
     };
