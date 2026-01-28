@@ -100,7 +100,7 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
                                         : <div className="text-muted me-3">No Logo</div>
                                     } */}
                                     <div className="hstack gap-3">
-                                        <div className="text-black avatar-text user-avatar-text">{project_name.substring(0, 1)}</div></div>
+                                        <div className="text-black avatar-text user-avatar-text me-3">{project_name.substring(0, 1)}</div></div>
                                     <div>
                                         <a href="#" className="text-truncate-1-line">{project_name}</a>
                                         <div className="fs-11 text-muted">{description.substring(0, 23) + "..." || "—"}</div>

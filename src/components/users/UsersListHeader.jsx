@@ -7,7 +7,7 @@ const UsersListHeader = () => {
 
     return (
         <div className="d-flex justify-content-between align-items-center">
-            <h4 className="mb-0">Users</h4>
+            <h4 className="mb-0 me-2">Users</h4>
 
             <button
                 className="btn btn-primary"

@@ -16,15 +16,30 @@ const UsersCreateContent = ({
         <div className="card">
             <div className="card-body">
                 <div className="row g-3">
-                    {/* Name */}
+
+                    {/* First Name */}
                     <div className="col-md-6">
-                        <label className="form-label">Name</label>
+                        <label className="form-label">First Name</label>
                         <input
                             type="text"
-                            name="name"
+                            name="first_name"
                             className="form-control"
-                            value={formData.name}
+                            value={formData.first_name || ''}
                             onChange={handleInput}
+                            placeholder="Enter first name"
+                        />
+                    </div>
+
+                    {/* Last Name */}
+                    <div className="col-md-6">
+                        <label className="form-label">Last Name</label>
+                        <input
+                            type="text"
+                            name="last_name"
+                            className="form-control"
+                            value={formData.last_name || ''}
+                            onChange={handleInput}
+                            placeholder="Enter last name"
                         />
                     </div>
 
@@ -35,8 +50,9 @@ const UsersCreateContent = ({
                             type="email"
                             name="email"
                             className="form-control"
-                            value={formData.email}
+                            value={formData.email || ''}
                             onChange={handleInput}
+                            placeholder="Enter email"
                         />
                     </div>
 
@@ -47,8 +63,9 @@ const UsersCreateContent = ({
                             type="password"
                             name="password"
                             className="form-control"
-                            value={formData.password}
+                            value={formData.password || ''}
                             onChange={handleInput}
+                            placeholder="Enter password"
                         />
                     </div>
 
@@ -56,14 +73,15 @@ const UsersCreateContent = ({
                     <div className="col-md-6">
                         <label className="form-label">Role</label>
                         <select
-                            name="role"
+                            name="role_id"
                             className="form-select"
-                            value={formData.role}
+                            value={formData.role_id || ''}
                             onChange={handleInput}
                         >
-                            {roles.map(r => (
-                                <option key={r} value={r}>
-                                    {r}
+                            <option value="">Select Role</option>
+                            {Array.isArray(roles) && roles.map(r => (
+                                <option key={r.role_id} value={r.role_id}>
+                                    {r.role_name}
                                 </option>
                             ))}
                         </select>
@@ -75,7 +93,7 @@ const UsersCreateContent = ({
                         <select
                             name="department_id"
                             className="form-select"
-                            value={formData.department_id}
+                            value={formData.department_id || ''}
                             onChange={handleInput}
                         >
                             <option value="">Select Department</option>
@@ -93,7 +111,7 @@ const UsersCreateContent = ({
                         <select
                             name="team_id"
                             className="form-select"
-                            value={formData.team_id}
+                            value={formData.team_id || ''}
                             onChange={handleInput}
                             disabled={!formData.department_id}
                         >
@@ -112,13 +130,14 @@ const UsersCreateContent = ({
                         <select
                             name="status"
                             className="form-select"
-                            value={formData.status}
+                            value={formData.status || 'active'}
                             onChange={handleInput}
                         >
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>
                     </div>
+
                 </div>
             </div>
         </div>

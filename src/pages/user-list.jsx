@@ -4,6 +4,7 @@ import PageHeader from '../components/shared/pageHeader/PageHeader'
 import UsersListHeader from '../components/users/UsersListHeader'
 import UsersListTable from '../components/users/UsersListTable'
 import { verifyPagePermission } from '../utils/verifyPagePermission'
+import Footer from '@/components/shared/Footer'
 
 const UsersList = () => {
     const navigate = useNavigate()
@@ -53,6 +54,7 @@ const UsersList = () => {
                     />
                 </div>
             </div>
+            <Footer />
         </>
     )
 }

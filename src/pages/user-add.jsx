@@ -4,23 +4,27 @@ import PageHeader from '../components/shared/pageHeader/PageHeader'
 import UsersCreateHeader from '../components/users/UserCreateHeader'
 import UsersCreateContent from '../components/users/UsersCreateContent'
 import { verifyPagePermission } from '../utils/verifyPagePermission'
+import { toast } from 'react-toastify'
+import Footer from '@/components/shared/Footer'
 
 const UsersCreate = () => {
     const navigate = useNavigate()
 
     const [loading, setLoading] = useState(false)
-    const [roles, setRoles] = useState(['admin', 'manager', 'user'])
+    const [roles, setRoles] = useState([])
     const [departments, setDepartments] = useState([])
     const [teams, setTeams] = useState([])
 
     const [formData, setFormData] = useState({
-        name: '',
         email: '',
         password: '',
-        role: 'user',
+        role_id: '',
         department_id: '',
         team_id: '',
         status: 'active',
+        agency_id: 2,
+        first_name: '',
+        last_name: '',
     })
 
     /* ================= PERMISSION ================= */
@@ -28,6 +32,23 @@ const UsersCreate = () => {
         verifyPagePermission('users', 'create', navigate)
     }, [])
 
+    /* ================= FETCH DEPARTMENTS ================= */
+    useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                const token = localStorage.getItem('token')
+                const res = await fetch('http://localhost:5000/api/roles', {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                const result = await res.json()
+                setRoles(result.data || [])
+            } catch (err) {
+                console.error(err)
+            }
+        }
+
+        fetchRoles()
+    }, [])
     /* ================= FETCH DEPARTMENTS ================= */
     useEffect(() => {
         const fetchDepartments = async () => {
@@ -79,22 +100,36 @@ const UsersCreate = () => {
             setLoading(true)
             const token = localStorage.getItem('token')
 
-            await fetch('http://localhost:5000/api/users/user', {
+            await fetch('http://localhost:5000/api/users/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    ...formData,
-                    status: type === 'draft' ? 'inactive' : 'active',
+                    // ...formData,
+                    formData
+                    // status: type === 'draft' ? 'inactive' : 'active',
                 }),
             })
-
-            navigate('/users')
+            setFormData({
+                email: '',
+                password: '',
+                role_id: '',
+                department_id: '',
+                team_id: '',
+                status: 'active',
+                agency_id: 2,
+                first_name: '',
+                last_name: '',
+            })
+            //   toast.success('User created successfully')
+            // navigate('/users')
         } catch (err) {
+            toast.error('Failed to create user')
             console.error(err)
         } finally {
+
             setLoading(false)
         }
     }
@@ -118,6 +153,7 @@ const UsersCreate = () => {
                     onChange={handleChange}
                 />
             </div>
+            <Footer/>
         </>
     )
 }
