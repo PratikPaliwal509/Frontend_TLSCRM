@@ -137,8 +137,8 @@ const NotesContent = () => {
 
                     <div className="content-area-body pb-0">
                         <div className="row note-has-grid">
-                            {filteredData.map(note => (
-                                <div key={note.id} className="col-xxl-4 col-xl-6 col-lg-4 col-sm-6">
+                            {filteredData.map(note => (<>
+                                {note.content && <div key={note.id} className="col-xxl-4 col-xl-6 col-lg-4 col-sm-6">
                                     <div className="card card-body mb-4 stretch stretch-full">
                                         <h5 className="note-title text-truncate mb-1">{note.title}</h5>
                                         <p className="fs-11 text-muted">
@@ -166,7 +166,8 @@ const NotesContent = () => {
                                             </span>
                                         </div>
                                     </div>
-                                </div>
+                                </div>}
+                                </>
                             ))}
                         </div>
                     </div>

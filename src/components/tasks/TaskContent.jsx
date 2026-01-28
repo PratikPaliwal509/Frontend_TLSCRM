@@ -281,7 +281,7 @@ const List = ({
                                     className="dropdown-item text-danger"
                                     onClick={(e) => {
                                         // e.stopPropagation()
-                                        console.log('Delete Task', task.id)
+                                        console.log('Delete Task')
                                     }}
                                 >
                                     Delete Task

@@ -38,8 +38,11 @@ const detailsMoreOptions = [
 
 
 const TasksDetails = ({ task }) => {
+    console.log("task received in details:", task)
     const { canRemoveAssignee } = useVerifyRole()
     const [value, setValue] = useState('');
+    const [assigningUserId, setAssigningUserId] = useState(null)
+
     const inputRef = useRef(null);
     const id = task?.id;
     const tags = task?.tags || [];
@@ -59,7 +62,6 @@ const TasksDetails = ({ task }) => {
 
     const [users, setUsers] = useState([])
     const [assignees, setAssignees] = useState([])
-    // const [assignees, setAssignees] = useState([])
     const [loadingUsers, setLoadingUsers] = useState(false)
     const token = localStorage.getItem("token")
     console.log("task in details:", task)
@@ -113,6 +115,7 @@ const TasksDetails = ({ task }) => {
             full_name: a.user.full_name,
             avatar: a.user.avatar || '/images/avatar/1.png',
             assigned_by: a.assigned_by,
+            is_active: a.is_active,
         }))
 
         setAssignees(normalized)
@@ -198,6 +201,7 @@ const TasksDetails = ({ task }) => {
         }
 
         try {
+            setAssigningUserId(userId)
             const res = await fetch(
                 `http://localhost:5000/api/tasks/${taskId}/assign`,
                 {
@@ -211,7 +215,7 @@ const TasksDetails = ({ task }) => {
             )
 
             if (!res.ok) throw new Error()
-                console.log('User to be assigned:', user)
+            console.log('User to be assigned:', user)
             console.log("response:", JSON.stringify(res))
             setAssignees(prev => [
                 ...prev,
@@ -219,7 +223,8 @@ const TasksDetails = ({ task }) => {
                     user_id: user.value,
                     full_name: user.label,
                     avatar: user.img || '/images/avatar/1.png',
-                    assigned_by: user.value  || null, // You can set this value accordingly
+                    assigned_by: user.value || null, // You can set this value accordingly
+                    is_active: true,
                 }
             ])
 
@@ -230,6 +235,9 @@ const TasksDetails = ({ task }) => {
             e.target.value = ''
         } catch {
             topTost('Failed to assign user', 'error')
+            e.target.value = ''
+        } finally {
+            setAssigningUserId(null) // 🔥 stop loading
             e.target.value = ''
         }
     }
@@ -256,7 +264,14 @@ const TasksDetails = ({ task }) => {
             if (!res.ok) throw new Error()
 
             // ✅ remove from UI
-            setAssignees(prev => prev.filter(u => u.user_id !== userId))
+            // setAssignees(prev => prev.filter(u => u.user_id !== userId))
+            setAssignees(prev =>
+                prev.map(u =>
+                    u.user_id === userId
+                        ? { ...u, is_active: false }
+                        : u
+                )
+            )
 
             topTost('User removed from task', 'success')
         } catch (err) {
@@ -395,9 +410,10 @@ const TasksDetails = ({ task }) => {
                             className="form-select"
                             onChange={(e) => handleAssignUser(e, id)}
                             defaultValue=""
+                            disabled={assigningUserId !== null}
                         >
                             <option value="" disabled>
-                                Select user
+                                {assigningUserId ? 'Assigning user...' : 'Select user'}
                             </option>
 
                             {users.map((user) => (
@@ -413,7 +429,9 @@ const TasksDetails = ({ task }) => {
                                 {assignees.map(user => (
                                     <span
                                         key={user.user_id}
-                                        className="badge bg-light text-dark d-flex align-items-center gap-2"
+                                        className={`badge d-flex align-items-center gap-2 ${user.is_active ? 'bg-light text-dark' : 'bg-light text-muted opacity-75'
+                                            }`}
+
                                     >
                                         <img
                                             src={user.avatar}
@@ -421,15 +439,20 @@ const TasksDetails = ({ task }) => {
                                             alt={user.full_name}
                                         />
                                         {user.full_name}
+                                        {user.is_active === false && (
+                                            <small className="ms-1 text-muted">(Inactive)</small>
+                                        )}
+
                                         <span>{canRemoveAssignee({
                                             taskCreatedBy: task.created_by,
                                             assignedBy: user?.assigned_by,
-                                        }) && (
+                                        }) && user.is_active && (
                                                 <button
                                                     className="btn btn-sm btn-link text-danger"
                                                     onClick={() => handleRemoveAssignee(user.user_id)}
                                                 >
                                                     ✕
+
                                                 </button>
                                             )}</span>
 
@@ -460,7 +483,7 @@ const TasksDetails = ({ task }) => {
 
                 <TaskTimeLogDetails taskId={id} project_id={project_id} />
                 <hr className="my-5" />
-                <AddAttachment taskCreatedBy={task?.created_by} taskId={task?.id}  />
+                <AddAttachment taskCreatedBy={task?.created_by} taskId={task?.id} />
                 <hr className="my-5" />
                 <div className="checklist">
                     <div className="d-flex justify-content-between mb-4">
