@@ -10,6 +10,8 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 // import { add } from 'date-fns'
 const ClientsCreate = () => {
     const [agencies, setAgencies] = useState([])
+    const [users, setUsers] = useState([])
+
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -42,6 +44,30 @@ const ClientsCreate = () => {
         };
         checkPermission();
     }, []);
+    /* ================= FETCH Users ================= */
+    useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            const token = localStorage.getItem('token')
+
+            const response = await fetch('http://localhost:5000/api/users/users/by-agency', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (!response.ok) throw new Error('Failed to fetch users')
+
+            const data = await response.json()
+            setUsers(data.data || [])
+        } catch (error) {
+            console.error('Users fetch error', error)
+        }
+    }
+
+    fetchUsers()
+}, [])
+
     /* ================= FETCH AGENCIES ================= */
     useEffect(() => {
         const fetchAgencies = async () => {
@@ -96,6 +122,7 @@ const ClientsCreate = () => {
             console.log("formdata" + JSON.stringify(formData))
             setFormData({
                 agency_id: '',
+                portal_user_id: '',
                 company_name: '',
                 industry: '',
                 company_size: '',
@@ -144,6 +171,7 @@ const ClientsCreate = () => {
                     <ClientsCreateContent
                         formData={formData}
                         agencies={agencies}
+                        users={users}    
                         onChange={handleChange}
                     />
                 </div>

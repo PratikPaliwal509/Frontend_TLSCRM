@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from '@/components/shared/Input';
 
-const ClientsEditContent = ({ formData, agencies, onChange }) => {
+const ClientsEditContent = ({ formData, agencies,  users = [], onChange }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         onChange(name, value);
@@ -29,6 +29,28 @@ const ClientsEditContent = ({ formData, agencies, onChange }) => {
                             {agencies.map((agency) => (
                                 <option key={agency.agency_id} value={agency.agency_id}>
                                     {agency.agency_name || agency.company_name || 'Unnamed Agency'}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                {/* User Select */}
+                <div className="row mb-4 align-items-center">
+                    <div className="col-lg-4">
+                        <label className="fw-semibold">Users: </label>
+                    </div>
+                    <div className="col-lg-8">
+                        <select
+                            className="form-select"
+                            name="portal_user_id"
+                            value={formData.portal_user_id}
+                            onChange={handleInputChange}
+                            // disabled
+                        >
+                            <option value="">Select User</option>
+                            {users.map((user) => (
+                                <option key={user.user_id} value={user.user_id}>
+                                    {user.first_name} {user.last_name}
                                 </option>
                             ))}
                         </select>

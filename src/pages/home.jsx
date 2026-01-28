@@ -33,7 +33,7 @@ const Home = () => {
                     <TasksOverviewChart />
                     <LeadsOverviewChart chartHeight={315} />
                     <LatestLeads title={"Latest Leads"} />
-                    <Schedule title={"Upcoming Schedule"} />
+                    {/* <Schedule title={"Upcoming Schedule"} /> */}
                     <Project cardYSpaceClass="hrozintioal-card" borderShow={true} title="Project Status" />
                     <TeamProgress title={"Team Progress"} footerShow={true} />
                 </div>

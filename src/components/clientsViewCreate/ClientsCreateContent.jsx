@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import Input from '@/components/shared/Input'
 import Select from 'react-select'
 
-const ClientsCreateContent = ({ formData, agencies = [], onChange }) => {
+const ClientsCreateContent = ({ formData, agencies = [], users = [], onChange }) => {
     const [sameEmail, setSameEmail] = useState(false)
     const [sameAddress, setSameAddress] = useState(false)
-
+console.log("users in content:", JSON.stringify(users));
     const brandColorOptions = [
         { value: '#FF5733', label: 'Red Orange' },
         { value: '#1E90FF', label: 'Dodger Blue' },
@@ -41,8 +41,27 @@ const ClientsCreateContent = ({ formData, agencies = [], onChange }) => {
             <div className="card stretch stretch-full">
                 <div className="card-body">
 
-                    {/* ================= AGENCY ================= */}
+                    {/* ================= USERs ================= */}
                     <div className="mb-4">
+                        <label className="form-label">Portal User</label>
+                        <select
+                            className="form-select"
+                            value={formData.portal_user_id || ''}
+                            onChange={(e) =>
+                                onChange('portal_user_id', Number(e.target.value) || null)
+                            }
+                        >
+                            <option value="">Select User</option>
+                            {users.map((user) => (
+                                <option key={user.user_id} value={user.user_id}>
+                                    {user.name || user.email}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* ================= AGENCY ================= */}
+                    {/* <div className="mb-4">
                         <label className="form-label">Agency</label>
                         <select
                             className="form-select"
@@ -61,7 +80,7 @@ const ClientsCreateContent = ({ formData, agencies = [], onChange }) => {
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div> */}
 
                     <Input label="Tax ID" value={formData.tax_id} onChange={e => onChange('tax_id', e.target.value)} />
                     <Input label="Company Name" value={formData.company_name} onChange={e => onChange('company_name', e.target.value)} />
