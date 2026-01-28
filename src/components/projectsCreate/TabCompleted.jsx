@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
+// import { toast } from 'react-toastify';
 const TabCompleted = ({ formData, resetForm }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -30,7 +30,7 @@ const TabCompleted = ({ formData, resetForm }) => {
       }
       // ✅ Optional: reset form
       resetForm && resetForm()
-
+      // toast.success('Project created successfully');
       // ✅ Navigate to project view page
       navigate(`/projects/view/${data.data.project_id}`)
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
-const TabProjectDetails = ({ formData = {}, setFormData }) => {
+const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
   const [value, setValue] = useState(formData.description || '')
   const [startDate, setStartDate] = useState(formData.start_date ? new Date(formData.start_date) : new Date())
   const [endDate, setEndDate] = useState(formData.end_date ? new Date(formData.end_date) : null)
@@ -57,6 +57,7 @@ const TabProjectDetails = ({ formData = {}, setFormData }) => {
               required
             />
           </div>
+          {error && formData.project_name === "" && <p className="text-danger mt-2">Project Name is required</p>}
           {/* Project Type */}
           {/* <div className="mb-4">
             <label htmlFor="projectType" className="form-label">
@@ -88,6 +89,8 @@ const TabProjectDetails = ({ formData = {}, setFormData }) => {
                 </option>
               ))}
             </select>
+             {error && formData.project_type === "" && <p className="text-danger mt-2">Project Type is required</p>}
+         
           </div>
           {/* <div className="mb-4">
             <label htmlFor="projectCode" className="form-label">

@@ -75,7 +75,7 @@ const TabProjectType = ({ formData, setFormData, error }) => {
           </option>
         ))}
       </select>
-
+      {error && formData.agency_id === null && <p className="text-danger mt-2">Agency is required</p>}
       <h4 className="mt-4">Client</h4>
       <select
         className="form-control text-black"
@@ -99,7 +99,7 @@ const TabProjectType = ({ formData, setFormData, error }) => {
         ))}
       </select>
 
-      {error && <p className="text-danger mt-2">Agency is required</p>}
+      {error && formData.client_id === null && <p className="text-danger mt-2">Client is required</p>}
     </section>
   )
 }

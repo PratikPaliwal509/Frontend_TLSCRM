@@ -7,13 +7,13 @@ import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const ProjectsCreate = () => {
     const navigate = useNavigate();
-     useEffect(() => {
-           const checkPermission = async () => {
-             await verifyPagePermission('projects', 'create', navigate);
-           };
-       
-           checkPermission();
-         }, []);
+    useEffect(() => {
+        const checkPermission = async () => {
+            await verifyPagePermission('projects', 'create', navigate);
+        };
+
+        checkPermission();
+    }, []);
 
     return (
         <>

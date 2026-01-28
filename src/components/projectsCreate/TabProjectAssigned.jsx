@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-const TabProjectAssigned = ({ formData = {}, setFormData }) => {
+const TabProjectAssigned = ({ formData = {}, setFormData, error }) => {
   const [managers, setManagers] = useState([])
 
   useEffect(() => {
@@ -67,6 +67,7 @@ const TabProjectAssigned = ({ formData = {}, setFormData }) => {
           </option>
         )}
       </select>
+      {error && <p className="text-danger mt-2">Manager ID is required</p>}
     </section>
   )
 }

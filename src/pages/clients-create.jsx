@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import ClientsCreateHeader from '@/components/clientsViewCreate/ClientsCreateHeader'
 import ClientsCreateContent from '@/components/clientsViewCreate/ClientsCreateContent'
+import { toast } from 'react-toastify';
 
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
@@ -46,27 +47,27 @@ const ClientsCreate = () => {
     }, []);
     /* ================= FETCH Users ================= */
     useEffect(() => {
-    const fetchUsers = async () => {
-        try {
-            const token = localStorage.getItem('token')
+        const fetchUsers = async () => {
+            try {
+                const token = localStorage.getItem('token')
 
-            const response = await fetch('http://localhost:5000/api/users/users/by-agency', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+                const response = await fetch('http://localhost:5000/api/users/users/by-agency', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
 
-            if (!response.ok) throw new Error('Failed to fetch users')
+                if (!response.ok) throw new Error('Failed to fetch users')
 
-            const data = await response.json()
-            setUsers(data.data || [])
-        } catch (error) {
-            console.error('Users fetch error', error)
+                const data = await response.json()
+                setUsers(data.data || [])
+            } catch (error) {
+                console.error('Users fetch error', error)
+            }
         }
-    }
 
-    fetchUsers()
-}, [])
+        fetchUsers()
+    }, [])
 
     /* ================= FETCH AGENCIES ================= */
     useEffect(() => {
@@ -104,6 +105,25 @@ const ClientsCreate = () => {
 
     /* ================= CREATE CLIENT ================= */
     const handleSubmit = async (type = 'create') => {
+        if (!formData.company_name?.trim()) {
+            toast.error('Company Name is required');
+            return false;
+        }
+
+        // if (!formData.portal_user_id) {
+        //     toast.error('Portal User is required');
+        //     return false;
+        // }
+
+        if (!formData.primary_contact_name?.trim()) {
+            toast.error('Primary Contact Name is required');
+            return false;
+        }
+
+        if (!formData.primary_contact_email?.trim()) {
+            toast.error('Primary Contact Email is required');
+            return false;
+        }
         try {
             setLoading(true)
 
@@ -147,7 +167,8 @@ const ClientsCreate = () => {
             }
 
             const data = await response.json()
-
+            // ✅ SUCCESS TOAST
+            toast.success('Client created successfully');
         } catch (error) {
             console.error('Create client error', error)
         } finally {
@@ -171,7 +192,7 @@ const ClientsCreate = () => {
                     <ClientsCreateContent
                         formData={formData}
                         agencies={agencies}
-                        users={users}    
+                        users={users}
                         onChange={handleChange}
                     />
                 </div>

@@ -21,8 +21,20 @@ const ClientsCreateHeader = ({ onCreate, onDraft, loading }) => {
                 disabled={loading}
                 onClick={onCreate}
             >
-                <FiUserPlus size={16} className="me-2" />
-                Create Client
+                 {loading ? (
+                    <>
+                        <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                        Creating...
+                    </>
+                ) : (
+                   <><FiUserPlus size={16} className="me-2" />
+                Create Client</>
+                )}
+                
             </button>
         </div>
     )

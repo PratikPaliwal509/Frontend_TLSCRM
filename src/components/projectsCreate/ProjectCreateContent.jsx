@@ -93,10 +93,27 @@ const ProjectCreateContent = () => {
     // };
     const handleTabClick = (e, index) => {
         e.preventDefault()
-
+        
         // allow going backward freely
         if (index < currentStep) {
             setError(false)
+            setCurrentStep(index)
+            return
+        }
+        if (index > currentStep) {
+            if (index > 0 && (formData.agency_id === null || formData.client_id === null)) {
+            setError(true)
+            return
+        }
+        if (index > 1 && (formData.project_name === "" || formData.project_type === "")) {
+            setError(true)
+            return
+        }
+            if (index > 3 && formData.project_manager_id === null) {
+            setError(true)
+            return
+        }
+        setError(false)
             setCurrentStep(index)
             return
         }
@@ -130,10 +147,10 @@ const ProjectCreateContent = () => {
                         {currentStep === 1 && <TabProjectDetails setFormData={setFormData} formData={formData} error={error} setError={setError} />}
                         {/* {currentStep === 2 && <TabProjectSettings />} */}
                         {currentStep === 2 && <TabProjectBudget setFormData={setFormData} formData={formData} error={error} setError={setError} />}
-                        {currentStep === 3 && <TabProjectAssigned setFormData={setFormData} formData={formData} setError={setError} />}
-                        {currentStep === 4 && <TabProjectTarget setFormData={setFormData} formData={formData} setError={setError} />}
+                        {currentStep === 3 && <TabProjectAssigned setFormData={setFormData} formData={formData} error={error} setError={setError} />}
+                        {currentStep === 4 && <TabProjectTarget setFormData={setFormData} formData={formData}  error={error} setError={setError} />}
                         {/* {currentStep === 5 && <TabAttachement />} */}
-                        {currentStep === 5 && <TabCompleted setFormData={setFormData} formData={formData} setError={setError} />}
+                        {currentStep === 5 && <TabCompleted setFormData={setFormData} formData={formData} error={error} setError={setError} />}
                     </div>
 
                     {/* Buttons */}
