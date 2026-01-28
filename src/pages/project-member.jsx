@@ -6,6 +6,7 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import AddProjectMember from '@/components/projectMembers/AddProjectMember'
+import Footer from '@/components/shared/Footer'
 
 const projectMember = () => {
     const navigate= useNavigate()
@@ -26,7 +27,7 @@ const projectMember = () => {
                     <AddProjectMember />
                 </div>
             </div>
-
+  <Footer />
         </>
     )
 }

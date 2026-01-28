@@ -5,6 +5,7 @@ import ProjectTable from '@/components/projectsList/ProjectTable'
 import ToastProvider from '@/components/ToastProvider'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import Footer from '@/components/shared/Footer'
 
 const ProjectsList = () => {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ const ProjectsList = () => {
                     <ProjectTable />
                 </div>
             </div>
-
+  <Footer />
         </>
     )
 }

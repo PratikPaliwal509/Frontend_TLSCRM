@@ -4,6 +4,7 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import TeamHeader from '../components/teams/TeamHeader'
 import TeamContent from '@/components/teams/TeamContent'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import Footer from '@/components/shared/Footer'
 
 const TeamCreate = () => {
   const navigate = useNavigate()
@@ -141,7 +142,7 @@ const TeamCreate = () => {
         />
       </PageHeader>
 
-      <div className="main-content">
+      <div className="main-content mb-3">
         <div className="row">
           {/* LEFT SIDE – TEAM FORM */}
           <TeamContent
@@ -178,7 +179,7 @@ const TeamCreate = () => {
 
                 {/* Selected Members */}
                 {selectedMembers.length > 0 && (
-                  <div>
+                  <div >
                     <label className="form-label">Selected Members</label>
                     <div className="border rounded p-2">
                       {selectedMembers.map(id => {
@@ -203,6 +204,7 @@ const TeamCreate = () => {
 
         </div>
       </div>
+        <Footer />
     </>
   )
 }

@@ -9,6 +9,7 @@ import LeadsEmptyCard from '@/components/leadsViewCreate/LeadsEmptyCard'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import TabProjectMembers from '@/components/projectsView/TabProjectMembers'
+import Footer from '@/components/shared/Footer'
 const ProjectsView = () => {
   const { id } = useParams() // project id from route
   const [project, setProject] = useState(null)
@@ -107,6 +108,7 @@ const ProjectsView = () => {
           </div>
         </div>
       </div>
+        <Footer/>
     </>
   )
 }

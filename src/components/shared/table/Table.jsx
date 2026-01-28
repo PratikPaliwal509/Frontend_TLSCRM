@@ -4,7 +4,8 @@ import TablePagination from './TablePagination'
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 
-const Table = ({data, columns}) => {
+const Table = ({ data = [], columns = [], isLoading = false, emptyMessage = "No data found" }) => {
+    // const Table = ({data, columns,}) => {
     // const [data] = useState([...fackData])
     const [sorting, setSorting] = useState([])
     const [globalFilter, setGlobalFilter] = useState('')
@@ -36,8 +37,18 @@ const Table = ({data, columns}) => {
                 <div className="card-body p-0">
                     <div className="table-responsive">
                         <div className='dataTables_wrapper dt-bootstrap5 no-footer'>
-                            <TableSearch table={table} setGlobalFilter={setGlobalFilter} globalFilter={globalFilter}/>
-
+                            <TableSearch table={table} setGlobalFilter={setGlobalFilter} globalFilter={globalFilter} />
+                            {isLoading && (
+                                <div
+                                    className="position-absolute top-50 start-50 translate-middle z-3"
+                                    style={{ pointerEvents: 'none' }}
+                                >
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            )}
+                                                {!isLoading && 
                             <div className="row dt-row">
                                 <div className="col-sm-12 px-0">
                                     <table className="table table-hover dataTable no-footer" id='projectList'>
@@ -99,9 +110,9 @@ const Table = ({data, columns}) => {
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </div>}
 
-                            <TablePagination table={table} />
+                                               {!isLoading && <TablePagination table={table} />}
                         </div>
                     </div>
                 </div>

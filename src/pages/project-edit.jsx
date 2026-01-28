@@ -7,6 +7,7 @@ import ToastProvider from '@/components/ToastProvider'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import { useEffect } from 'react'
+import Footer from '@/components/shared/Footer'
 const ProjectEdit = () => {
   const formRef = useRef()
   const [saving, setSaving] = useState(false)
@@ -31,6 +32,7 @@ const ProjectEdit = () => {
         <ToastProvider />
         <ProjectEditForm ref={formRef} setSaving={setSaving} />
       </div>
+        <Footer/>
     </>
   )
 }

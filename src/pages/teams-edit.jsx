@@ -5,6 +5,7 @@ import TeamHeader from '../components/teams/TeamHeader'
 import TeamContent from '@/components/teams/TeamContent'
 import TeamMembers from '@/components/teams/TeamMembers'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import Footer from '@/components/shared/Footer'
 const TeamEdit = () => {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -187,6 +188,7 @@ const TeamEdit = () => {
           />
         </div>
       </div>
+        <Footer />
     </>
   )
 }

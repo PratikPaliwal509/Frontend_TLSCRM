@@ -5,6 +5,7 @@ import ProjectCreateHeader from '@/components/projectsCreate/ProjectCreateHeader
 
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import Footer from '@/components/shared/Footer'
 const ProjectsCreate = () => {
     const navigate = useNavigate();
     useEffect(() => {
@@ -25,7 +26,7 @@ const ProjectsCreate = () => {
                     <ProjectCreateContent />
                 </div>
             </div>
-
+  <Footer />
         </>
     )
 }
