@@ -37,7 +37,8 @@ const detailsMoreOptions = [
 ];
 
 
-const TasksDetails = ({ task }) => {
+const TasksDetails = ({ task, user_id }) => {
+    console.log("user_id in task details:", user_id)
     console.log("task received in details:", task)
     const { canRemoveAssignee } = useVerifyRole()
     const [value, setValue] = useState('');
@@ -73,6 +74,8 @@ const TasksDetails = ({ task }) => {
 
     const [comments, setComments] = useState([])
     const [loading, setLoading] = useState(false)
+
+    const isAssignedUser = assignedUserIds.includes(user_id)
 
     const fetchComments = async () => {
         setLoading(true)
@@ -312,7 +315,7 @@ const TasksDetails = ({ task }) => {
                     </a>
                 </div>
                 <div className="d-none d-md-flex gap-1 align-items-center justify-content-center">
-                    <TaskTimer taskId={id} project_id={project_id} />
+                    {isAssignedUser && (<TaskTimer taskId={id} project_id={project_id} />)}
                     <a href="#"
                         className="d-none d-lg-flex align-items-center fs-9 fw-bold text-uppercase text-dark py-2 px-3 border border-gray-2 rounded"
                     >
@@ -481,7 +484,9 @@ const TasksDetails = ({ task }) => {
                 </div>
                 <hr className="my-5" />
 
-                <TaskTimeLogDetails taskId={id} project_id={project_id} />
+
+                 {isAssignedUser && (<TaskTimeLogDetails taskId={id} project_id={project_id} />)}
+
                 <hr className="my-5" />
                 <AddAttachment taskCreatedBy={task?.created_by} taskId={task?.id} />
                 <hr className="my-5" />
@@ -525,7 +530,7 @@ const TasksDetails = ({ task }) => {
                             <FiInfo />
                         </a>
                     </div>
-                    <Comments comments={comments} loading={loading} setComments={setComments} />
+                    <Comments comments={comments} loading={loading} setComments={setComments} portal_user_id={user_id} />
                     {/* <Comments taskID={id} /> */}
                     <AddComment
                         taskID={id}

@@ -1,12 +1,12 @@
 import React from 'react'
 import Input from '@/components/shared/Input'
 
-const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) => {
+const UsersEditContent = ({ formData, departments = [], teams = [], roles=[], onChange }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target
     onChange(name, value)
   }
-
+console.log("departments in UsersEditContent:", formData, departments, teams, roles)
   return (
     <div className="col-12">
       <div className="card p-4">
@@ -14,11 +14,19 @@ const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) 
 
         {/* Name */}
         <Input
-          label="Full Name"
-          name="name"
-          labelId="name"
-          placeholder="Enter full name"
-          value={formData.name}
+          label="First Name"
+          name="first_name"
+          labelId="first_name"
+          placeholder="Enter first name"
+          value={formData.first_name}
+          onChange={handleInputChange}
+        />
+        <Input
+          label="Last Name"
+          name="last_name"
+          labelId="last_name"
+          placeholder="Enter last name"
+          value={formData.last_name}
           onChange={handleInputChange}
         />
 
@@ -43,6 +51,16 @@ const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) 
           value={formData.phone}
           onChange={handleInputChange}
         />
+        {/* Mobile */}
+        <Input
+          label="Mobile"
+          type="tel"
+          name="mobile"
+          labelId="mobile"
+          placeholder="Enter mobile number"
+          value={formData.mobile}
+          onChange={handleInputChange}
+        />
 
         {/* Role */}
         <div className="row mb-4 align-items-center">
@@ -52,14 +70,16 @@ const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) 
           <div className="col-lg-8">
             <select
               className="form-select"
-              name="role"
-              value={formData.role}
+              name="role_id"
+              value={formData.role_id}
               onChange={handleInputChange}
             >
               <option value="">Select Role</option>
-              <option value="admin">Admin</option>
-              <option value="manager">Manager</option>
-              <option value="staff">Staff</option>
+              {roles.map((role) => (
+                <option key={role.role_id} value={role.role_id}>
+                  {role.role_name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -78,8 +98,8 @@ const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) 
             >
               <option value="">Select Department</option>
               {departments.map((dept) => (
-                <option key={dept.id} value={dept.id}>
-                  {dept.name}
+                <option key={dept.department_id} value={dept.department_id}>
+                  {dept.department_name}
                 </option>
               ))}
             </select>
@@ -100,8 +120,8 @@ const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) 
             >
               <option value="">Select Team</option>
               {teams.map((team) => (
-                <option key={team.id} value={team.id}>
-                  {team.name}
+                <option key={team.team_id} value={team.team_id}>
+                  {team.team_name}
                 </option>
               ))}
             </select>
@@ -126,13 +146,13 @@ const UsersEditContent = ({ formData, departments = [], teams = [], onChange }) 
           </div>
         </div>
 
-        {/* Notes */}
+        {/* Bio */}
         <Input
-          label="Notes"
-          name="notes"
-          labelId="notes"
-          placeholder="Enter notes"
-          value={formData.notes || ''}
+          label="Bio"
+          name="bio"
+          labelId="bio"
+          placeholder="Enter bio"
+          value={formData.bio || ''}
           onChange={handleInputChange}
         />
       </div>

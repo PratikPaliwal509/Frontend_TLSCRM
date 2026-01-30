@@ -52,15 +52,29 @@ const ProfileEdit = () => {
   };
 
   // 🔹 Handle avatar upload
-  const handleAvatarChange = (e) => {
+ const handleAvatarChange = async (e) => {
   const file = e.target.files[0];
-  if (file) {
-    setForm((prev) => ({
-      ...prev,
-      avatar: file,
-      avatar_url: URL.createObjectURL(file),
-    }));
-  }
+  if (!file) return;
+
+  // ⬇️ upload to cloudinary here
+  const data = new FormData();
+  data.append("file", file);
+  data.append("upload_preset", "task_attachments");
+    data.append("folder", "profile_avatars");
+  const res = await fetch(
+    "https://api.cloudinary.com/v1_1/dwghrvasx/image/upload",
+    {
+      method: "POST",
+      body: data,
+    }
+  );
+
+  const json = await res.json();
+
+  setForm((prev) => ({
+    ...prev,
+    avatar_url: json.secure_url, // ✅ final URL
+  }));
 };
 
   // 🔹 Save profile
@@ -71,31 +85,25 @@ const handleSave = async (e) => {
   const token = localStorage.getItem("token");
 
   try {
-    const formData = new FormData();
+    const payload = {
+      first_name: form.first_name,
+      last_name: form.last_name,
+      phone: form.phone,
+      mobile: form.mobile,
+      job_title: form.job_title,
+      bio: form.bio,
+      avatar_url: form.avatar_url, // ✅ Cloudinary URL
+    };
 
-    formData.append("first_name", form.first_name);
-    formData.append("last_name", form.last_name);
-
-    if (form.phone) formData.append("phone", form.phone);
-    if (form.gender) formData.append("gender", form.gender);
-    if (form.date_of_birth)
-      formData.append("date_of_birth", form.date_of_birth);
-
-    if (form.avatar) {
-      formData.append("avatar", form.avatar);
-    }
-
-    // 🔍 REAL debug
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
+    console.log("Updating profile payload:", payload);
 
     const res = await fetch("http://localhost:5000/api/users/mee", {
       method: "PUT",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: formData,
+      body: JSON.stringify(payload),
     });
 
     const json = await res.json();
@@ -110,6 +118,7 @@ const handleSave = async (e) => {
     setSaving(false);
   }
 };
+
 
 
   return (
@@ -172,6 +181,7 @@ const handleSave = async (e) => {
             value={form.email}
             onChange={handleChange}
             required
+             disabled
           />
         </div>
 

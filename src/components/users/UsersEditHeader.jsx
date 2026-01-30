@@ -10,8 +10,21 @@ const UsersEditHeader = ({ onUpdate, loading }) => {
         disabled={loading}
         onClick={onUpdate}
       >
-        <FiEdit2 size={16} className="me-2" />
-        Update User
+        {loading ? (
+          <>
+            <span
+              className="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            />
+            Updating...
+          </>
+        ) : (
+          <>
+            <FiEdit2 size={16} className="me-2" />
+            Update User
+          </>
+        )}
       </button>
 
       <button

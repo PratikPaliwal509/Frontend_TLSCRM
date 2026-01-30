@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fi'
 import Dropdown from '../shared/Dropdown'
 import Comments from '../Comments'
+import { toast } from 'react-toastify'
 
 const CommentCard = ({
     comment_id,
@@ -16,9 +17,11 @@ const CommentCard = ({
     like_count = 0,
     replies = [],
     task_id,
-    setComments
+    setComments,
+    portal_user_id
 }) => {
-
+    console.log('CommentCard props:', user)
+    console.log('portal_user_id:', portal_user_id)
     const [isEditing, setIsEditing] = useState(false)
     const [editText, setEditText] = useState(comment_text)
 
@@ -179,7 +182,7 @@ const CommentCard = ({
                     body: JSON.stringify({ comment_text: editText }),
                 }
             )
-
+            console.log('Edit response:', res)
             if (!res.ok) throw new Error('Failed to update comment')
 
             const result = await res.json()
@@ -197,12 +200,13 @@ const CommentCard = ({
                     return c
                 })
             }
-
+            toast.success("Comment updated successfully");
             setComments(prev => updateCommentRecursive(prev))
 
             setIsEditing(false)
         } catch (err) {
             console.error(err)
+            toast.error(err.message);
         }
     }
 
@@ -245,7 +249,7 @@ const CommentCard = ({
             {/* Avatar */}
             <div className="avatar-image me-3">
                 <img
-                    src={user?.avatar || '/images/avatar/1.png'}
+                    src={user?.avatar_url || '/images/avatar/1.png'}
                     className="img-fluid rounded-circle"
                     alt={user?.full_name}
                 />
@@ -300,10 +304,12 @@ const CommentCard = ({
                     )}
 
 
-                    <Dropdown
-                        dropdownItems={commentOptions}
-                        dropdownParentStyle="ms-2"
-                    />
+                    {portal_user_id === user.user_id && (
+                        <Dropdown
+                            dropdownItems={commentOptions}
+                            dropdownParentStyle="ms-2"
+                        />
+                    )}
                 </div>
 
                 {/* Actions */}

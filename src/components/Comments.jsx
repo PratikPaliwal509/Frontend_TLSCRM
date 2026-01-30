@@ -5,7 +5,8 @@ import CommentCard from './tasks/CommetCard'
 const COMMENTS_PER_LOAD = 5
 const REPLIES_PER_LOAD = 2
 
-const Comments = ({ comments, loading, setComments }) => {
+const Comments = ({ comments, loading, setComments, portal_user_id }) => {
+  console.log("portal_user_id in Comments:", portal_user_id)
   const [visibleComments, setVisibleComments] = useState(COMMENTS_PER_LOAD)
   const [visibleReplies, setVisibleReplies] = useState({})
   const [expandedReplies, setExpandedReplies] = useState({})
@@ -42,8 +43,7 @@ const Comments = ({ comments, loading, setComments }) => {
   /* ---------------- RENDER ---------------- */
   const renderCommentWithReplies = (comment, level = 0) => {
     const totalReplies = comment.replies?.length || 0
-    const repliesVisible =
-      visibleReplies[comment.comment_id] || REPLIES_PER_LOAD
+    const repliesVisible = visibleReplies[comment.comment_id] || REPLIES_PER_LOAD
 
     const hasMoreReplies = totalReplies > repliesVisible
     const canHideReplies = repliesVisible > REPLIES_PER_LOAD
@@ -52,7 +52,7 @@ const Comments = ({ comments, loading, setComments }) => {
       <Fragment key={comment.comment_id}>
         {/* Main Comment */}
         <div style={{ marginLeft: level * 20 }}>
-          <CommentCard {...comment} setComments={setComments} />
+          <CommentCard {...comment} setComments={setComments} portal_user_id={portal_user_id} />
         </div>
 
         {/* Replies */}
@@ -66,7 +66,7 @@ const Comments = ({ comments, loading, setComments }) => {
 
               return (
                 <div key={reply.comment_id} className="mb-1">
-                  <CommentCard {...reply} setComments={setComments} />
+                  <CommentCard {...reply} setComments={setComments} portal_user_id={portal_user_id}/>
 
                   {/* Show nested replies */}
                   {hasNestedReplies && !isExpanded && (

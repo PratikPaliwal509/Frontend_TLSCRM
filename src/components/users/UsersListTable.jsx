@@ -96,7 +96,7 @@ const UsersListTable = ({ users, loading }) => {
                                                 <button
                                                     className="btn btn-sm btn-outline-secondary"
                                                     onClick={() =>
-                                                        navigate(`/user/edit/${user.user_id}/edit`)
+                                                        navigate(`/user/edit/${user.user_id}`)
                                                     }
                                                 >
                                                     <FiEdit />

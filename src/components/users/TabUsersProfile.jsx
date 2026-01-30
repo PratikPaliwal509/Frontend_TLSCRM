@@ -120,7 +120,7 @@ const TabUserProfile = ({ user }) => {
             </span>
           </h5>
 
-          <a href={`/users/edit/${user.id}`} className="btn btn-sm btn-light-brand">
+          <a href={`/user/edit/${user.id}`} className="btn btn-sm btn-light-brand">
             Edit User
           </a>
         </div>

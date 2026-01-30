@@ -19,6 +19,7 @@ const actions = [
 const TaskContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [tasks, setTasks] = useState([])
+    const [user_id, setUser_id] = useState(null)
     const [selectedTask, setSelectedTask] = useState(null)
     const [activeFilter, setActiveFilter] = useState({
         type: 'status',
@@ -90,8 +91,20 @@ const TaskContent = () => {
                 : []
             setTasks(formattedTasks)
         }
+const getUserIdFromToken = () => {
+  const token = localStorage.getItem('token')
+  if (!token) return null
 
-        fetchTasks()
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    setUser_id(payload.user_id)
+    return payload.user_id
+  } catch (e) {
+    return null
+  }
+}
+fetchTasks()
+getUserIdFromToken()
     }, [])
 
     /* =========================
@@ -122,7 +135,7 @@ const TaskContent = () => {
             />
 
             <ToastProvider />
-            <TasksDetails task={selectedTask} />
+            <TasksDetails task={selectedTask} user_id={user_id} />
 
             <div className="content-area">
                 <PerfectScrollbar>

@@ -38,14 +38,17 @@ const TaskTimeLogDetails = ({ taskId, project_id }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
+        `http://localhost:5000/api/tasks/timelogs/active/${taskId}`,
+        // `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       )
 
       const result = await res.json()
-      setLog(result?.data?.[0] || null)
+
+      setLog(result || null)
+      // setLog(result?.data?.[0] || null)
     } catch (err) {
       console.error("Failed to fetch time log", err)
     } finally {

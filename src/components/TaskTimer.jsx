@@ -47,7 +47,8 @@ const TaskTimer = ({ taskId, project_id }) => {
       console.log("taskId"+taskId)
       try {
         const res = await fetch(
-          `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
+          `http://localhost:5000/api/tasks/timelogs/active/${taskId}`,
+          // `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
           {
             method: "GET",
             headers: {
@@ -60,9 +61,11 @@ const TaskTimer = ({ taskId, project_id }) => {
         if (!res.ok) return
 
         const result = await res.json()
-        const log = result?.data?.[0]
+        console.log("result"+JSON.stringify(result))
+        const log = result
+        // const log = result?.data?.[0]
         if (!log) return
-
+console.log("log"+JSON.stringify(log))
         // 🟢 ACTIVE TIMER
         if (log.start_time && !log.end_time) {
           const diff = Math.floor(
