@@ -137,7 +137,6 @@ const RolesCreate = () => {
                 alert(data.message || 'Failed to create role')
                 return
             }
-            console.log('Role created:', data)
             navigate(`/roles/list`)
         } catch (err) {
             console.error(err)

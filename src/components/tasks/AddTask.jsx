@@ -168,7 +168,6 @@ const AddTask = () => {
             const taskId = taskRes?.data?.task_id || taskRes?.task_id
 
             /* -------- Assign Users -------- */
-            console.log("formData.assignees.length" + formData.assignees.length)
             if (formData.assignees.length > 0) {
                 await fetch(`http://localhost:5000/api/tasks/${taskId}/assign`, {
                     method: 'POST',

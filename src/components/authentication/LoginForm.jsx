@@ -26,7 +26,6 @@ const LoginForm = ({ registerPath, resetPath }) => {
             })
 
             const data = await response.json()
-            console.log("User" + JSON.stringify(data))
             if (!response.ok) {
                 toast.error(data.message || 'Invalid credentials')
                 return
@@ -58,7 +57,6 @@ const LoginForm = ({ registerPath, resetPath }) => {
                 permissions: user.permissions || {}
             }
 
-            console.log("SafeUser" + JSON.stringify(safeUser))
             // ✅ Store in localStorage
             localStorage.setItem('token', token)
             localStorage.setItem('user', JSON.stringify(safeUser))

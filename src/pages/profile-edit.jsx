@@ -21,7 +21,6 @@ const ProfileEdit = () => {
         });
         const json = await res.json();
          const data = json.data;
-          console.log("Fetched user data:", JSON.stringify(data));
         if (json.success ) {
           setUser(data);
           setForm({
@@ -94,8 +93,6 @@ const handleSave = async (e) => {
       bio: form.bio,
       avatar_url: form.avatar_url, // ✅ Cloudinary URL
     };
-
-    console.log("Updating profile payload:", payload);
 
     const res = await fetch("http://localhost:5000/api/users/mee", {
       method: "PUT",

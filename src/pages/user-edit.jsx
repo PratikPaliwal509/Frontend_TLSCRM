@@ -76,9 +76,7 @@ const UserEditPage = () => {
         })
         if (!rolesRes.ok) throw new Error('Failed to fetch roles')
         const rolesData = await rolesRes.json()
-        console.log("rolesData:", rolesData)
-        
-        console.log("userData:", userData)
+
         // Set states
         setFormData({
           first_name: userData.data.first_name ?? '',
@@ -127,7 +125,6 @@ const UserEditPage = () => {
         },
         body: JSON.stringify(cleanPayload),
       })
-      console.log("res", res)
       if (!res.ok) throw new Error('Failed to update user')
       //   topTost('User updated successfully')
       navigate(`/user/view/${id}`)

@@ -47,7 +47,6 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
     }, [defaultSelect, options])
 
     const handleChange = (option) => {
-        console.log('handleChange called with:', option)
         
         // Handle both cases: option object or just the value string
         let selectedValue = option
@@ -59,11 +58,9 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
         }
         
         if (!selectedValue) {
-            console.log('Value is missing, returning')
             return
         }
 
-        console.log('Creating toast confirmation for:', selectedValue)
         const toastId = toast(
             <div>
                 <div>
@@ -85,8 +82,6 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
                                 const projectId = row.raw.project_id || row.raw.id
                                 const url = `http://localhost:5000/api/projects/${projectId}/status`
                                 const payload = { status: selectedValue }
-                                
-                                console.log('Updating status:', { projectId, url, payload })
 
                                 const res = await fetch(url, {
                                     method: 'PATCH',
@@ -98,7 +93,6 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
                                 })
 
                                 const data = await res.json()
-                                console.log('Status update response:', { status: res.status, data })
 
                                 if (data.success) {
                                     setSelectedOption({ label: selectedLabel, value: selectedValue })

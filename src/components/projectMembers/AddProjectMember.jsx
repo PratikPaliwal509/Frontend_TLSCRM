@@ -33,7 +33,6 @@ const AddProjectMember = () => {
         if (!res.ok) throw new Error("Failed to fetch projects");
 
         const data = await res.json();
-        console.log(data);
         setProjects(data.data);
       } catch (err) {
         console.error(err);
@@ -103,7 +102,6 @@ const AddProjectMember = () => {
     setError("");
 
     try {
-      console.log("roleInProject" + roleInProject, hourlyRate)
       const res = await fetch(
         `http://localhost:5000/api/projects/${projectId}/members`,
         {

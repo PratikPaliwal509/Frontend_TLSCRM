@@ -5,7 +5,6 @@ import Select from 'react-select'
 const ClientsCreateContent = ({ formData, agencies = [], users = [], onChange }) => {
     const [sameEmail, setSameEmail] = useState(false)
     const [sameAddress, setSameAddress] = useState(false)
-console.log("users in content:", JSON.stringify(users));
     const brandColorOptions = [
         { value: '#FF5733', label: 'Red Orange' },
         { value: '#1E90FF', label: 'Dodger Blue' },

@@ -23,7 +23,6 @@ const GeneralCard = ({ title, icon, text }) => (
 )
 
 const TabClientsProfile = ({ client }) => {
-  console.log("client"+JSON.stringify(client))
   if (!client) return null
 
   /* -------- Lead Info (Left Section) -------- */

@@ -29,7 +29,6 @@ const ProfileModal = () => {
         });
 
         const json = await res.json();
-        console.log("user data", JSON.stringify(json));
         if (res.ok && json.success) {
           setUser(json.data); // ✅ SINGLE OBJECT
         } else {

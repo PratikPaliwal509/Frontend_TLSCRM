@@ -69,7 +69,6 @@ const TeamEdit = () => {
       )
       const data = await res.json()
       const team = data.data
-      console.log('Fetched team:', team)
       setFormData({
         team_name: team.team_name,
         description: team.description || '',

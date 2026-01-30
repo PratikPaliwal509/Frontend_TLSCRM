@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
-  console.log("taskCreatedBy" + taskCreatedBy, taskId)
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [attachments, setAttachments] = useState([]);
@@ -17,7 +16,6 @@ const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
             },
           });
           const data = await res.json();
-          // console.log("attachments" + JSON.stringify(data))
           setAttachments(data.data || []);
 
         } catch (err) {
@@ -82,7 +80,6 @@ const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
         }
       );
       const savedAttachment = await backendRes.json();
-      console.log("attachmnets" + JSON.stringify(savedAttachment))
       setAttachments((prev) => [...prev, savedAttachment.data]); // update list
       setFile(null);
     } catch (err) {
@@ -124,7 +121,6 @@ const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
       )
 
       // topTost('Attachment deleted successfully', 'success')
-      console.log('Attachment deleted successfully')
     } catch (error) {
       console.error(error)
       // topTost(error.message || 'Something went wrong', 'error')

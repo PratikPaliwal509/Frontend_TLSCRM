@@ -6,7 +6,6 @@ const UsersEditContent = ({ formData, departments = [], teams = [], roles=[], on
     const { name, value } = e.target
     onChange(name, value)
   }
-console.log("departments in UsersEditContent:", formData, departments, teams, roles)
   return (
     <div className="col-12">
       <div className="card p-4">

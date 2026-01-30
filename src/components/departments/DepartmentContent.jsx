@@ -10,9 +10,6 @@ const DepartmentContent = ({
     SetIs_sub_department,
     is_sub_department
 }) => {
-    console.log('Departments List:', departments);
-    console.log('formData List:', formData);
-    console.log('is_sub_department:', is_sub_department);
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target
         onChange(name, type === 'checkbox' ? checked : value)

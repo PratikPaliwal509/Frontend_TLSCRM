@@ -38,8 +38,6 @@ const detailsMoreOptions = [
 
 
 const TasksDetails = ({ task, user_id }) => {
-    console.log("user_id in task details:", user_id)
-    console.log("task received in details:", task)
     const { canRemoveAssignee } = useVerifyRole()
     const [value, setValue] = useState('');
     const [assigningUserId, setAssigningUserId] = useState(null)
@@ -65,7 +63,6 @@ const TasksDetails = ({ task, user_id }) => {
     const [assignees, setAssignees] = useState([])
     const [loadingUsers, setLoadingUsers] = useState(false)
     const token = localStorage.getItem("token")
-    console.log("task in details:", task)
     const assignedUserIds = Array.isArray(task?.assigned_to)
         ? task.assigned_to.map((u) =>
             typeof u === 'object' ? u.user_id : u
@@ -218,8 +215,6 @@ const TasksDetails = ({ task, user_id }) => {
             )
 
             if (!res.ok) throw new Error()
-            console.log('User to be assigned:', user)
-            console.log("response:", JSON.stringify(res))
             setAssignees(prev => [
                 ...prev,
                 {

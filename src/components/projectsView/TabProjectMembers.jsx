@@ -9,7 +9,6 @@ const TabProjectMembers = ({ project }) => {
     const token = localStorage.getItem('token')
     const decoded = token ? jwtDecode(token) : null
     const userId = decoded?.user_id
-    console.log(JSON.stringify(members))
     const handleLeaveProject = async (projectId) => {
         if (!window.confirm('Are you sure you want to leave this project?')) return
 

@@ -5,6 +5,7 @@ import UsersViewHeader from '../components/users/UsersViewHeader'
 import UsersViewContent from '@/components/users/UsersViewContent'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import UsersViewTabs from '@/components/users/UsersViewTabs'
+import { toast } from 'react-toastify'
 
 const UsersView = () => {
     const { id } = useParams()
@@ -33,10 +34,10 @@ const UsersView = () => {
                 })
 
                 const data = await res.json()
-                console.log("Fetched user data:", data)
                 setUser(data.data)
             } catch (error) {
                 console.error('Failed to load user', error)
+                toast.error('Failed to load user')
             } finally {
                 setLoading(false)
             }

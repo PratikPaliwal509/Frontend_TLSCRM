@@ -24,7 +24,6 @@ const TabSubDepartments = ({ departmentId }) => {
                     }
                 )
                 const data = await response.json()
-                console.log("subdepartments" + JSON.stringify(data.data))
                 setSubDepartments(data.data || [])
             } catch (error) {
                 console.error('Fetch sub-departments error:', error)

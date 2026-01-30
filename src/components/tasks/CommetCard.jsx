@@ -20,12 +20,9 @@ const CommentCard = ({
     setComments,
     portal_user_id
 }) => {
-    console.log('CommentCard props:', user)
-    console.log('portal_user_id:', portal_user_id)
     const [isEditing, setIsEditing] = useState(false)
     const [editText, setEditText] = useState(comment_text)
 
-    // console.log('Rendering CommentCard:', comment_id, comment_text, replies)
     /* =========================
        DROPDOWN OPTIONS
     ========================== */
@@ -182,7 +179,6 @@ const CommentCard = ({
                     body: JSON.stringify({ comment_text: editText }),
                 }
             )
-            console.log('Edit response:', res)
             if (!res.ok) throw new Error('Failed to update comment')
 
             const result = await res.json()

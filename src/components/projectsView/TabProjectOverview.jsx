@@ -16,7 +16,6 @@ const TabProjectOverview = ({ project }) => {
     user_name: m.user?.full_name,
     user_img: m.user?.avatar || '/images/avatar/default.png'
   }))
-  console.log("members" + JSON.stringify(members))
   return (
     <div className="tab-pane fade show active" id="overviewTab">
       <div className="row">

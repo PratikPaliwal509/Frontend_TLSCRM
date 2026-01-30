@@ -9,8 +9,6 @@ const TaskTimer = ({ taskId, project_id }) => {
 
   const intervalRef = useRef(null)
 
-  console.log("project_id"+project_id)
-
   const startLocalTimer = (initialSeconds = 0) => {
     stopLocalTimer() // ✅ force cleanup
 
@@ -44,7 +42,6 @@ const TaskTimer = ({ taskId, project_id }) => {
     const token = localStorage.getItem("token")
 
     const fetchActiveLog = async () => {
-      console.log("taskId"+taskId)
       try {
         const res = await fetch(
           `http://localhost:5000/api/tasks/timelogs/active/${taskId}`,
@@ -61,11 +58,9 @@ const TaskTimer = ({ taskId, project_id }) => {
         if (!res.ok) return
 
         const result = await res.json()
-        console.log("result"+JSON.stringify(result))
         const log = result
         // const log = result?.data?.[0]
         if (!log) return
-console.log("log"+JSON.stringify(log))
         // 🟢 ACTIVE TIMER
         if (log.start_time && !log.end_time) {
           const diff = Math.floor(
@@ -111,9 +106,6 @@ console.log("log"+JSON.stringify(log))
     })
 
     const data = await res.json()
-    console.log("dataa" + JSON.stringify(data))
-    console.log("data id" + JSON.stringify(data.id))
-    console.log("data logid" + JSON.stringify(data.log_id))
     setLogId(data.log_id)
     startLocalTimer(0)
   }

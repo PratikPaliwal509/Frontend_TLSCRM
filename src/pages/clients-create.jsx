@@ -140,7 +140,6 @@ const ClientsCreate = () => {
                     status: type === 'draft' ? 'inactive' : 'active',
                 }),
             })
-            console.log("formdata" + JSON.stringify(formData))
             setFormData({
                 agency_id: '',
                 portal_user_id: '',

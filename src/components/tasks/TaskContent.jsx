@@ -267,7 +267,6 @@ const List = ({
                                     className="dropdown-item"
                                     onClick={(e) => {
                                         e.stopPropagation()
-                                        console.log('Edit Task', task.id)
                                     }}
                                 >
                                     Edit Task

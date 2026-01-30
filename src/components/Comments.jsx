@@ -6,7 +6,6 @@ const COMMENTS_PER_LOAD = 5
 const REPLIES_PER_LOAD = 2
 
 const Comments = ({ comments, loading, setComments, portal_user_id }) => {
-  console.log("portal_user_id in Comments:", portal_user_id)
   const [visibleComments, setVisibleComments] = useState(COMMENTS_PER_LOAD)
   const [visibleReplies, setVisibleReplies] = useState({})
   const [expandedReplies, setExpandedReplies] = useState({})
