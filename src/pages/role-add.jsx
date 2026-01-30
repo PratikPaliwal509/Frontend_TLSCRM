@@ -4,6 +4,7 @@ import RolesCreateHeader from '@/components/Roles/RolesCreateHeader'
 import RolesCreateContent from '@/components/Roles/RolesCreateContent'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import { toast } from 'react-toastify'
 
 /* ============================
    VIEW SCOPES CONFIG
@@ -113,7 +114,7 @@ const RolesCreate = () => {
     ============================ */
     const handleSubmit = async () => {
         if (!formData.role_name.trim()) {
-            alert('Role Name is required')
+            toast.error('Role Name is required')
             return
         }
 

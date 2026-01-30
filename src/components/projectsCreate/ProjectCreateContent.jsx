@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import TabProjectType from './TabProjectType'
 import TabProjectDetails from './TabProjectDetails';
-import TabProjectSettings from './TabProjectSettings';
+// import TabProjectSettings from './TabProjectSettings';
 import TabProjectBudget from './TabProjectBudget';
 import TabProjectAssigned from './TabProjectAssigned';
 import TabProjectTarget from './TabProjectTarget';
-import TabAttachement from './TabAttachement';
+// import TabAttachement from './TabAttachement';
 import TabCompleted from './TabCompleted';
 
 const steps = [

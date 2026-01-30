@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const AddProjectMember = () => {
   const [projects, setProjects] = useState([]);
@@ -8,12 +9,16 @@ const AddProjectMember = () => {
   const [roleInProject, setRoleInProject] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [projectsLoading, setProjectsLoading] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(false);
+
   const [error, setError] = useState("");
   const token = localStorage.getItem("token");
 
   // 1️⃣ Fetch managed projects
   useEffect(() => {
     const fetchProjects = async () => {
+      setProjectsLoading(true);
       try {
         const res = await fetch(
           // "http://localhost:5000/api/projects/managed",
@@ -34,6 +39,9 @@ const AddProjectMember = () => {
         console.error(err);
         setError("Failed to load projects");
       }
+      finally {
+        setProjectsLoading(false);
+      }
     };
 
     fetchProjects();
@@ -44,6 +52,8 @@ const AddProjectMember = () => {
     if (!projectId) return;
 
     const fetchUsers = async () => {
+
+      setUsersLoading(true);
       try {
         const res = await fetch(
           `http://localhost:5000/api/projects/${projectId}/users`,
@@ -62,10 +72,25 @@ const AddProjectMember = () => {
         console.error(err);
         setError("Failed to load users");
       }
+      finally {
+        setUsersLoading(false);
+      }
     };
 
     fetchUsers();
   }, [projectId]);
+  const parseApiError = async (res) => {
+  const contentType = res.headers.get('content-type')
+
+  if (contentType && contentType.includes('application/json')) {
+    const json = await res.json()
+    return json.message || 'Something went wrong'
+  }
+
+  const text = await res.text()
+  return text || 'Something went wrong'
+}
+
 
   // 3️⃣ Add project member
   const handleAddMember = async () => {
@@ -78,7 +103,7 @@ const AddProjectMember = () => {
     setError("");
 
     try {
-      console.log("roleInProject"+roleInProject, hourlyRate)
+      console.log("roleInProject" + roleInProject, hourlyRate)
       const res = await fetch(
         `http://localhost:5000/api/projects/${projectId}/members`,
         {
@@ -96,12 +121,12 @@ const AddProjectMember = () => {
       );
 
       if (!res.ok) {
-        const errRes = await res.json();
-        throw new Error(errRes.message || "Failed to add member");
+        const message = await parseApiError(res);
+        throw new Error(message);
       }
 
       await res.json();
-      alert("Member added successfully");
+      toast.success("Member added successfully");
 
       // Reset form
       setUserId("");
@@ -130,8 +155,10 @@ const AddProjectMember = () => {
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
           >
-            <option value="">Select Project</option>
-            {projects.map((p) => (
+            <option value="">
+              {projectsLoading ? "Loading projects…" : "Select Project"}
+            </option>
+            {!projectsLoading && projects.map((p) => (
               <option key={p.project_id} value={p.project_id}>
                 {p.project_name}
               </option>
@@ -148,8 +175,10 @@ const AddProjectMember = () => {
             onChange={(e) => setUserId(e.target.value)}
             disabled={!projectId}
           >
-            <option value="">Select User</option>
-            {users.map((u) => (
+            <option value="">
+              {usersLoading ? "Loading users…" : "Select User"}
+            </option>
+            {!usersLoading && users.map((u) => (
               <option key={u.user_id} value={u.user_id}>
                 {u.full_name || u.email}
               </option>

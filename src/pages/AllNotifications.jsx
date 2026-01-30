@@ -3,10 +3,14 @@ import React, { useEffect, useState } from "react";
 const AllNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const token = localStorage.getItem("token");
 
   const fetchNotifications = async () => {
     try {
+      setLoading(true);
+
       const res = await fetch("http://localhost:5000/api/notification", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -14,6 +18,9 @@ const AllNotifications = () => {
       if (json.success) setNotifications(json.data);
     } catch (err) {
       console.error(err);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -43,7 +50,15 @@ const AllNotifications = () => {
     <div className="container py-4">
       <h4 className="fw-bold mb-4">All Notifications</h4>
 
-      {notifications.length === 0 && (
+      {loading && (
+        <div className="d-flex justify-content-center py-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
+
+      {!loading &&notifications.length === 0 && (
         <p className="text-muted">No notifications available.</p>
       )}
 

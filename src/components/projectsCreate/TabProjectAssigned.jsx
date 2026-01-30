@@ -1,9 +1,9 @@
 
 import React, { useEffect, useState } from 'react'
-
+import { toast } from 'react-toastify'
 const TabProjectAssigned = ({ formData = {}, setFormData, error }) => {
   const [managers, setManagers] = useState([])
-
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     if (!formData.agency_id) {
       setManagers([])
@@ -11,9 +11,10 @@ const TabProjectAssigned = ({ formData = {}, setFormData, error }) => {
     }
 
     const token = localStorage.getItem('token')
-
+    setLoading(true)
     fetch(
-      `http://localhost:5000/api/users/users/by-agency`,
+      `http://localhost:5000/api/users/user`,
+      // `http://localhost:5000/api/users/users/by-agency`,
       // `http://localhost:5000/api/users/managers/${Number(formData.agency_id)}`,
       // fetch(
       //   `http://localhost:5000/api/users/by-agency?agency_id=${Number(
@@ -33,6 +34,11 @@ const TabProjectAssigned = ({ formData = {}, setFormData, error }) => {
       .catch(err => {
         console.error(err)
         setManagers([])
+         toast.error(
+          err?.message || 'Unable to fetch project managers'
+        )
+      }).finally(() => {
+        setLoading(false)
       })
   }, [formData.agency_id]) // ✅ IMPORTANT
 
@@ -53,15 +59,20 @@ const TabProjectAssigned = ({ formData = {}, setFormData, error }) => {
         }
       >
         {/* ✅ Placeholder */}
-        <option value="">Select Manager</option>
+        <option value="">
+          {loading ? 'Loading managers…' : 'Select Manager'}
+        </option>
 
-        {managers.length > 0 ? (
+
+        {!loading && managers.length > 0 &&
           managers.map((m) => (
             <option key={m.user_id} value={m.user_id}>
-              {m.first_name}
+              {m.full_name}
             </option>
-          ))
-        ) : (
+          ))}
+
+
+        {!loading && managers.length === 0 && (
           <option disabled value="">
             No users available
           </option>

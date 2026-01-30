@@ -18,6 +18,7 @@ const UsersCreate = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
+        confirm_password: '',
         role_id: '',
         department_id: '',
         team_id: '',
@@ -25,6 +26,10 @@ const UsersCreate = () => {
         agency_id: 2,
         first_name: '',
         last_name: '',
+        bio: '',
+        date_of_joining: '',
+        hourly_rate: '',
+        job_title: ''
     })
 
     /* ================= PERMISSION ================= */
@@ -94,13 +99,58 @@ const UsersCreate = () => {
         setFormData(prev => ({ ...prev, [name]: value }))
     }
 
+    const validateForm = () => {
+        if (!formData.first_name.trim()) {
+            toast.error('First name is required')
+            return false
+        }
+
+        if (!formData.last_name.trim()) {
+            toast.error('Last name is required')
+            return false
+        }
+
+        if (!formData.email.trim()) {
+            toast.error('Email is required')
+            return false
+        }
+
+        if (!formData.role_id) {
+            toast.error('Role is required')
+            return false
+        }
+
+        if (!formData.password) {
+            toast.error('Password is required')
+            return false
+        }
+
+        if (formData.password.length < 6) {
+            toast.error('Password must be at least 6 characters')
+            return false
+        }
+
+        if (!formData.confirm_password) {
+            toast.error('Confirm password is required')
+            return false
+        }
+
+        if (formData.password !== formData.confirm_password) {
+            toast.error('Passwords do not match')
+            return false
+        }
+
+        return true
+    }
+
     /* ================= SUBMIT ================= */
     const handleSubmit = async (type = 'create') => {
+        if (!validateForm()) return
         try {
             setLoading(true)
             const token = localStorage.getItem('token')
 
-            await fetch('http://localhost:5000/api/users/users', {
+            const res = await fetch('http://localhost:5000/api/users/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,9 +162,18 @@ const UsersCreate = () => {
                     // status: type === 'draft' ? 'inactive' : 'active',
                 }),
             })
+            const data = await res.json()
+
+            if (!res.ok) {
+                toast.error(data.message || 'Failed to create user')
+                return
+            }
+
+            toast.success('User created successfully')
             setFormData({
                 email: '',
                 password: '',
+                confirm_password: '',
                 role_id: '',
                 department_id: '',
                 team_id: '',
@@ -122,11 +181,14 @@ const UsersCreate = () => {
                 agency_id: 2,
                 first_name: '',
                 last_name: '',
+                bio: '',
+                date_of_joining: '',
+                hourly_rate: '',
+                job_title: ''
             })
-            //   toast.success('User created successfully')
             // navigate('/users')
         } catch (err) {
-            toast.error('Failed to create user')
+            toast.error('Server error while creating user')
             console.error(err)
         } finally {
 
@@ -153,7 +215,7 @@ const UsersCreate = () => {
                     onChange={handleChange}
                 />
             </div>
-            <Footer/>
+            <Footer />
         </>
     )
 }

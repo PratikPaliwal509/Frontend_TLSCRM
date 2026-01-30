@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { FiSave, FiUser, FiMail, FiPhone, FiBriefcase } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ProfileEdit = () => {
   const [user, setUser] = useState(null);
   const [form, setForm] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const token = localStorage.getItem("token");
+
   const navigate = useNavigate();
 
   // 🔹 Fetch user data
   useEffect(() => {
     const fetchUser = async () => {
+        const token = localStorage.getItem("token");
       try {
-        const res = await fetch("http://localhost:5000/api/users/users/by-agency", {
+        const res = await fetch("http://localhost:5000/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
-        if (json.success && Array.isArray(json.data)) {
-          const data = json.data[0];
+         const data = json.data;
+          console.log("Fetched user data:", JSON.stringify(data));
+        if (json.success ) {
           setUser(data);
           setForm({
             first_name: data.first_name || "",
@@ -38,8 +41,8 @@ const ProfileEdit = () => {
         setLoading(false);
       }
     };
-    if (token) fetchUser();
-  }, [token]);
+    fetchUser();
+  }, []);
 
   if (loading) return <div className="container py-5">Loading...</div>;
 
@@ -50,47 +53,64 @@ const ProfileEdit = () => {
 
   // 🔹 Handle avatar upload
   const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setForm({ ...form, avatar_file: file });
-      setForm({ ...form, avatar_url: URL.createObjectURL(file) });
-    }
-  };
+  const file = e.target.files[0];
+  if (file) {
+    setForm((prev) => ({
+      ...prev,
+      avatar: file,
+      avatar_url: URL.createObjectURL(file),
+    }));
+  }
+};
 
   // 🔹 Save profile
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      const formData = new FormData();
-      Object.keys(form).forEach((key) => {
-        if (key === "avatar_file") {
-          formData.append("avatar", form.avatar_file);
-        } else {
-          formData.append(key, form[key]);
-        }
-      });
+const handleSave = async (e) => {
+  e.preventDefault();
+  setSaving(true);
 
-      const res = await fetch(`http://localhost:5000/api/users/me`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+  const token = localStorage.getItem("token");
 
-      const json = await res.json();
-      if (res.ok) {
-        alert("Profile updated successfully!");
-        navigate("/profile");
-      } else {
-        alert(json.message || "Failed to update profile");
-      }
-    } catch (err) {
-      console.error("Save failed", err);
-      alert("Error saving profile");
-    } finally {
-      setSaving(false);
+  try {
+    const formData = new FormData();
+
+    formData.append("first_name", form.first_name);
+    formData.append("last_name", form.last_name);
+
+    if (form.phone) formData.append("phone", form.phone);
+    if (form.gender) formData.append("gender", form.gender);
+    if (form.date_of_birth)
+      formData.append("date_of_birth", form.date_of_birth);
+
+    if (form.avatar) {
+      formData.append("avatar", form.avatar);
     }
-  };
+
+    // 🔍 REAL debug
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
+    const res = await fetch("http://localhost:5000/api/users/mee", {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) throw new Error(json.message);
+
+    toast.success("Profile updated successfully");
+    navigate("/profile");
+  } catch (err) {
+    toast.error(err.message);
+  } finally {
+    setSaving(false);
+  }
+};
+
 
   return (
     <div className="container py-4">

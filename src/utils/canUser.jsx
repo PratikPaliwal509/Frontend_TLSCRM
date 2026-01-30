@@ -1,38 +1,43 @@
-// src/utils/canUser.js
-
 export const canUser = async (moduleKey, action) => {
   try {
-    const token = localStorage.getItem('token')
-    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
 
     // ❌ Not authenticated
-    if (!token || !user?.user_id || !user?.role_id) return false
+    if (!token || !user?.user_id || !user?.role_id) return false;
 
     // ❌ Inactive user
-    if (user.is_active === false) return false
+    if (user.is_active === false) return false;
 
     // 🔹 Fetch role using role_id
     const response = await fetch(
-      `${import.meta.env.VITE_TLS_CRM_API_URL}/roles/${user.role_id}`,
+      `http://localhost:5000/api/roles/${user.role_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
-    )
+    );
 
-    if (!response.ok) return false
+    if (!response.ok) return false;
 
-    const result = await response.json()
-    const permissions = result?.data?.permissions || {}
+    const result = await response.json();
+    const permissions = result?.data?.permissions || {};
 
     // ❌ Module not found
-    if (!permissions[moduleKey]) return false
+    if (!permissions[moduleKey]) return false;
 
-    // ❌ Action not allowed
-    return permissions[moduleKey].includes(action)
+    // 🔹 Action check
+    const modulePermissions = permissions[moduleKey];
+
+    // Some actions might be boolean (true/false) or "all"
+    if (modulePermissions[action] === true || modulePermissions[action] === 'all') {
+      return true;
+    }
+
+    return false;
   } catch (error) {
-    console.error('canUser error:', error)
-    return false
+    console.error('canUser error:', error);
+    return false;
   }
-}
+};

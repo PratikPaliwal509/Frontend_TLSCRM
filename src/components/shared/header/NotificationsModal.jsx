@@ -103,7 +103,7 @@ const handleMarkAllAsRead = async () => {
         {notifications.slice(0, 3).map(notification => (
           <div
             key={notification.notification_id}
-            className={`notification-item d-flex align-items-start gap-3 px-3 py-2 ${!notification.is_read ? "unread" : "read"
+            className={`notification-item d-flex align-items-start  px-3  ${!notification.is_read ? "unread" : "read"
               }`}
           >
             {/* Left dot indicator */}

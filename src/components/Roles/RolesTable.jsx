@@ -10,7 +10,7 @@ import {
 } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 import { canUser } from '@/utils/canUser'
-
+import { toast } from 'react-toastify';
 /* ---------------- TYPE BADGE ---------------- */
 
 const RoleTypeBadge = memo(({ isSystem }) =>
@@ -51,23 +51,37 @@ const RolesTable = () => {
     }
 
     const handleDeleteRole = async role => {
-        if (!canUser('roles', 'delete')) {
-            alert('No permission')
-            return
+        try {
+            if (!canUser('roles', 'delete')) {
+                toast.error('You do not have permission to delete roles.');
+                return
+            }
+
+            if (!window.confirm('Delete this role?')) return
+
+            const token = localStorage.getItem('token')
+
+            const response = await fetch(`http://localhost:5000/api/roles/${role.role_id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+            })
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Handle backend errors
+                toast.error(data?.message || 'Failed to delete role. Please try again.');
+                return;
+            }
+            // Update UI and show success
+            setRoles(prev => prev.filter(r => r.role_id !== role.role_id));
+            toast.success(`Role "${role.role_name}" deleted successfully!`);
+
+        } catch (err) {
+            console.error('Delete role error:', err);
+            toast.error(err?.message || 'Something went wrong while deleting the role.');
         }
-
-        if (!window.confirm('Delete this role?')) return
-
-        const token = localStorage.getItem('token')
-
-        await fetch(`http://localhost:5000/api/roles/${role.role_id}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-        })
-
-        setRoles(prev => prev.filter(r => r.role_id !== role.role_id))
     }
-
     const columns = [
         {
             accessorKey: 'role_name',

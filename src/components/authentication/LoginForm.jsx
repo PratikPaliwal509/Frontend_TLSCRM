@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { FiFacebook, FiGithub, FiTwitter } from 'react-icons/fi'
 import { Link, useNavigate } from 'react-router-dom'
 import Loader from '../loader'
+import { toast } from 'react-toastify'
+
 const LoginForm = ({ registerPath, resetPath }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -9,7 +11,8 @@ const LoginForm = ({ registerPath, resetPath }) => {
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const navigate = useNavigate()
-    const handleSubmit = async (e) => { 
+    
+    const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         setError('')
@@ -23,9 +26,9 @@ const LoginForm = ({ registerPath, resetPath }) => {
             })
 
             const data = await response.json()
-console.log("User"+JSON.stringify(data))
+            console.log("User" + JSON.stringify(data))
             if (!response.ok) {
-                setError(data.message || 'Login failed')
+                toast.error(data.message || 'Invalid credentials')
                 return
             }
 
@@ -55,15 +58,17 @@ console.log("User"+JSON.stringify(data))
                 permissions: user.permissions || {}
             }
 
-            console.log("SafeUser"+JSON.stringify(safeUser))
+            console.log("SafeUser" + JSON.stringify(safeUser))
             // ✅ Store in localStorage
             localStorage.setItem('token', token)
             localStorage.setItem('user', JSON.stringify(safeUser))
 
             setSuccess('Login successful!')
+            toast.success('Login successful!')
 
             navigate('/')
         } catch (err) {
+            toast.error('Server error. Please try again.')
             setError('Something went wrong. Please try again.')
             console.error(err)
         } finally {
@@ -98,7 +103,18 @@ console.log("User"+JSON.stringify(data))
                     </div>
                 </div>
                 <div className="mt-5">
-                    <button type="submit" className="btn btn-lg btn-primary w-100">Login</button>
+                    <button type="submit" className="btn btn-lg btn-primary w-100"> {loading ? (
+                        <>
+                            <span
+                                className="spinner-border spinner-border-sm me-2"
+                                role="status"
+                                aria-hidden="true"
+                            />
+                            Logging in...
+                        </>
+                    ) : (
+                        'Login'
+                    )}</button>
                 </div>
             </form>
             <div className="w-100 mt-5 text-center mx-auto">

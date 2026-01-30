@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/shared/pageHeader/PageHeader';
 import RolesViewHeader from '@/components/Roles/RolesViewHeader';
 import RolesViewContent from '@/components/Roles/RolesViewContent';
-import RolesViewTab from '@/components/Roles/RolesViewTab';
+// import RolesViewTab from '@/components/Roles/RolesViewTab';
 import { verifyPagePermission } from '@/utils/verifyPagePermission';
 
 const RoleView = () => {

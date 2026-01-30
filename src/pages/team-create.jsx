@@ -5,7 +5,7 @@ import TeamHeader from '../components/teams/TeamHeader'
 import TeamContent from '@/components/teams/TeamContent'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import Footer from '@/components/shared/Footer'
-
+import { toast } from 'react-toastify'
 const TeamCreate = () => {
   const navigate = useNavigate()
 
@@ -85,6 +85,11 @@ const TeamCreate = () => {
   /* ================= CREATE TEAM ================= */
   const handleSubmit = async () => {
     try {
+      if (!formData.team_name.trim()) {
+        toast.error('Team name is required')
+        return
+      }
+
       setLoading(true)
       const token = localStorage.getItem('token')
 
@@ -108,13 +113,31 @@ const TeamCreate = () => {
         body: JSON.stringify(payload),
       })
 
-      if (!res.ok) throw await res.json()
+      if (!res.ok) {
+        const text = await res.text()
+        let message = 'Something went wrong'
+
+        try {
+          const json = JSON.parse(text)
+          message = json.message || message
+        } catch {
+          message = text
+        }
+
+        console.error('Create Team API Error:', {
+          status: res.status,
+          body: text,
+        })
+
+        toast.error(message)
+        return
+      }
       const data = await res.json()
       const teamId = data.data.team_id
 
       // 2️⃣ Add members
       if (selectedMembers.length) {
-        await fetch(`http://localhost:5000/api/teams/${teamId}/members`, {
+        const membersRes = await fetch(`http://localhost:5000/api/teams/${teamId}/members`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -122,11 +145,27 @@ const TeamCreate = () => {
           },
           body: JSON.stringify({ user_ids: selectedMembers }),
         })
-      }
+        if (!membersRes.ok) {
+          const errorData = await parseError(membersRes)
 
+          console.error('Add Team Members Error:', {
+            teamId,
+            errorData,
+          })
+
+          toast.warning(
+            'Team created, but failed to add some members'
+          )
+        }
+
+      }
+      toast.success('Team created successfully!')
       navigate(`/teams/view/${teamId}`)
     } catch (err) {
       console.error('Create team error:', err)
+      toast.error(
+        err?.message || 'Unexpected error occurred while creating team'
+      )
     } finally {
       setLoading(false)
     }
@@ -204,7 +243,7 @@ const TeamCreate = () => {
 
         </div>
       </div>
-        <Footer />
+      <Footer />
     </>
   )
 }

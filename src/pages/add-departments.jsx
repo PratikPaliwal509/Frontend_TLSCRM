@@ -4,6 +4,7 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import DepartmentContent from '@/components/departments/DepartmentContent'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import DepartmentCreateHeader from '@/components/departments/DepartmentCreateHeader'
+import { toast } from 'react-toastify'
 
 const AddDepartment = () => {
   const navigate = useNavigate()
@@ -11,7 +12,7 @@ const AddDepartment = () => {
   const [users, setUsers] = useState([])
   const [departments, setDepartments] = useState([])
 
-    const [is_sub_department, SetIs_sub_department] = useState(false)
+  const [is_sub_department, SetIs_sub_department] = useState(false)
   const [formData, setFormData] = useState({
     department_name: '',
     department_code: '',
@@ -75,6 +76,10 @@ const AddDepartment = () => {
   /* ================= CREATE DEPARTMENT ================= */
   const handleSubmit = async () => {
     try {
+      if (!formData.department_name.trim()) {
+        toast.error('Department name is required')
+        return
+      }
       setLoading(true)
       const token = localStorage.getItem('token')
 
@@ -98,10 +103,15 @@ const AddDepartment = () => {
         }
       )
 
-      if (!response.ok) throw await response.json()
+      // if (!response.ok) throw await response.json()
 
       const data = await response.json()
+      if (!response.ok || data.success === false) {
+      toast.error(data.message || 'Failed to create department')
+      return
+    }
 
+      toast.success('Department created successfully')
       navigate(
         payload.parent_department_id
           ? `/settings/departments/view/${payload.parent_department_id}`
@@ -109,6 +119,9 @@ const AddDepartment = () => {
       )
     } catch (err) {
       console.error('Create department error:', err)
+      toast.error(
+      err?.message || 'Failed to create department. Please try again.'
+    )
     } finally {
       setLoading(false)
     }
@@ -123,8 +136,8 @@ const AddDepartment = () => {
       <div className="main-content">
         <div className="row">
           <DepartmentContent
-          SetIs_sub_department={SetIs_sub_department}
-          is_sub_department={is_sub_department}
+            SetIs_sub_department={SetIs_sub_department}
+            is_sub_department={is_sub_department}
 
             formData={formData}
             onChange={handleChange}

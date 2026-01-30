@@ -26,7 +26,7 @@ const ProjectsCreate = () => {
                     <ProjectCreateContent />
                 </div>
             </div>
-  <Footer />
+            <Footer />
         </>
     )
 }
