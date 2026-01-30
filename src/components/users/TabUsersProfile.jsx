@@ -29,7 +29,7 @@ const TabUserProfile = ({ user }) => {
   const userInfoData = [
     {
       title: 'Full Name',
-      content: <span>{user.name || '-'}</span>,
+      content: <span>{user.full_name || '-'}</span>,
     },
     {
       title: 'Email',
@@ -49,15 +49,15 @@ const TabUserProfile = ({ user }) => {
     },
     {
       title: 'Role',
-      content: <span className="text-capitalize">{user.role || '-'}</span>,
+      content: <span className="text-capitalize">{user.role.role_name || '-'}</span>,
     },
     {
       title: 'Department',
-      content: <span>{user.department?.name || '-'}</span>,
+      content: <span>{user.department?.department_name || '-'}</span>,
     },
     {
       title: 'Team',
-      content: <span>{user.team?.name || '-'}</span>,
+      content: <span>{user.team?.team_name || '-'}</span>,
     },
     {
       title: 'Address',
@@ -120,7 +120,7 @@ const TabUserProfile = ({ user }) => {
             </span>
           </h5>
 
-          <a href={`/user/edit/${user.id}`} className="btn btn-sm btn-light-brand">
+          <a href={`/user/edit/${user.user_id}`} className="btn btn-sm btn-light-brand">
             Edit User
           </a>
         </div>
@@ -158,9 +158,9 @@ const TabUserProfile = ({ user }) => {
 
         {/* Notes */}
         <div className="row mb-4">
-          <div className="col-lg-2 fw-medium">Notes</div>
+          <div className="col-lg-2 fw-medium">Bio</div>
           <div className="col-lg-10">
-            {user.notes || 'No notes available'}
+            {user.bio || 'No notes available'}
           </div>
         </div>
       </div>

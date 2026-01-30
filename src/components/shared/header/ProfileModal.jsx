@@ -60,7 +60,7 @@ const ProfileModal = () => {
 
   return (
     <div className="dropdown nxl-h-item">
-      <a href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+      <a href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" className="">
         <img
           src={user.avatar_url || "/images/avatar/1.png"}
           alt="user"

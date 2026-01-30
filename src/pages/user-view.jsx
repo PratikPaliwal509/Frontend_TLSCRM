@@ -22,27 +22,19 @@ const UsersView = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                // const token = localStorage.getItem('token')
+                const token = localStorage.getItem('token')
 
-                // const res = await fetch(`http://localhost:5000/api/users/${id}`, {
-                //     headers: { Authorization: `Bearer ${token}` },
-                // })
+                const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    },
+                })
 
-                // const data = await res.json()
-                setUser( {"id": 1,
-    "name": "Pratik Paliwal",
-    "email": "pratik@example.com",
-    "role": "admin",
-    "status": "active",
-    "department": {
-      "id": 1,
-      "name": "Engineering"
-    },
-    "team": {
-      "id": 2,
-      "name": "Frontend Team"
-    }})
-                // setUser(data.data)
+                const data = await res.json()
+                console.log("Fetched user data:", data)
+                setUser(data.data)
             } catch (error) {
                 console.error('Failed to load user', error)
             } finally {
