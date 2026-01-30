@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import Footer from '@/components/shared/Footer';
 // import { c } from 'vite/dist/node/types.d-aGj9QkWt'
 // import { add } from 'date-fns'
 const ClientsCreate = () => {
@@ -197,6 +198,7 @@ const ClientsCreate = () => {
                     />
                 </div>
             </div>
+            <Footer/>
         </>
     )
 }

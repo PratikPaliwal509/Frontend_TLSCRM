@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from '@/components/shared/Input';
 
-const ClientsEditContent = ({ formData, agencies,  users = [], onChange }) => {
+const ClientsEditContent = ({ formData, agencies, users = [], onChange, onFileChange }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         onChange(name, value);
@@ -11,6 +11,23 @@ const ClientsEditContent = ({ formData, agencies,  users = [], onChange }) => {
         <div className="col-12">
             <div className="card p-4">
                 <h5 className="mb-4">Client Information</h5>
+                <div className="col-md-6">
+                    <label className="form-label">Company Logo</label>
+                    <input
+                        type="file"
+                        className="form-control"
+                        accept="image/*"
+                        onChange={e => onFileChange(e)}
+                    />
+
+                    {formData.logo_url && (
+                        <img
+                            src={formData.logo_url}
+                            alt="Logo"
+                            style={{ width: 120, marginTop: 10 }}
+                        />
+                    )}
+                </div>
 
                 {/* Agency Select */}
                 <div className="row mb-4 align-items-center">
@@ -34,10 +51,11 @@ const ClientsEditContent = ({ formData, agencies,  users = [], onChange }) => {
                         </select>
                     </div>
                 </div>
+
                 {/* User Select */}
                 <div className="row mb-4 align-items-center">
                     <div className="col-lg-4">
-                        <label className="fw-semibold">Users: </label>
+                        <label className="fw-semibold">Portal User: </label>
                     </div>
                     <div className="col-lg-8">
                         <select
@@ -45,10 +63,29 @@ const ClientsEditContent = ({ formData, agencies,  users = [], onChange }) => {
                             name="portal_user_id"
                             value={formData.portal_user_id}
                             onChange={handleInputChange}
-                            // disabled
+                        // disabled
                         >
                             <option value="">Select User</option>
                             {users.map((user) => (
+                                <option key={user.user_id} value={user.user_id}>
+                                    {user.first_name} {user.last_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <div className="row mb-4 align-items-center">
+                    <div className="col-lg-4">
+                        <label className="fw-semibold">Account Manager</label>
+                    </div>
+                    <div className="col-lg-8">
+                        <select
+                            className="form-select"
+                            value={formData.account_manager_id}
+                            onChange={e => onChange('account_manager_id', e.target.value)}
+                        >
+                            <option value="">Select Account Manager</option>
+                            {users.map(user => (
                                 <option key={user.user_id} value={user.user_id}>
                                     {user.first_name} {user.last_name}
                                 </option>

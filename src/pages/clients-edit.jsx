@@ -5,12 +5,13 @@ import ClientsEditHeader from '@/components/clientsViewCreate/ClientsEditHeader'
 import ClientsEditContent from '@/components/clientsViewCreate/ClientsEditContent';
 import Swal from 'sweetalert2';
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
-
+import { toast } from 'react-toastify';
+import Footer from '@/components/shared/Footer';
 const ClientEdit = () => {
     const { id } = useParams(); // get client id from route
     const [agencies, setAgencies] = useState([]);
-    
-        const [users, setUsers] = useState([])
+
+    const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -24,6 +25,8 @@ const ClientEdit = () => {
         primary_contact_phone: '',
         country: '',
         status: 'active',
+        account_manager_id: '',   // ✅ NEW
+        logo_url: '',              // ✅ Cloudinary URL
     });
 
     useEffect(() => {
@@ -33,27 +36,27 @@ const ClientEdit = () => {
         checkPermission();
     }, []);
 
-     /* ================= FETCH Users ================= */
-        useEffect(() => {
+    /* ================= FETCH Users ================= */
+    useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const token = localStorage.getItem('token')
-    
+
                 const response = await fetch('http://localhost:5000/api/users/users/by-agency', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 })
-    
+
                 if (!response.ok) throw new Error('Failed to fetch users')
-    
+
                 const data = await response.json()
                 setUsers(data.data || [])
             } catch (error) {
                 console.error('Users fetch error', error)
             }
         }
-    
+
         fetchUsers()
     }, [])
     /* ================= FETCH AGENCIES ================= */
@@ -106,6 +109,8 @@ const ClientEdit = () => {
                     country: data.data.country || '',
                     status: data.data.status || 'active',
                     portal_user_id: data.data.portal_user_id || '',
+                    account_manager_id: data.data.account_manager_id || '',   // ✅ NEW
+                    logo_url: data.data.logo_url || '',              // ✅ Cloudinary URL
                 });
             } catch (error) {
                 console.error('Client fetch error', error);
@@ -119,6 +124,50 @@ const ClientEdit = () => {
     const handleChange = (name, value) => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+
+    const uploadToCloudinary = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'task_attachments'); // cloudinary preset
+        formData.append('cloud_name', 'dwghrvasx');
+        formData.append("folder", "company_logos");
+        const response = await fetch(
+            'https://api.cloudinary.com/v1_1/dwghrvasx/image/upload',
+            {
+                method: 'POST',
+                body: formData,
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Cloudinary upload failed');
+        }
+
+        const data = await response.json();
+        return data.secure_url; // ✅ this is what we save
+    };
+    const handleFileChange = async (e) => {
+        try {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            setLoading(true);
+
+            const url = await uploadToCloudinary(file);
+
+            setFormData(prev => ({
+                ...prev,
+                logo_url: url,
+            }));
+        } catch (error) {
+            console.error('File upload error', error);
+            Swal.fire('Error', 'File upload failed', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
 
     /* ================= UPDATE CLIENT ================= */
     const handleUpdate = async () => {
@@ -135,9 +184,14 @@ const ClientEdit = () => {
                 body: JSON.stringify(formData),
             });
 
+            // ❌ HTTP error
             if (!response.ok) {
-                const errorData = await response.json();
-                throw errorData;
+                throw new Error(result.message || 'Update failed');
+            }
+
+            // ❌ Logical failure (very important)
+            if (result.success === false) {
+                throw new Error(result.message || 'Client not updated');
             }
 
             const data = await response.json();
@@ -153,6 +207,7 @@ const ClientEdit = () => {
 
         } catch (error) {
             console.error('Update client error', error);
+            toast.error(error.message || 'Failed to update client');
         } finally {
             setLoading(false);
         }
@@ -172,11 +227,13 @@ const ClientEdit = () => {
                     <ClientsEditContent
                         formData={formData}
                         agencies={agencies}
-                         users={users}    
+                        users={users}
                         onChange={handleChange}
+                        onFileChange={handleFileChange}
                     />
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };

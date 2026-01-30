@@ -7,6 +7,7 @@ import ClientsViewContent from '@/components/clientsViewCreate/ClientsViewConten
 import ClientsViewTab from '@/components/clientsViewCreate/ClientsViewTabs'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import Footer from '@/components/shared/Footer'
 const ClientsView = () => {
   const { id } = useParams()
   const [client, setClient] = useState(null)
@@ -54,6 +55,7 @@ const ClientsView = () => {
           <ClientsViewContent client={client} />
         </div>
       </div>
+      <Footer/>
     </>
   )
 }
