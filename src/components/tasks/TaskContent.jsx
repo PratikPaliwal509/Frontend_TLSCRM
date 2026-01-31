@@ -8,7 +8,7 @@ import TaskSidebar from './TaskSidebar'
 import ToastProvider from '../ToastProvider'
 import TasksDetails from './TasksDetails'
 import CheckList from '../CheckList'
-
+import { toast } from 'react-toastify';
 const actions = [
     { label: 'Edit Task', icon: '' },
     { label: 'View Task', icon: '' },
@@ -31,80 +31,90 @@ const TaskContent = () => {
     ========================== */
     useEffect(() => {
         const fetchTasks = async () => {
-            const token = localStorage.getItem('token')
-            const res = await fetch('http://localhost:5000/api/tasks/', {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            const json = await res.json()
+            try {
+                const token = localStorage.getItem('token')
+                const res = await fetch('http://localhost:5000/api/tasks/', {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.message || 'Failed to fetch tasks');
+                }
+                const json = await res.json()
 
-            const formattedTasks = Array.isArray(json.data)
-                ? json.data.map((task) => ({
-                    id: task.task_id,
-                    title: task.task_title,
-                    description: task.description || '—',
-                    priority: task.priority,
-                    priorityColor:
-                        task.priority === 'high'
-                            ? 'danger'
-                            : task.priority === 'medium'
-                                ? 'warning'
-                                : 'success',
-                    priorityBgColor:
-                        task.priority === 'high'
-                            ? 'soft-danger'
-                            : task.priority === 'medium'
-                                ? 'soft-warning'
-                                : 'soft-success',
-                    statusColor:
-                        task.status === 'completed'
-                            ? 'success'
-                            : task.status === 'inprogress'
-                                ? 'info'
-                                : task.status === 'pending'
+                const formattedTasks = Array.isArray(json.data)
+                    ? json.data.map((task) => ({
+                        id: task.task_id,
+                        title: task.task_title,
+                        description: task.description || '—',
+                        priority: task.priority,
+                        priorityColor:
+                            task.priority === 'high'
+                                ? 'danger'
+                                : task.priority === 'medium'
                                     ? 'warning'
-                                    : 'primary',
-                    statusBgColor:
-                        task.status === 'completed'
-                            ? 'soft-success'
-                            : task.status === 'inprogress'
-                                ? 'soft-info'
-                                : task.status === 'pending'
+                                    : 'success',
+                        priorityBgColor:
+                            task.priority === 'high'
+                                ? 'soft-danger'
+                                : task.priority === 'medium'
                                     ? 'soft-warning'
-                                    : 'soft-primary',
-                    taskType: task.task_type || 'Task',
-                    taskTypeColor: 'primary',
-                    taskTypeBgColor: 'soft-primary',
-                    user_img: '/images/avatar/1.png',
-                    assigned_date: new Date(task.assigned_date),
-                    due_date: new Date(task.due_date),
-                    assigned_to: task.assigned_to,
-                    start_date: new Date(task.start_date),
-                    tags: task.tags || [],
-                    status: task.status || 'to_do',
-                    checklist: task.checklist || [],
-                    created_at: task.created_at,
-                    task_type: task.task_type,
-                    project_id: task.project_id,
-                    assignments: task?.assignments,
-                    created_by: task?.created_by,
-                }))
-                : []
-            setTasks(formattedTasks)
-        }
-const getUserIdFromToken = () => {
-  const token = localStorage.getItem('token')
-  if (!token) return null
+                                    : 'soft-success',
+                        statusColor:
+                            task.status === 'completed'
+                                ? 'success'
+                                : task.status === 'inprogress'
+                                    ? 'info'
+                                    : task.status === 'pending'
+                                        ? 'warning'
+                                        : 'primary',
+                        statusBgColor:
+                            task.status === 'completed'
+                                ? 'soft-success'
+                                : task.status === 'inprogress'
+                                    ? 'soft-info'
+                                    : task.status === 'pending'
+                                        ? 'soft-warning'
+                                        : 'soft-primary',
+                        taskType: task.task_type || 'Task',
+                        taskTypeColor: 'primary',
+                        taskTypeBgColor: 'soft-primary',
+                        user_img: '/images/avatar/1.png',
+                        assigned_date: new Date(task.assigned_date),
+                        due_date: new Date(task.due_date),
+                        assigned_to: task.assigned_to,
+                        start_date: new Date(task.start_date),
+                        tags: task.tags || [],
+                        status: task.status || 'to_do',
+                        checklist: task.checklist || [],
+                        created_at: task.created_at,
+                        task_type: task.task_type,
+                        project_id: task.project_id,
+                        assignments: task?.assignments,
+                        created_by: task?.created_by,
+                    }))
+                    : []
+                setTasks(formattedTasks)
+            } catch (error) {
+                console.error('Fetch tasks error:', error);
+                toast.error(error.message || 'Something went wrong while fetching tasks');
+            }
+        };
 
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    setUser_id(payload.user_id)
-    return payload.user_id
-  } catch (e) {
-    return null
-  }
-}
-fetchTasks()
-getUserIdFromToken()
+        const getUserIdFromToken = () => {
+            const token = localStorage.getItem('token')
+            if (!token) return null
+
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]))
+                setUser_id(payload.user_id)
+                return payload.user_id
+            } catch (e) {
+                return null
+            }
+        }
+        fetchTasks()
+        getUserIdFromToken()
     }, [])
 
     /* =========================
@@ -274,17 +284,17 @@ const List = ({
                             </li> */}
 
                             <li>
-                                <a  href="#"
-                            className="single-task-list-link"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#tasksDetailsOffcanvas"
-                            onClick={onSelect}>
-                                <button
-                                
-                                    className="dropdown-item"
-                                   >
-                                    View Task
-                                </button>
+                                <a href="#"
+                                    className="single-task-list-link"
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#tasksDetailsOffcanvas"
+                                    onClick={onSelect}>
+                                    <button
+
+                                        className="dropdown-item"
+                                    >
+                                        View Task
+                                    </button>
                                 </a>
                             </li>
 
