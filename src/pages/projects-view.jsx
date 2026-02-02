@@ -6,6 +6,7 @@ import ProjectViewHeader from '@/components/projectsView/ProjectViewHeader'
 import ProjectViewTabItems from '@/components/projectsView/ProjectViewTabItems'
 import TabProjectOverview from '@/components/projectsView/TabProjectOverview'
 import LeadsEmptyCard from '@/components/leadsViewCreate/LeadsEmptyCard'
+import GanttTimeline from '@/components/Gantt/GanttTimeline'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import TabProjectMembers from '@/components/projectsView/TabProjectMembers'
@@ -68,8 +69,8 @@ const ProjectsView = () => {
       <ProjectViewTabItems
         tabs={[
           { id: 'overviewTab', label: 'Overview', active: true },
+          { id: 'ganttTab', label: 'Gantt Timeline' },
           { id: 'activityTab', label: 'Activity' },
-          // { id: 'projectMembersTab', label: 'Members' },
         ]}
       />
 
@@ -79,6 +80,9 @@ const ProjectsView = () => {
           {/* pass project to overview */}
           <TabProjectOverview project={project} />
           <TabProjectMembers project={project} />
+          <div className="tab-pane fade" id="ganttTab">
+            <GanttTimeline projectId={project.project_id} />
+          </div>
           <div className="tab-pane fade" id="activityTab">
             <LeadsEmptyCard
               title="No activity yet!"
