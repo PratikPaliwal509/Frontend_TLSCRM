@@ -9,6 +9,7 @@ import ToastProvider from '../ToastProvider'
 import TasksDetails from './TasksDetails'
 import CheckList from '../CheckList'
 import { toast } from 'react-toastify';
+import KanbanBoard from './KanbanBoard'
 const actions = [
     { label: 'Edit Task', icon: '' },
     { label: 'View Task', icon: '' },
@@ -17,6 +18,8 @@ const actions = [
 
 
 const TaskContent = () => {
+    const [viewMode, setViewMode] = useState('kanban') // list | kanban
+
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [tasks, setTasks] = useState([])
     const [user_id, setUser_id] = useState(null)
@@ -142,7 +145,10 @@ const TaskContent = () => {
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
                 onFilterChange={setActiveFilter}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
             />
+
 
             <ToastProvider />
             <TasksDetails task={selectedTask} user_id={user_id} />
@@ -151,29 +157,37 @@ const TaskContent = () => {
                 <PerfectScrollbar>
                     <TaskHeader setSidebarOpen={setSidebarOpen} />
 
-                    <div className="content-area-body">
-                        {Object.keys(groupedTasks).map((group, index) =>
-                            groupedTasks[group].length > 0 ? (
-                                <div key={group} className="card mb-4">
-                                    <div className="card-header">
-                                        <h5 className="mb-0">{group}</h5>
-                                    </div>
+                  <div className="content-area-body">
+  {viewMode === 'kanban' ? (
+    <KanbanBoard
+      tasks={filteredTasks}
+      onSelect={(task) => setSelectedTask(task)}
+    />
+  ) : (
+    Object.keys(groupedTasks).map((group) =>
+      groupedTasks[group].length > 0 ? (
+        <div key={group} className="card mb-4">
+          <div className="card-header">
+            <h5 className="mb-0">{group}</h5>
+          </div>
 
-                                    <div className="card-body">
-                                        <ul className="list-unstyled mb-0">
-                                            {groupedTasks[group].map((task) => (
-                                                <List
-                                                    key={task.id}
-                                                    {...task}
-                                                    onSelect={() => setSelectedTask(task)}
-                                                />
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            ) : null
-                        )}
-                    </div>
+          <div className="card-body">
+            <ul className="list-unstyled mb-0">
+              {groupedTasks[group].map((task) => (
+                <List
+                  key={task.id}
+                  {...task}
+                  onSelect={() => setSelectedTask(task)}
+                />
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null
+    )
+  )}
+</div>
+
 
                     <Footer />
                 </PerfectScrollbar>

@@ -24,7 +24,7 @@ const AddTask = () => {
         description: '',
         start_date: null,
         due_date: null,
-        estimated_hours: 0,
+        estimated_hours: null,
         status: 'to_do',
         priority: 'medium',
         labels: [],
@@ -124,16 +124,44 @@ const AddTask = () => {
             modalInstance.hide()
         }
     }
+
+    const validateForm = () => {
+        if (!formData.project_id) {
+            toast.error('Please select a project');
+            return false;
+        }
+
+        if (!formData.task_title.trim()) {
+            toast.error('Task title is required');
+            return false;
+        }
+
+        if (
+            formData.estimated_hours !== null &&
+            formData.estimated_hours < 0
+        ) {
+            toast.error('Estimated hours cannot be negative');
+            return false;
+        }
+
+        if (
+            formData.start_date &&
+            formData.due_date &&
+            new Date(formData.start_date) > new Date(formData.due_date)
+        ) {
+            toast.error('Due date must be after start date');
+            return false;
+        }
+
+        return true;
+    };
+
     /* =========================
        Create Task + Assign Users
     ========================== */
 
     const handleCreateTask = async () => {
-        if (!formData.project_id || !formData.task_title) {
-            // alert('Project and Task title are required')
-            toast.error('Task created and assigned successfully');
-            return
-        }
+        if (!validateForm()) return;
 
         setLoading(true)
 
@@ -190,7 +218,7 @@ const AddTask = () => {
                 description: '',
                 start_date: null,
                 due_date: null,
-                estimated_hours: 0,
+                estimated_hours: null,
                 status: 'to_do',
                 priority: 'medium',
                 labels: [],
@@ -342,7 +370,7 @@ const AddTask = () => {
                                 type="number"
                                 className="form-control"
                                 placeholder="e.g. 12"
-                                min="0"
+                                // min="0"
                                 value={formData.estimated_hours}
                                 onChange={(e) =>
                                     setFormData({
