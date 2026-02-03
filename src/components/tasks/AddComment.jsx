@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 
-const AddComment = ({ taskID, setComments  }) => {
-   const [comment, setComment] = useState('')
+const AddComment = ({ taskID, setComments }) => {
+  const [comment, setComment] = useState('')
   const [loading, setLoading] = useState(false)
   const token = localStorage.getItem('token')
 
@@ -28,10 +29,10 @@ const AddComment = ({ taskID, setComments  }) => {
       if (!res.ok) throw new Error('Failed to add comment')
 
       const result = await res.json()
+      toast.success("Comment Added Successfully!")
+      setComments(prev => [result.data, ...prev])
 
-    setComments(prev => [result.data, ...prev])
-
-    setComment('')
+      setComment('')
     } catch (err) {
       console.error(err)
     } finally {

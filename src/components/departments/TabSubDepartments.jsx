@@ -64,7 +64,7 @@ const TabSubDepartments = ({ departmentId }) => {
                                     Code: {dep.department_code || '—'}
                                 </div>
                             </div>
-                            <div className="flex-row d-flex">
+                            <div className="flex-row d-flex align-items-center">
 
                                 <span className="avatar-text avatar-md m-2">
                                     <FiEye
@@ -73,7 +73,7 @@ const TabSubDepartments = ({ departmentId }) => {
                                     />
                                 </span>
                                 <span
-                                    className={`m-2 badge ${dep.is_active ? 'bg-success' : 'bg-secondary'
+                                    className={`h-50 badge ${dep.is_active ? 'bg-success' : 'bg-secondary'
                                         }`}
                                 >
                                     {dep.is_active ? 'Active' : 'Inactive'}

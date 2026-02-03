@@ -28,6 +28,7 @@ const KanbanBoard = ({ tasks, onSelect }) => {
                     key={task.id}
                     className="p-3 border rounded cursor-pointer hover-shadow"
                     onClick={() => onSelect(task)}
+                      style={{ cursor: 'pointer' }}
                     data-bs-toggle="offcanvas"
                     data-bs-target="#tasksDetailsOffcanvas"
                   >

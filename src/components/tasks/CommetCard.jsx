@@ -278,7 +278,7 @@ const CommentCard = ({
                                 onChange={e => setEditText(e.target.value)}
                             />
 
-                            <div className="mt-2">
+                            <div className="mt-2 d-flex">
                                 <button
                                     className="btn btn-sm btn-primary me-2"
                                     onClick={submitEdit}
@@ -299,8 +299,7 @@ const CommentCard = ({
                         </p>
                     )}
 
-
-                    {portal_user_id === user.user_id && (
+                    {portal_user_id === user?.user_id && (
                         <Dropdown
                             dropdownItems={commentOptions}
                             dropdownParentStyle="ms-2"
@@ -373,7 +372,7 @@ const CommentCard = ({
                         {showMentions && (
                             <ul className="list-group position-absolute w-100 shadow z-3">
                                 {mentionUsers.map(u => (
-                                    <li
+                                    <li 
                                         key={u.user_id}
                                         className="list-group-item list-group-item-action"
                                         onClick={() => {

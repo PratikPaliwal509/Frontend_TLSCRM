@@ -157,36 +157,36 @@ const TaskContent = () => {
                 <PerfectScrollbar>
                     <TaskHeader setSidebarOpen={setSidebarOpen} />
 
-                  <div className="content-area-body">
-  {viewMode === 'kanban' ? (
-    <KanbanBoard
-      tasks={filteredTasks}
-      onSelect={(task) => setSelectedTask(task)}
-    />
-  ) : (
-    Object.keys(groupedTasks).map((group) =>
-      groupedTasks[group].length > 0 ? (
-        <div key={group} className="card mb-4">
-          <div className="card-header">
-            <h5 className="mb-0">{group}</h5>
-          </div>
+                    <div className="content-area-body">
+                        {viewMode === 'kanban' ? (
+                            <KanbanBoard
+                                tasks={filteredTasks}
+                                onSelect={(task) => setSelectedTask(task)}
+                            />
+                        ) : (
+                            Object.keys(groupedTasks).map((group) =>
+                                groupedTasks[group].length > 0 ? (
+                                    <div key={group} className="card mb-4">
+                                        <div className="card-header">
+                                            <h5 className="mb-0">{group}</h5>
+                                        </div>
 
-          <div className="card-body">
-            <ul className="list-unstyled mb-0">
-              {groupedTasks[group].map((task) => (
-                <List
-                  key={task.id}
-                  {...task}
-                  onSelect={() => setSelectedTask(task)}
-                />
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null
-    )
-  )}
-</div>
+                                        <div className="card-body">
+                                            <ul className="list-unstyled mb-0">
+                                                {groupedTasks[group].map((task) => (
+                                                    <List
+                                                        key={task.id}
+                                                        {...task}
+                                                        onSelect={() => setSelectedTask(task)}
+                                                    />
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                ) : null
+                            )
+                        )}
+                    </div>
 
 
                     <Footer />
