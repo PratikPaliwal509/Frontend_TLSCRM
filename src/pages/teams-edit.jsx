@@ -6,6 +6,8 @@ import TeamContent from '@/components/teams/TeamContent'
 import TeamMembers from '@/components/teams/TeamMembers'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import Footer from '@/components/shared/Footer'
+import { toast } from 'react-toastify'
+
 const TeamEdit = () => {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -125,9 +127,17 @@ const TeamEdit = () => {
         }
       )
 
-      if (!res.ok) throw await res.json()
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data?.message || 'Failed to update team')
+      }
+
+      // ✅ SUCCESS TOAST
+      toast.success(data?.message || 'Team updated successfully')
     } catch (err) {
       console.error('Update team error:', err)
+      toast.error(err.message || 'Something went wrong while updating team')
     } finally {
       setLoading(false)
     }
@@ -135,27 +145,41 @@ const TeamEdit = () => {
 
   /* ================= ADD MEMBERS ================= */
   const handleAddMembers = async (selectedUserIds) => {
-    const token = localStorage.getItem('token')
+    try {
+      const token = localStorage.getItem('token')
 
-    await fetch(
-      `http://localhost:5000/api/teams/${teamId}/members`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ user_ids: selectedUserIds }),
+      const res = await fetch(
+        `http://localhost:5000/api/teams/${teamId}/members`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ user_ids: selectedUserIds }),
+        }
+      )
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data?.message || 'Failed to add members')
       }
-    )
 
-    // Reload team members
-    const res = await fetch(
-      `http://localhost:5000/api/teams/${teamId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    const data = await res.json()
-    setTeamMembers(data.data.members || [])
+      // ✅ SUCCESS TOAST
+      toast.success(data?.message || 'Members added successfully')
+      // Reload team members
+      const teamRes = await fetch(
+        `http://localhost:5000/api/teams/${teamId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      const teamData = await teamRes.json()
+      setTeamMembers(teamData.data.members || [])
+    } catch (err) {
+      console.error('Add members error:', err)
+      toast.error(err.message || 'Something went wrong while adding members')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -187,7 +211,7 @@ const TeamEdit = () => {
           />
         </div>
       </div>
-        <Footer />
+      <Footer />
     </>
   )
 }

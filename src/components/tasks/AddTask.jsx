@@ -33,6 +33,8 @@ const AddTask = () => {
         is_milestone: false,
         depends_on: [],
         blocks: [],
+        visible_to_client: false,
+        client_approval_required: false,
 
     })
 
@@ -187,6 +189,8 @@ const AddTask = () => {
                     is_milestone: formData.is_milestone,
                     depends_on: formData.depends_on.map(d => d.value),
                     blocks: formData.blocks.map(b => b.value),
+                    visible_to_client: formData.visible_to_client,
+                    client_approval_required: formData.client_approval_required,
                 }),
             })
 
@@ -227,6 +231,8 @@ const AddTask = () => {
                 is_milestone: false,
                 depends_on: [],
                 blocks: [],
+                visible_to_client: false,
+                client_approval_required: false,
             })
             closeModal()
             // setIsOpen(false);
@@ -550,6 +556,43 @@ const AddTask = () => {
                             </div>
                         </div>
 
+                        <div className="form-check mb-3">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="visibleToClient"
+                                checked={formData.visible_to_client}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        visible_to_client: e.target.checked,
+                                    })
+                                }
+                            />
+                            <label className="form-check-label" htmlFor="visibleToClient">
+                                Visible to Client
+                            </label>
+                            {formData.visible_to_client && (
+                                <div className="form-check mb-4 ms-3">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="clientApprovalRequired"
+                                        checked={formData.client_approval_required}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                client_approval_required: e.target.checked,
+                                            })
+                                        }
+                                    />
+                                    <label className="form-check-label" htmlFor="clientApprovalRequired">
+                                        Client approval required
+                                    </label>
+                                </div>
+                            )}
+
+                        </div>
 
 
                     </div>

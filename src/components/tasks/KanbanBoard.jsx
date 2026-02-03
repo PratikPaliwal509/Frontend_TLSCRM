@@ -1,5 +1,6 @@
-import React from 'react'
-
+import { verifyAccess } from '@/utils/verifyAccess'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 const KANBAN_COLUMNS = [
   { key: 'to_do', title: 'To Do' },
   { key: 'inprogress', title: 'In Progress' },
@@ -10,9 +11,57 @@ const KANBAN_COLUMNS = [
 ]
 
 const KanbanBoard = ({ tasks, onSelect }) => {
+  const [isClient, setIsClient] = useState(false)
+const [tasks2, setTasks] =useState(tasks || [])
+  useEffect(() => {
+    const checkPermission = async () => {
+      const res = await verifyAccess('tasks', 'view', 'client')
+      console.log(res)
+      setIsClient(res)
+    };
+    checkPermission();
+  }, []);
+
+  const approveTask = async (taskId) => {
+    const token = localStorage.getItem('token')
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/tasks/${taskId}/approve`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      const data = await res.json()
+console.log("data", JSON.stringify(data)) 
+ setTasks((prev) =>
+  prev.map((task) =>
+    task.id === taskId
+      ? { ...task, client_approved: true }
+      : task
+  )
+)
+
+      if (!res.ok) {
+        throw new Error(data.message)
+      }
+      // ✅ SUCCESS TOAST
+      toast.success(data?.message || 'Task approved successfully')
+      return data
+    } catch (error) {
+      // ❌ ERROR TOAST
+      toast.error(error.message || 'Something went wrong')
+      throw error
+    }
+  }
+
+
   return (
     <div className="row  g-4">
-    {/* <div className="row overflow-x-auto  flex-nowrap d-flex g-4"> */}
+      {/* <div className="row overflow-x-auto  flex-nowrap d-flex g-4"> */}
       {KANBAN_COLUMNS.map((col) => (
         <div key={col.key} className="col-md-4">
           <div className="card h-100">
@@ -21,14 +70,14 @@ const KanbanBoard = ({ tasks, onSelect }) => {
             </div>
 
             <div className="card-body d-flex flex-column gap-3">
-              {tasks
+              {tasks2
                 .filter((task) => task.status === col.key)
                 .map((task) => (
-                  <div
+                <div
                     key={task.id}
                     className="p-3 border rounded cursor-pointer hover-shadow"
                     onClick={() => onSelect(task)}
-                      style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer' }}
                     data-bs-toggle="offcanvas"
                     data-bs-target="#tasksDetailsOffcanvas"
                   >
@@ -52,6 +101,33 @@ const KanbanBoard = ({ tasks, onSelect }) => {
                         alt="user"
                         className="avatar-image avatar-xs"
                       />
+                      {/* ✅ CLIENT APPROVAL */}
+                      {isClient &&
+                        task.client_approval_required &&
+                        !task.client_approved && (
+                          <div className="mt-2 text-end">
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                console.log('Approve task:', task.id)
+                                // call approve API here
+                                approveTask(task.id)
+                              }}
+                            >
+                              Approve
+                            </button>
+                          </div>
+                        )}
+
+                      {/* ✅ Approved badge */}
+                      {task.client_approved && (
+                        <div className="mt-2">
+                          <span className="badge bg-secondary">
+                            Client Approved
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

@@ -16,7 +16,7 @@ const ClientsView = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const checkPermission = async () => {
-      await verifyPagePermission('clients', 'view', navigate);
+       await verifyPagePermission('clients', 'view', navigate);
     };
     checkPermission();
   }, []);

@@ -19,6 +19,7 @@ const actions = [
 
 const TaskContent = () => {
     const [viewMode, setViewMode] = useState('kanban') // list | kanban
+    const [loading, setLoading] = useState(true)
 
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [tasks, setTasks] = useState([])
@@ -35,6 +36,7 @@ const TaskContent = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
+                setLoading(true)
                 const token = localStorage.getItem('token')
                 const res = await fetch('http://localhost:5000/api/tasks/', {
                     headers: { Authorization: `Bearer ${token}` },
@@ -95,12 +97,17 @@ const TaskContent = () => {
                         project_id: task.project_id,
                         assignments: task?.assignments,
                         created_by: task?.created_by,
+                        visible_to_client: task?.visible_to_client,
+                        client_approval_required: task?.client_approval_required,
+                        client_approved: task?.client_approved
                     }))
                     : []
                 setTasks(formattedTasks)
             } catch (error) {
                 console.error('Fetch tasks error:', error);
                 toast.error(error.message || 'Something went wrong while fetching tasks');
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -158,7 +165,13 @@ const TaskContent = () => {
                     <TaskHeader setSidebarOpen={setSidebarOpen} />
 
                     <div className="content-area-body">
-                        {viewMode === 'kanban' ? (
+                        {loading ? (
+                            <div className="d-flex justify-content-center align-items-center py-5">
+                                <div className="spinner-border text-primary" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        ) : viewMode === 'kanban' ? (
                             <KanbanBoard
                                 tasks={filteredTasks}
                                 onSelect={(task) => setSelectedTask(task)}
