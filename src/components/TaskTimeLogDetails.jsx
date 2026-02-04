@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { FiClock } from "react-icons/fi"
 
-const TaskTimeLogDetails = ({ taskId, project_id }) => {
+const TaskTimeLogDetails = ({ taskId, project_id, role }) => {
   const [log, setLog] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -11,6 +11,7 @@ const TaskTimeLogDetails = ({ taskId, project_id }) => {
   const [description, setDescription] = useState("")
   const [isBillable, setIsBillable] = useState(true)
   const [hourlyRate, setHourlyRate] = useState("")
+const [actionLoading, setActionLoading] = useState(false)
 
   /* ---------------- HELPERS ---------------- */
 
@@ -41,7 +42,7 @@ const TaskTimeLogDetails = ({ taskId, project_id }) => {
         `http://localhost:5000/api/tasks/timelogs/active/${taskId}`,
         // `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` }
         }
       )
 
@@ -106,6 +107,56 @@ const TaskTimeLogDetails = ({ taskId, project_id }) => {
     }
   }
 
+  const handleApprove = async () => {
+  if (!log) return
+
+  const token = localStorage.getItem("token")
+  setActionLoading(true)
+
+  try {
+    await fetch(
+      `http://localhost:5000/api/tasks/timelogs/${log.log_id}/approve`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    fetchLog()
+  } catch (err) {
+    console.error("Failed to approve time log", err)
+  } finally {
+    setActionLoading(false)
+  }
+}
+
+const handleReject = async () => {
+  if (!log) return
+
+  const token = localStorage.getItem("token")
+  setActionLoading(true)
+
+  try {
+    await fetch(
+      `http://localhost:5000/api/tasks/timelogs/${log.log_id}/reject`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    fetchLog()
+  } catch (err) {
+    console.error("Failed to reject time log", err)
+  } finally {
+    setActionLoading(false)
+  }
+}
+
   /* ---------------- UI ---------------- */
 
   if (loading) return <p>Loading time logs...</p>
@@ -151,6 +202,29 @@ const TaskTimeLogDetails = ({ taskId, project_id }) => {
                       {formatDuration(log.start_time, log.end_time)}
                     </span>
                   </div>
+                   <div className="d-flex gap-2 justify-content-end">
+      {
+      // !log.is_approved && 
+      (role === "Super Admin" || role === "Admin") && <>
+        <button
+          className="btn btn-success mt-2"
+          onClick={handleApprove}
+          disabled={actionLoading || log.is_approved}
+        >
+          {log.is_approved ? "Approved" : "Approve"}
+        </button>
+      
+        {/* <button
+          className="btn btn-danger"
+          onClick={handleReject}
+          disabled={actionLoading}
+        >
+          Reject
+        </button> */}
+        </>
+      }
+    </div>
+  
                 </div>
               )}
             </div>

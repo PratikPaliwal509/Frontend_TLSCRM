@@ -16,7 +16,7 @@ import TaskTimer from '@/components/TaskTimer'
 import TaskTimeLogDetails from '../TaskTimeLogDetails';
 import AddAttachment from './TaskAttachment';
 import useVerifyRole from '@/utils/canRemoveAssognee'
-
+import {getUserRole} from "@/utils/verifyRole"
 
 const detailsMoreOptions = [
     { label: "Make Unread", icon: <FiEyeOff /> },
@@ -41,7 +41,7 @@ const TasksDetails = ({ task, user_id }) => {
     const { canRemoveAssignee } = useVerifyRole()
     const [value, setValue] = useState('');
     const [assigningUserId, setAssigningUserId] = useState(null)
-
+const [role, setRole] = useState("")
     const inputRef = useRef(null);
     const id = task?.id;
     const tags = task?.tags || [];
@@ -100,7 +100,14 @@ const TasksDetails = ({ task, user_id }) => {
             setLoading(false)
         }
     }
-
+useEffect(()=>{
+    const data = async () =>{
+    const res = await getUserRole()
+    setRole(res.role_name)
+    console.log("res", res)
+    }
+    data()
+})
     useEffect(() => {
         if (id) {
             fetchComments()
@@ -480,7 +487,8 @@ const TasksDetails = ({ task, user_id }) => {
                 <hr className="my-5" />
 
 
-                 {isAssignedUser && (<TaskTimeLogDetails taskId={id} project_id={project_id} />)}
+                 {(isAssignedUser || role === "Super Admin" || role === "Admin") && (<TaskTimeLogDetails taskId={id} project_id={project_id} role={role}/>)}
+                 {/* <TaskTimeLogDetails taskId={id} project_id={project_id} /> */}
 
                 <hr className="my-5" />
                 <AddAttachment taskCreatedBy={task?.created_by} taskId={task?.id} />
