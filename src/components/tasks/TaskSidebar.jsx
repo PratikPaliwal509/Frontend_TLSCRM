@@ -2,7 +2,10 @@ import React from 'react'
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { FiActivity, FiCheckCircle, FiHash, FiList, FiPlus, FiWatch, FiX } from 'react-icons/fi'
 
-const TaskSidebar = ({ sidebarOpen, setSidebarOpen, onFilterChange, viewMode, setViewMode }) => {
+const TaskSidebar = ({ sidebarOpen, setSidebarOpen, onFilterChange, activeFilter, viewMode, setViewMode }) => {
+    const isActive = (type, value) =>
+        activeFilter?.type === type && activeFilter?.value === value
+
     return (
         <div className={`content-sidebar content-sidebar-md ${sidebarOpen ? "app-sidebar-open" : ""}`}>
             <PerfectScrollbar>
@@ -30,14 +33,28 @@ const TaskSidebar = ({ sidebarOpen, setSidebarOpen, onFilterChange, viewMode, se
                 </div>
                 <div className="content-sidebar-body">
                     <ul className="nav flex-column nxl-content-sidebar-item">
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <a className="nav-link" onClick={() =>
                                 onFilterChange({ type: 'ALL', value: 'all' })
                             } href="#">
                                 <FiList size={16} strokeWidth={1.6} />
                                 <span>ALL</span>
                             </a>
+                        </li> */}
+                        <li className="nav-item">
+                            <a
+                                href="#"
+                                className={`nav-link ${isActive('status', 'all') ? 'active' : ''}`}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    onFilterChange({ type: 'status', value: 'all' })
+                                }}
+                            >
+                                <FiList size={16} />
+                                <span>ALL</span>
+                            </a>
                         </li>
+
                         {/* <li className="nav-item">
                             <a className="nav-link" onClick={() =>
                                     onFilterChange({ type: 'status', value: 'to_do' })
@@ -46,50 +63,69 @@ const TaskSidebar = ({ sidebarOpen, setSidebarOpen, onFilterChange, viewMode, se
                                 <span>New</span>
                             </a>
                         </li> */}
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <a className="nav-link" onClick={() =>
                                 onFilterChange({ type: 'status', value: 'pending' })
                             } href="#">
                                 <FiWatch size={16} strokeWidth={1.6} />
                                 <span>Pending</span>
                             </a>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a
+                                href="#"
+                                className={`nav-link ${isActive('status', 'pending') ? 'active' : ''}`}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    onFilterChange({ type: 'status', value: 'pending' })
+                                }}
+                            >
+                                <FiWatch size={16} />
+                                <span>Pending</span>
+                            </a>
+                        </li>
+
+                        <li className="nav-item">
+                            <a className={`nav-link ${isActive('status', 'inprogress') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'status', value: 'inprogress' })
-                            } href="#">
+                            }} href="#">
                                 <FiActivity size={16} strokeWidth={1.6} />
                                 <span>Inprogress</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('status', 'completed') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'status', value: 'completed' })
-                            } href="#">
+                            }} href="#">
                                 <FiCheckCircle size={16} strokeWidth={1.6} />
                                 <span>Completed</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('status', 'auto') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'status', value: 'auto' })
-                            } href="#">
+                            }} href="#">
                                 <FiCheckCircle size={16} strokeWidth={1.6} />
                                 <span>Auto</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('status', 'upcoming') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'status', value: 'upcoming' })
-                            } href="#">
+                            }} href="#">
                                 <FiCheckCircle size={16} strokeWidth={1.6} />
                                 <span>UpComing</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('status', 'rejected') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'status', value: 'rejected' })
-                            } href="#">
+                            }} href="#">
                                 <FiCheckCircle size={16} strokeWidth={1.6} />
                                 <span>Rejected</span>
                             </a>
@@ -103,41 +139,46 @@ const TaskSidebar = ({ sidebarOpen, setSidebarOpen, onFilterChange, viewMode, se
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('priority', 'low') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'priority', value: 'low' })
-                            } href="#">
+                            }} href="#">
                                 <span className="wd-7 ht-7 bg-dark rounded-circle"></span>
                                 <span>Low</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('priority', 'normal') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'priority', value: 'normal' })
-                            } href="#">
+                            }} href="#">
                                 <span className="wd-7 ht-7 bg-success rounded-circle"></span>
                                 <span>Normal</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('priority', 'medium') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'priority', value: 'medium' })
-                            } href="#">
+                            }} href="#">
                                 <span className="wd-7 ht-7 bg-primary rounded-circle"></span>
                                 <span>Medium</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('priority', 'high') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'priority', value: 'high' })
-                            } href="#">
+                            }} href="#">
                                 <span className="wd-7 ht-7 bg-warning rounded-circle"></span>
                                 <span>High</span>
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={() =>
+                            <a className={`nav-link ${isActive('priority', 'urgent') ? 'active' : ''}`} onClick={(e) => {
+                                e.preventDefault()
                                 onFilterChange({ type: 'priority', value: 'urgent' })
-                            } href="#">
+                            }} href="#">
                                 <span className="wd-7 ht-7 bg-danger rounded-circle"></span>
                                 <span>Urgent</span>
                             </a>

@@ -20,7 +20,7 @@ const NotesSidebar = ({ setSelectTab, selectTab, sidebarOpen, setSidebarOpen, se
                 </div>
 
                 <div className="content-sidebar-header">
-                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+                    <button className="btn btn-primary w-100" onClick={() => setShowAddModal(true)}>
                         Add Note
                     </button>
 

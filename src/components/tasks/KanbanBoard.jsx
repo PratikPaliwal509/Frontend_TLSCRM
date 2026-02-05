@@ -21,6 +21,9 @@ const [tasks2, setTasks] =useState(tasks || [])
     };
     checkPermission();
   }, []);
+  useEffect(()=>{
+    setTasks(tasks)
+  }, [tasks])
 
   const approveTask = async (taskId) => {
     const token = localStorage.getItem('token')
@@ -134,7 +137,7 @@ console.log("data", JSON.stringify(data))
 
               {tasks.filter((t) => t.status === col.key).length === 0 && (
                 <div className="text-muted fs-12 text-center">
-                  No tasks
+                  No Tasks
                 </div>
               )}
             </div>

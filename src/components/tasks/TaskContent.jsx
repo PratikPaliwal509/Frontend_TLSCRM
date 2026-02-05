@@ -145,6 +145,7 @@ const TaskContent = () => {
     }, [tasks, activeFilter])
 
     const groupedTasks = groupTasksByDate(filteredTasks)
+    const hasNoTasks = !loading && filteredTasks.length === 0
 
     return (
         <>
@@ -152,6 +153,7 @@ const TaskContent = () => {
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
                 onFilterChange={setActiveFilter}
+                activeFilter={activeFilter}
                 viewMode={viewMode}
                 setViewMode={setViewMode}
             />
@@ -176,7 +178,13 @@ const TaskContent = () => {
                                 tasks={filteredTasks}
                                 onSelect={(task) => setSelectedTask(task)}
                             />
-                        ) : (
+                        ) : hasNoTasks ? (
+                            <div className="d-flex flex-column align-items-center justify-content-center py-5 text-muted">
+                                <div className="fs-5 fw-semibold mb-2">No tasks found</div>
+                                <div className="fs-13">
+                                    Try changing filters or create a new task
+                                </div>
+                            </div>) : (
                             Object.keys(groupedTasks).map((group) =>
                                 groupedTasks[group].length > 0 ? (
                                     <div key={group} className="card mb-4">

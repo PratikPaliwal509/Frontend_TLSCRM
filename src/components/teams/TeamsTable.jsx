@@ -13,6 +13,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import Loader from '../loader'
 
 const TeamsTable = () => {
   const [teams, setTeams] = useState([])
@@ -140,7 +141,8 @@ const TeamsTable = () => {
     },
   ]
 
-  if (loading) return <p>Loading teams...</p>
+  if (loading) return <Loader/>
+  // if (loading) return <p>Loading teams...</p>
 
   return <Table data={teams} columns={columns} />
 }

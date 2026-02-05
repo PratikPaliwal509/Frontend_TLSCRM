@@ -14,6 +14,7 @@ import {
 import Dropdown from '@/components/shared/Dropdown'
 import SelectDropdown from '@/components/shared/SelectDropdown'
 import { useNavigate } from 'react-router-dom'
+import Loader from '../loader'
 
 
 /* ---------- Actions ---------- */
@@ -290,7 +291,9 @@ const navigate = useNavigate()
 ,
   ]
 
-  if (loading) return <p>Loading clients...</p>
+  // if (loading) return <p>Loading clients...</p>
+  if (loading) return <Loader/>
+
 
   return <Table data={clients} columns={columns} />
 }

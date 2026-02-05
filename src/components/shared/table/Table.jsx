@@ -3,6 +3,7 @@ import TableSearch from './TableSearch'
 import TablePagination from './TablePagination'
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import Loader from '@/components/loader'
 
 const Table = ({ data = [], columns = [], isLoading = false, emptyMessage = "No data found" }) => {
     // const Table = ({data, columns,}) => {
@@ -33,90 +34,85 @@ const Table = ({ data = [], columns = [], isLoading = false, emptyMessage = "No 
 
     return (
         <div className="col-lg-12">
-            <div className="card stretch stretch-full function-table">
-                <div className="card-body p-0">
-                    <div className="table-responsive">
-                        <div className='dataTables_wrapper dt-bootstrap5 no-footer'>
-                            <TableSearch table={table} setGlobalFilter={setGlobalFilter} globalFilter={globalFilter} />
-                            {isLoading && (
-                                <div
-                                    className="position-absolute top-50 start-50 translate-middle z-3"
-                                    style={{ pointerEvents: 'none' }}
-                                >
-                                    <div className="spinner-border text-primary" role="status">
-                                        <span className="visually-hidden">Loading...</span>
+            {isLoading && (
+                <Loader />
+            )}
+            {!isLoading &&
+                <div className="card stretch stretch-full function-table">
+
+                    <div className="card-body p-0">
+                        <div className="table-responsive">
+                            <div className='dataTables_wrapper dt-bootstrap5 no-footer'>
+                                <TableSearch table={table} setGlobalFilter={setGlobalFilter} globalFilter={globalFilter} />
+
+                                <div className="row dt-row">
+                                    <div className="col-sm-12 px-0">
+                                        <table className="table table-hover dataTable no-footer" id='projectList'>
+                                            <thead>
+                                                {table.getHeaderGroups().map((headerGroup) => (
+                                                    <tr key={headerGroup.id} >
+                                                        {
+                                                            headerGroup.headers.map((header) => {
+                                                                return (
+                                                                    <th key={header.id} className={header.column.columnDef.meta?.headerClassName}>
+                                                                        {
+                                                                            header.id === "id" ?
+                                                                                <div className='d-flex gap-2'>
+                                                                                    {
+                                                                                        flexRender(
+                                                                                            header.column.columnDef.header,
+                                                                                            header.getContext()
+                                                                                        )
+
+                                                                                    }
+                                                                                    <ArrowToggle header={header} />
+                                                                                </div>
+                                                                                :
+                                                                                <ArrowToggle header={header}>
+                                                                                    {
+                                                                                        flexRender(
+                                                                                            header.column.columnDef.header,
+                                                                                            header.getContext()
+                                                                                        )
+                                                                                    }
+                                                                                </ArrowToggle>
+                                                                        }
+                                                                    </th>
+                                                                )
+                                                            })
+                                                        }
+                                                    </tr>
+                                                ))}
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    table.getRowModel().rows.map((row) => (
+                                                        <tr key={row.id} className='single-item chat-single-item'>
+                                                            {row.getVisibleCells().map((cell) => {
+                                                                return (
+                                                                    <td key={cell.id} className={cell.column.columnDef.meta?.className}>
+                                                                        {
+                                                                            flexRender(
+                                                                                cell.column.columnDef.cell,
+                                                                                cell.getContext()
+                                                                            )
+                                                                        }
+                                                                    </td>
+                                                                )
+                                                            })}
+                                                        </tr>
+                                                    ))
+                                                }
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                            )}
-                                                {!isLoading && 
-                            <div className="row dt-row">
-                                <div className="col-sm-12 px-0">
-                                    <table className="table table-hover dataTable no-footer" id='projectList'>
-                                        <thead>
-                                            {table.getHeaderGroups().map((headerGroup) => (
-                                                <tr key={headerGroup.id} >
-                                                    {
-                                                        headerGroup.headers.map((header) => {
-                                                            return (
-                                                                <th key={header.id} className={header.column.columnDef.meta?.headerClassName}>
-                                                                    {
-                                                                        header.id === "id" ?
-                                                                            <div className='d-flex gap-2'>
-                                                                                {
-                                                                                    flexRender(
-                                                                                        header.column.columnDef.header,
-                                                                                        header.getContext()
-                                                                                    )
 
-                                                                                }
-                                                                                <ArrowToggle header={header} />
-                                                                            </div>
-                                                                            :
-                                                                            <ArrowToggle header={header}>
-                                                                                {
-                                                                                    flexRender(
-                                                                                        header.column.columnDef.header,
-                                                                                        header.getContext()
-                                                                                    )
-                                                                                }
-                                                                            </ArrowToggle>
-                                                                    }
-                                                                </th>
-                                                            )
-                                                        })
-                                                    }
-                                                </tr>
-                                            ))}
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                table.getRowModel().rows.map((row) => (
-                                                    <tr key={row.id} className='single-item chat-single-item'>
-                                                        {row.getVisibleCells().map((cell) => {
-                                                            return (
-                                                                <td key={cell.id} className={cell.column.columnDef.meta?.className}>
-                                                                    {
-                                                                        flexRender(
-                                                                            cell.column.columnDef.cell,
-                                                                            cell.getContext()
-                                                                        )
-                                                                    }
-                                                                </td>
-                                                            )
-                                                        })}
-                                                    </tr>
-                                                ))
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>}
-
-                                               {!isLoading && <TablePagination table={table} />}
+                                {!isLoading && <TablePagination table={table} />}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div>}
         </div>
     )
 }

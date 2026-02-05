@@ -29,9 +29,9 @@ const Home = () => {
                 <div className='row'>
                     <SiteOverviewStatistics />
                     {/* <PaymentRecordChart /> */}
-                    <SalesMiscellaneous isFooterShow={true} dataList={projectsDataTwo} />
+                    {/* <SalesMiscellaneous isFooterShow={true} dataList={projectsDataTwo} /> */}
                     <TasksOverviewChart />
-                    <LeadsOverviewChart chartHeight={315} />
+                    {/* <LeadsOverviewChart chartHeight={315} /> */}
                     <LatestLeads title={"Latest Leads"} />
                     {/* <Schedule title={"Upcoming Schedule"} /> */}
                     <Project cardYSpaceClass="hrozintioal-card" borderShow={true} title="Project Status" />
