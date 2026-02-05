@@ -187,7 +187,7 @@ export const menuList = [
         id: 6,
         name: "Clients",
         path: "#",
-        icon: 'feather-users',
+        icon: 'feather-user-plus',
         // icon: 'feather-alert-circle',
         dropdownMenu: [
             {
@@ -332,7 +332,7 @@ export const menuList = [
         id: 14,
         name: "Roles",
         path: "#",
-        icon: 'feather-user-check',
+        icon: 'feather-lock',
         // subdropdownMenu: false
         dropdownMenu: [
             {
@@ -372,7 +372,7 @@ export const menuList = [
     {
         id: 16,
         name: "Users",
-        icon: 'feather-user-check',
+        icon: 'feather-user',
         path: "#",
         dropdownMenu: [
             {
