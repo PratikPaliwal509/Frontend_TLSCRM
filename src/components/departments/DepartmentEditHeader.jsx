@@ -13,7 +13,7 @@ const DepartmentEditHeader = ({ loading, onSave }) => {
             </div>
 
             <div className="d-flex gap-2">
-                <Link to="/settings/departments/list" className="btn btn-light">
+                <Link to="/departments/list" className="btn btn-light">
                     <FiArrowLeft className="me-2" />
                     Back
                 </Link>

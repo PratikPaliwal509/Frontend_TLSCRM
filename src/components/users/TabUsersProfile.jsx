@@ -160,7 +160,7 @@ const TabUserProfile = ({ user }) => {
         <div className="row mb-4">
           <div className="col-lg-2 fw-medium">Bio</div>
           <div className="col-lg-10">
-            {user.bio || 'No notes available'}
+            {user.bio || 'Bio not added yet.'}
           </div>
         </div>
       </div>

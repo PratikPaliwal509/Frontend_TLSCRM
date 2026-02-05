@@ -6,6 +6,7 @@ import UsersViewContent from '@/components/users/UsersViewContent'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import UsersViewTabs from '@/components/users/UsersViewTabs'
 import { toast } from 'react-toastify'
+import Loader from '@/components/loader'
 
 const UsersView = () => {
     const { id } = useParams()
@@ -46,7 +47,7 @@ const UsersView = () => {
         fetchUser()
     }, [id])
 
-    if (loading) return <p>Loading user...</p>
+    if (loading) return <Loader/>
     if (!user) return <p>User not found</p>
 
     return (

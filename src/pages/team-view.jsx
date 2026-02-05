@@ -5,6 +5,8 @@ import TeamsViewContent from '@/components/teams/TeamsViewContent'
 import TeamHeader from '@/components/teams/TeamHeader'
 // import TeamsViewTabs from '@/components/teams/TeamsViewTabs'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
+import Loader from '@/components/loader'
+import Footer from '@/components/shared/Footer'
 
 const TeamsView = () => {
   const { id } = useParams()
@@ -50,7 +52,7 @@ const TeamsView = () => {
     fetchTeam()
   }, [id])
 
-  if (loading) return <p>Loading team...</p>
+  if (loading) return <Loader/>
   if (!team) return <p>Team not found</p>
 
   return (
@@ -66,6 +68,7 @@ const TeamsView = () => {
           <TeamsViewContent team={team} />
         </div>
       </div>
+      <Footer/>
     </>
   )
 }

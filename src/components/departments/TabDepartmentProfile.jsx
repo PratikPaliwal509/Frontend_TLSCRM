@@ -118,7 +118,7 @@ const TabDepartmentProfile = ({ departments }) => {
                             General information for this department
                         </span>
                     </h5>
-                    <Link to={`/settings/departments/edit/${departments.department_id}`} className="btn btn-sm btn-light-brand">
+                    <Link to={`/departments/edit/${departments.department_id}`} className="btn btn-sm btn-light-brand">
                         Edit Department
                     </Link>
                 </div>

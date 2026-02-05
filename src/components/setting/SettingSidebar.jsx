@@ -19,7 +19,7 @@ const navItems = [
     { label: "Role List", path: "/settings/roles", icon: "" },
     { label: "Role Create", path: "/settings/roles/create", icon: "" },
     { label: "Departments", path: "/settings/departments", icon: "" },
-    { label: "Departments Create", path: "/settings/departments/create", icon: "" },
+    { label: "Departments Create", path: "/departments/create", icon: "" },
     // { label: "Localization", path: "/settings/localization", icon: "feather-globe" },
     // { label: "reCaptcha", path: "/settings/recaptcha", icon: "feather-shield" },
     // { label: "Miscellaneous", path: "/settings/miscellaneous", icon: "feather-cast" },

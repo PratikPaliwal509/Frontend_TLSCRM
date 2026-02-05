@@ -358,13 +358,13 @@ export const menuList = [
             {
                 id: 1,
                 name: "Department List",
-                path: "/settings/departments/list",
+                path: "/departments/list",
                 subdropdownMenu: false
             },
             {
                 id: 2,
                 name: "Add Department",
-                path: "/settings/departments/create",
+                path: "/departments/create",
                 subdropdownMenu: false
             },
         ]

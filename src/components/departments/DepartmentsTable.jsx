@@ -13,6 +13,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import Loader from '../loader'
 
 const DepartmentsTable = () => {
   const [departments, setDepartments] = useState([])
@@ -116,14 +117,14 @@ const DepartmentsTable = () => {
           {
             label: 'Edit',
             icon: <FiEdit3 />,
-            onClick: () => navigate(`/settings/departments/edit/${departmentId}`),
+            onClick: () => navigate(`/departments/edit/${departmentId}`),
           },
         ]
         return (
           <div className="hstack gap-2 justify-content-end">
             <span className="avatar-text avatar-md">
               <FiEye
-                onClick={() => navigate(`/settings/departments/view/${departmentId}`)}
+                onClick={() => navigate(`/departments/view/${departmentId}`)}
                 className="cursor-pointer"
               />
             </span>
@@ -140,7 +141,7 @@ const DepartmentsTable = () => {
     },
   ]
 
-  if (loading) return <p>Loading departments...</p>
+  if (loading) return <Loader/>
 
   return <Table data={departments} columns={columns} />
 }

@@ -261,19 +261,19 @@ export const router = createBrowserRouter([
                 element: <TeamsList />
             },
             {
-                path: "/settings/departments/view/:id",
+                path: "/departments/view/:id",
                 element: <DepartmentsView />
             },
             {
-                path: "/settings/departments/edit/:id",
+                path: "/departments/edit/:id",
                 element: <DepartmentEdit />
             },
             {
-                path: "/settings/departments/list",
+                path: "/departments/list",
                 element: <DepartmentsList />
             },
             {
-                path: "/settings/departments/create",
+                path: "/departments/create",
                 element: <AddDepartments />
             },
             {

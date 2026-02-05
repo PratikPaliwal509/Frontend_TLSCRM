@@ -114,8 +114,8 @@ const AddDepartment = () => {
       toast.success('Department created successfully')
       navigate(
         payload.parent_department_id
-          ? `/settings/departments/view/${payload.parent_department_id}`
-          : `/settings/departments/view/${data.data.department_id}`
+          ? `/departments/view/${payload.parent_department_id}`
+          : `/departments/view/${data.data.department_id}`
       )
     } catch (err) {
       console.error('Create department error:', err)

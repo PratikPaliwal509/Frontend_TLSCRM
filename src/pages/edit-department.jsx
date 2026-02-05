@@ -125,7 +125,7 @@ const [users, setUsers] = useState([])
             }
 
             const data = await response.json()
-            navigate(`/settings/departments/view/${data.data.department_id}`)
+            navigate(`/departments/view/${data.data.department_id}`)
         } catch (error) {
             console.error('Update department error:', error)
         } finally {

@@ -68,7 +68,7 @@ const TabSubDepartments = ({ departmentId }) => {
 
                                 <span className="avatar-text avatar-md m-2">
                                     <FiEye
-                                        onClick={() => navigate(`/settings/departments/view/${dep.department_id}`)}
+                                        onClick={() => navigate(`/departments/view/${dep.department_id}`)}
                                         className="cursor-pointer"
                                     />
                                 </span>

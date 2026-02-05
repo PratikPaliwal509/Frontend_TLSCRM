@@ -58,7 +58,7 @@ const DepartmentsHeader = ({ mode = 'list' }) => {
             />
 
             {/* Create Department */}
-            <Link to="/settings/departments/create" className="btn btn-primary">
+            <Link to="/departments/create" className="btn btn-primary">
               <FiPlus size={16} className="me-2" />
               <span>Create Department</span>
             </Link>

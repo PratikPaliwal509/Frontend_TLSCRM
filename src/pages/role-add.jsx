@@ -5,6 +5,7 @@ import RolesCreateContent from '@/components/Roles/RolesCreateContent'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import { toast } from 'react-toastify'
+import Footer from '@/components/shared/Footer'
 
 /* ============================
    VIEW SCOPES CONFIG
@@ -165,6 +166,7 @@ const RolesCreate = () => {
                     />
                 </div>
             </div>
+            <Footer/>
         </>
     )
 }

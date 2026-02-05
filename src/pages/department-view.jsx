@@ -7,6 +7,7 @@ import DepartmentsViewTabs from '@/components/departments/DepartmentsViewTabs'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import TabSubDepartments from '@/components/departments/TabSubDepartments'
 import { Tab } from 'bootstrap'
+import Loader from '@/components/loader'
 const DepartmentsView = () => {
     const { id } = useParams()
     const [departments, setDepartments] = useState(null)
@@ -61,7 +62,7 @@ const DepartmentsView = () => {
     }
   }, [departments])
 
-    if (loading) return <p>Loading department...</p>
+    if (loading) return <Loader/>
     if (!departments) return <p>Department not found</p>
 
     return (

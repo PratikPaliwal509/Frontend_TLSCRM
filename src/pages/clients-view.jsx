@@ -8,6 +8,7 @@ import ClientsViewTab from '@/components/clientsViewCreate/ClientsViewTabs'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import Footer from '@/components/shared/Footer'
+import Loader from '@/components/loader'
 const ClientsView = () => {
   const { id } = useParams()
   const [client, setClient] = useState(null)
@@ -41,7 +42,7 @@ const ClientsView = () => {
     fetchClient()
   }, [id])
 
-  if (loading) return <p>Loading client...</p>
+  if (loading) return <Loader/>
   if (!client) return <p>Client not found</p>
 
   return (

@@ -5,6 +5,8 @@ import RolesViewHeader from '@/components/Roles/RolesViewHeader';
 import RolesViewContent from '@/components/Roles/RolesViewContent';
 // import RolesViewTab from '@/components/Roles/RolesViewTab';
 import { verifyPagePermission } from '@/utils/verifyPagePermission';
+import Loader from '@/components/loader';
+import Footer from '@/components/shared/Footer';
 
 const RoleView = () => {
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ const RoleView = () => {
   /* ============================
      SAFETY CHECK
   ============================ */
-  if (loading) return <p>Loading role...</p>;
+  if (loading) return <Loader/>
   if (!role) {
     return (
       <div className="text-center text-muted p-5">
@@ -58,6 +60,7 @@ const RoleView = () => {
           <RolesViewContent role={role} />
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

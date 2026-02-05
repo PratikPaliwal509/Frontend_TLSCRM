@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import TabProjectMembers from '@/components/projectsView/TabProjectMembers'
 import Footer from '@/components/shared/Footer'
+import Loader from '@/components/loader'
 const ProjectsView = () => {
   const { id } = useParams() // project id from route
   const [project, setProject] = useState(null)
@@ -51,7 +52,7 @@ const ProjectsView = () => {
   }, [id])
 
   if (loading) {
-    return <div className="p-4">Loading project...</div>
+    return <Loader/>
   }
 
   if (!project) {
