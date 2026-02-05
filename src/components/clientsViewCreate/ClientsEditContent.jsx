@@ -30,7 +30,7 @@ const ClientsEditContent = ({ formData, agencies, users = [], onChange, onFileCh
                 </div>
 
                 {/* Agency Select */}
-                <div className="row mb-4 align-items-center">
+                <div className="row mb-4 align-items-center mt-4">
                     <div className="col-lg-4">
                         <label className="fw-semibold">Agency: </label>
                     </div>
@@ -53,7 +53,7 @@ const ClientsEditContent = ({ formData, agencies, users = [], onChange, onFileCh
                 </div>
 
                 {/* User Select */}
-                <div className="row mb-4 align-items-center">
+                <div className="row mb-4 align-items-center ">
                     <div className="col-lg-4">
                         <label className="fw-semibold">Portal User: </label>
                     </div>
@@ -68,7 +68,7 @@ const ClientsEditContent = ({ formData, agencies, users = [], onChange, onFileCh
                             <option value="">Select User</option>
                             {users.map((user) => (
                                 <option key={user.user_id} value={user.user_id}>
-                                    {user.first_name} {user.last_name}
+                                    {user.full_name}
                                 </option>
                             ))}
                         </select>
@@ -87,7 +87,7 @@ const ClientsEditContent = ({ formData, agencies, users = [], onChange, onFileCh
                             <option value="">Select Account Manager</option>
                             {users.map(user => (
                                 <option key={user.user_id} value={user.user_id}>
-                                    {user.first_name} {user.last_name}
+                                    {user.full_name}
                                 </option>
                             ))}
                         </select>

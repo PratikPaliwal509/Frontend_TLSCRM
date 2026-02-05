@@ -1,7 +1,7 @@
 import React from 'react'
 import Input from '@/components/shared/Input'
 
-const TeamContent = ({ formData, onChange, users, departments }) => {
+const TeamContent = ({ formData, onChange, users, usersLoading, departments, departmentsLoading }) => {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
     onChange(name, type === 'checkbox' ? checked : value)
@@ -14,7 +14,7 @@ const TeamContent = ({ formData, onChange, users, departments }) => {
         <Input
           label="Team Name"
           name="team_name"
-          placeholder="Enter team name"
+          placeholder="Enter Team Name"
           value={formData.team_name}
           onChange={handleInputChange}
         />
@@ -22,7 +22,7 @@ const TeamContent = ({ formData, onChange, users, departments }) => {
         <Input
           label="Description"
           name="description"
-          placeholder="Enter description"
+          placeholder="Enter Description"
           value={formData.description}
           onChange={handleInputChange}
         />
@@ -39,7 +39,9 @@ const TeamContent = ({ formData, onChange, users, departments }) => {
               value={formData.department_id}
               onChange={handleInputChange}
             >
-              <option value="">No Department</option>
+              <option value="">
+                {departmentsLoading ? 'Loading...' : 'Select Department'}
+              </option>
               {departments.map(dep => (
                 <option key={dep.department_id} value={dep.department_id}>
                   {dep.department_name}
@@ -61,6 +63,9 @@ const TeamContent = ({ formData, onChange, users, departments }) => {
               value={formData.team_lead_id}
               onChange={handleInputChange}
             >
+              <option value="">
+                {usersLoading ? 'Loading...' : 'Select Team Lead'}
+              </option>
               <option value="">Select Team Lead</option>
               {users.map(user => (
                 <option key={user.user_id} value={user.user_id}>

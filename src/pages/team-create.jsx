@@ -13,6 +13,8 @@ const TeamCreate = () => {
   const [users, setUsers] = useState([])
   const [departments, setDepartments] = useState([])
   const [selectedMembers, setSelectedMembers] = useState([])
+  const [usersLoading, setUsersLoading] = useState(true)
+  const [departmentsLoading, setDepartmentsLoading] = useState(true)
 
   const [formData, setFormData] = useState({
     team_name: '',
@@ -31,6 +33,7 @@ const TeamCreate = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setUsersLoading(true)
         const token = localStorage.getItem('token')
         const res = await fetch(
           'http://localhost:5000/api/users/users/without-team',
@@ -40,6 +43,9 @@ const TeamCreate = () => {
         setUsers(data.data || [])
       } catch (err) {
         console.error(err)
+        toast.error('Failed to load users')
+      } finally {
+        setUsersLoading(false)
       }
     }
     fetchUsers()
@@ -49,6 +55,7 @@ const TeamCreate = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
+        setDepartmentsLoading(true)
         const token = localStorage.getItem('token')
         const res = await fetch(
           'http://localhost:5000/api/departments',
@@ -58,6 +65,8 @@ const TeamCreate = () => {
         setDepartments(data.data || [])
       } catch (err) {
         console.error(err)
+      } finally {
+        setDepartmentsLoading(false)
       }
     }
     fetchDepartments()
@@ -188,7 +197,9 @@ const TeamCreate = () => {
             formData={formData}
             onChange={handleChange}
             users={users}
+            usersLoading={usersLoading}
             departments={departments}
+            departmentsLoading={departmentsLoading}
           />
 
           {/* RIGHT SIDE – TEAM MEMBERS */}
@@ -205,10 +216,13 @@ const TeamCreate = () => {
                   <select
                     className="form-control"
                     value=""
+                    disabled={usersLoading}
                     onChange={handleSelectMember}
                   >
-                    <option value="">Select user</option>
-                    {users.map(user => (
+                    <option value="">
+                      {usersLoading ? 'Loading users...' : 'Select user'}
+                    </option>
+                    {!usersLoading && users.map(user => (
                       <option key={user.user_id} value={user.user_id}>
                         {user.first_name} {user.last_name}
                       </option>

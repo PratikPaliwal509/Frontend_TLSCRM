@@ -7,6 +7,7 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import UsersViewTabs from '@/components/users/UsersViewTabs'
 import { toast } from 'react-toastify'
 import Loader from '@/components/loader'
+import Footer from '@/components/shared/Footer'
 
 const UsersView = () => {
     const { id } = useParams()
@@ -63,6 +64,7 @@ const UsersView = () => {
                     <UsersViewContent user={user} />
                 </div>
             </div>
+            <Footer/>
         </>
     )
 }

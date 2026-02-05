@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Input from '@/components/shared/Input'
 import Select from 'react-select'
 
-const ClientsCreateContent = ({ formData, agencies = [], users = [], onChange }) => {
+const ClientsCreateContent = ({ formData, agencies = [], users = [], onChange, usersLoading }) => {
     const [sameEmail, setSameEmail] = useState(false)
     const [sameAddress, setSameAddress] = useState(false)
     const brandColorOptions = [
@@ -49,13 +49,15 @@ const ClientsCreateContent = ({ formData, agencies = [], users = [], onChange })
                             onChange={(e) =>
                                 onChange('portal_user_id', Number(e.target.value) || null)
                             }
-                        >
+                        > {usersLoading ? (
+                            <option>Loading users...</option>
+                        ) : (<>
                             <option value="">Select User</option>
                             {users.map((user) => (
                                 <option key={user.user_id} value={user.user_id}>
-                                    {user.name || user.email}
+                                    {user.full_name || user.email}
                                 </option>
-                            ))}
+                            ))}</>)}
                         </select>
                     </div>
 

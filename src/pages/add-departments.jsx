@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 const AddDepartment = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [managerLoading, setManagerLoading] = useState(false)
   const [users, setUsers] = useState([])
   const [departments, setDepartments] = useState([])
 
@@ -32,6 +33,7 @@ const AddDepartment = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setManagerLoading(true)
         const token = localStorage.getItem('token')
         const response = await fetch(
           'http://localhost:5000/api/users/users/by-agency',
@@ -43,6 +45,8 @@ const AddDepartment = () => {
         setUsers(data.data || [])
       } catch (err) {
         console.error('Fetch users error:', err)
+      } finally{
+        setManagerLoading(false)
       }
     }
     fetchUsers()
@@ -138,11 +142,11 @@ const AddDepartment = () => {
           <DepartmentContent
             SetIs_sub_department={SetIs_sub_department}
             is_sub_department={is_sub_department}
-
             formData={formData}
             onChange={handleChange}
             users={users}
             departments={departments}
+            managerLoading={managerLoading}
           />
         </div>
       </div>

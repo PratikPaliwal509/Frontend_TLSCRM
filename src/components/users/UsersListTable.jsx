@@ -5,7 +5,6 @@ import Loader from '../loader'
 
 const UsersListTable = ({ users, loading }) => {
     const navigate = useNavigate()
-
     return (
         <div className="col-12">{loading ? (
             <Loader />
@@ -82,7 +81,7 @@ const UsersListTable = ({ users, loading }) => {
                                         <td>
                                             {user.department?.department_name || '—'}
                                         </td>
-                                        <td className="">
+                                        <td className="d-flex">
                                             <button
                                                 className="btn btn-sm btn-outline-primary me-1"
                                                 onClick={() =>

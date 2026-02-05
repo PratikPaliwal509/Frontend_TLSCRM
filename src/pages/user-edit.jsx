@@ -6,6 +6,7 @@ import UsersEditContent from '../components/users/UsersEditContent'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import { set } from 'date-fns'
+import Footer from '@/components/shared/Footer'
 
 const UserEditPage = () => {
   const { id } = useParams()
@@ -119,7 +120,7 @@ const UserEditPage = () => {
     try {
       const res = await fetch(`http://localhost:5000/api/users/users/${id}`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
@@ -154,7 +155,10 @@ const UserEditPage = () => {
             roles={roles}
             teams={teams}
             onChange={handleChange}
-          /></div></div>
+          />
+        </div>
+      </div>
+      <Footer/>
     </>
   )
 }

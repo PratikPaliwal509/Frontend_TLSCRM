@@ -8,7 +8,8 @@ const DepartmentContent = ({
     users,
     departments,
     SetIs_sub_department,
-    is_sub_department
+    is_sub_department,
+    managerLoading
 }) => {
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target
@@ -54,7 +55,7 @@ const DepartmentContent = ({
                                 onChange('manager_id', Number(e.target.value))
                             }
                         >
-                            <option value="">Select Manager</option>
+                            <option value="">{managerLoading? 'Loading Manager...' : 'Select Manager'}</option>
                             {users.map(u => (
                                 <option key={u.user_id} value={u.user_id}>
                                     {u.first_name} {u.last_name}

@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react'
 const TabProjectType = ({ formData, setFormData, error }) => {
   const [agencies, setAgencies] = useState([])
   const [clients, setClients] = useState([])
-
+  const [loadingAgencies, setLoadingAgencies] = useState(false)
+  const [loadingClients, setLoadingClients] = useState(false)
   const token = localStorage.getItem('token')
 
   // 🔹 Fetch agencies (only once)
   useEffect(() => {
+    setLoadingAgencies(true)
     fetch('http://localhost:5000/api/agencies', {
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +22,8 @@ const TabProjectType = ({ formData, setFormData, error }) => {
         const list = Array.isArray(res) ? res : res.data || res.agencies || []
         setAgencies(list)
       })
-      .catch(() => setAgencies([]))
+       .catch(() => setAgencies([]))
+      .finally(() => setLoadingAgencies(false))
   }, [])
 
   // 🔹 Fetch clients when agency changes
@@ -29,8 +32,7 @@ const TabProjectType = ({ formData, setFormData, error }) => {
       setClients([])
       return
     }
-
-
+ setLoadingClients(true)
     fetch(
       `http://localhost:5000/api/clients/clientsAll?agency_id=${formData.agency_id}`,
       {
@@ -45,10 +47,8 @@ const TabProjectType = ({ formData, setFormData, error }) => {
         const list = Array.isArray(res) ? res : res.data || res.clients || []
         setClients(list)
       })
-      .catch(err => {
-        console.error(err)
-        setClients([])
-      })
+     .catch(() => setClients([]))
+      .finally(() => setLoadingClients(false))
   }, [formData.agency_id])
 
   return (
@@ -68,8 +68,11 @@ const TabProjectType = ({ formData, setFormData, error }) => {
 
       >
 
-        <option value="">Select Agency</option>
-        {agencies.map(a => (
+         <option value="">
+          {loadingAgencies ? 'Loading agencies...' : 'Select Agency'}
+        </option>
+        {!loadingAgencies &&
+          agencies.map(a => (
           <option key={a.agency_id} value={a.agency_id}>
             {a.agency_name}
           </option>
@@ -91,8 +94,16 @@ const TabProjectType = ({ formData, setFormData, error }) => {
 
       >
 
-        <option value="">Select Client</option>
-        {clients.map(c => (
+         <option value="">
+          {loadingClients
+            ? 'Loading clients...'
+            : !formData.agency_id
+            ? 'Select agency first'
+            : 'Select Client'}
+        </option>
+
+        {!loadingClients &&
+          clients.map(c => (
           <option key={c.client_id} value={c.client_id}>
             {c.company_name}
           </option>

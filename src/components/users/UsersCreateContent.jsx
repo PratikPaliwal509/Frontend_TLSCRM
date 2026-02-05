@@ -6,6 +6,9 @@ const UsersCreateContent = ({
     departments,
     teams,
     onChange,
+     rolesLoading, 
+    departmentsLoading, 
+    teamsLoading
 }) => {
     const handleInput = (e) => {
         const { name, value } = e.target
@@ -65,7 +68,9 @@ const UsersCreateContent = ({
                             value={formData.role_id || ''}
                             onChange={handleInput}
                         >
-                            <option value="">Select Role</option>
+                            <option value="">
+                                {rolesLoading ? 'Loading roles...' : 'Select role'}
+                            </option>
                             {Array.isArray(roles) && roles.map(r => (
                                 <option key={r.role_id} value={r.role_id}>
                                     {r.role_name}
@@ -109,7 +114,9 @@ const UsersCreateContent = ({
                             value={formData.department_id || ''}
                             onChange={handleInput}
                         >
-                            <option value="">Select Department</option>
+                            <option value="">
+                                {departmentsLoading ? 'Loading departments...' : 'Select department'}
+                            </option>
                             {departments?.map(d => (
                                 <option key={d.department_id} value={d.department_id}>
                                     {d.department_name}
@@ -128,7 +135,14 @@ const UsersCreateContent = ({
                             onChange={handleInput}
                             disabled={!formData.department_id}
                         >
-                            <option value="">Select Team</option>
+                            <option value="">
+                                {teamsLoading
+                                    ? 'Loading teams...'
+                                    : !formData.department_id
+                                        ? 'Select department first'
+                                        : 'Select team'}
+                            </option>
+
                             {teams?.map(t => (
                                 <option key={t.team_id} value={t.team_id}>
                                     {t.team_name}
@@ -182,13 +196,13 @@ const UsersCreateContent = ({
                         />
                     </div>
                     {/* <div className="col-md-6 mb-3"> */}
-                        <label className="form-label">Bio</label>
-                        <textarea
-                            value={formData.bio}
-                            className="form-control"
-                            onChange={e => onChange('bio', e.target.value)}
-                            placeholder="Short bio"
-                        />
+                    <label className="form-label">Bio</label>
+                    <textarea
+                        value={formData.bio}
+                        className="form-control"
+                        onChange={e => onChange('bio', e.target.value)}
+                        placeholder="Short bio"
+                    />
                     {/* </div> */}
 
                 </div>

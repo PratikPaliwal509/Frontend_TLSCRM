@@ -13,6 +13,7 @@ import Footer from '@/components/shared/Footer';
 const ClientsCreate = () => {
     const [agencies, setAgencies] = useState([])
     const [users, setUsers] = useState([])
+const [usersLoading, setUsersLoading] = useState(true);
 
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
@@ -49,10 +50,11 @@ const ClientsCreate = () => {
     /* ================= FETCH Users ================= */
     useEffect(() => {
         const fetchUsers = async () => {
+            setUsersLoading(true);
             try {
                 const token = localStorage.getItem('token')
 
-                const response = await fetch('http://localhost:5000/api/users/users/by-agency', {
+                const response = await fetch('http://localhost:5000/api/users/client-portal-users', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -64,6 +66,8 @@ const ClientsCreate = () => {
                 setUsers(data.data || [])
             } catch (error) {
                 console.error('Users fetch error', error)
+            } finally {
+                setUsersLoading(false);
             }
         }
 
@@ -194,6 +198,7 @@ const ClientsCreate = () => {
                         agencies={agencies}
                         users={users}
                         onChange={handleChange}
+                        usersLoading={usersLoading}
                     />
                 </div>
             </div>

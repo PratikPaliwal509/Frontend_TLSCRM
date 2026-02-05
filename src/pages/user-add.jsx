@@ -9,6 +9,9 @@ import Footer from '@/components/shared/Footer'
 
 const UsersCreate = () => {
     const navigate = useNavigate()
+    const [rolesLoading, setRolesLoading] = useState(true)
+    const [departmentsLoading, setDepartmentsLoading] = useState(true)
+    const [teamsLoading, setTeamsLoading] = useState(false)
 
     const [loading, setLoading] = useState(false)
     const [roles, setRoles] = useState([])
@@ -41,6 +44,7 @@ const UsersCreate = () => {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
+                setRolesLoading(true)
                 const token = localStorage.getItem('token')
                 const res = await fetch('http://localhost:5000/api/roles', {
                     headers: { Authorization: `Bearer ${token}` },
@@ -49,6 +53,8 @@ const UsersCreate = () => {
                 setRoles(result.data || [])
             } catch (err) {
                 console.error(err)
+            } finally {
+                setRolesLoading(false)
             }
         }
 
@@ -58,6 +64,7 @@ const UsersCreate = () => {
     useEffect(() => {
         const fetchDepartments = async () => {
             try {
+                setDepartmentsLoading(true)
                 const token = localStorage.getItem('token')
                 const res = await fetch('http://localhost:5000/api/departments', {
                     headers: { Authorization: `Bearer ${token}` },
@@ -66,7 +73,10 @@ const UsersCreate = () => {
                 setDepartments(data.data || [])
             } catch (err) {
                 console.error(err)
+            } finally {
+                setDepartmentsLoading(false)
             }
+
         }
 
         fetchDepartments()
@@ -78,6 +88,7 @@ const UsersCreate = () => {
 
         const fetchTeams = async () => {
             try {
+                setTeamsLoading(true)
                 const token = localStorage.getItem('token')
                 const res = await fetch(
                     `http://localhost:5000/api/teams/`,
@@ -88,6 +99,8 @@ const UsersCreate = () => {
                 setTeams(data.data || [])
             } catch (err) {
                 console.error(err)
+            } finally {
+                setTeamsLoading(false)
             }
         }
 
@@ -210,8 +223,11 @@ const UsersCreate = () => {
                 <UsersCreateContent
                     formData={formData}
                     roles={roles}
+                    rolesLoading={rolesLoading}
                     departments={departments}
+                    departmentsLoading={departmentsLoading}
                     teams={teams}
+                    teamsLoading={teamsLoading}
                     onChange={handleChange}
                 />
             </div>
