@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { toast } from "react-toastify";
 
 const AddsNote = ({
     isOpen,
@@ -25,6 +26,10 @@ const AddsNote = ({
     if (!isOpen) return null
 
     const handleSubmit = async () => {
+        if(description===""){
+            toast.error("Description Not added!")
+            return;
+        }
         const token = localStorage.getItem("token")
 
         const url =
@@ -36,24 +41,29 @@ const AddsNote = ({
             noteType === "clients"
                 ? { notes: description }
                 : { notes: description }
+        try {
+            const res = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(body),
+            })
 
-        const res = await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(body),
-        })
+            const json = await res.json()
+            if (!res.ok || !json.success) {
+                throw new Error(json.message || "Failed to add note");
+            }
 
-        const json = await res.json()
+            toast.success("Note added successfully!");
 
-        if (json.success) {
-            onNoteAdded?.()
-            onClose()
+            onNoteAdded?.();
+            onClose();
+        } catch (err) {
+            toast.error(err.message || "Something went wrong!");
         }
-    }
-
+    };
     return (
         <>
             {/* Overlay */}
@@ -114,11 +124,13 @@ const AddsNote = ({
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
                                     <option value="">Select Client</option>
-                                    {clientList.map((c) => (
+                                    {(!clientList || clientList.length === 0) ? (
+                                        <option value="" disabled>Notes already added for all clients</option>
+                                    ) : (clientList.map((c) => (
                                         <option key={c.client_id} value={c.client_id}>
                                             {c.company_name}
                                         </option>
-                                    ))}
+                                    )))}
                                 </select>
                             </div>
                         )}
@@ -132,7 +144,9 @@ const AddsNote = ({
                                     onChange={(e) => setSelectedProject(e.target.value)}
                                 >
                                     <option value="">Select Project</option>
-                                    {projectList.map((p) => (
+                                    {(!projectList || projectList.length === 0) ? (
+                                        <option value="" disabled>Notes already added for all project</option>
+                                    ) : projectList.map((p) => (
                                         <option key={p.project_id} value={p.project_id}>
                                             {p.project_name}
                                         </option>

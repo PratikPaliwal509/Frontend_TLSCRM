@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { FiStar, FiTrash2 } from 'react-icons/fi'
 import PerfectScrollbar from "react-perfect-scrollbar"
-
 import NotesHeader from './NotesHeader'
 import NotesSidebar from './NotesSidebar'
 import Footer from '@/components/shared/Footer'
 import AddsNote from './AddsNote'
-import { ToastContainer } from "react-toastify"
+import { toast } from 'react-toastify'
+
 const NotesContent = () => {
     const [data, setData] = useState([])
     const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -46,9 +46,9 @@ const NotesContent = () => {
                 date: item?.created_at,
                 category: noteType,
             }))
-
+            console.log(formatted)
             setData(formatted)
-            toast.success("Notes loaded successfully")
+            // toast.success("Notes loaded successfully")
         } catch (error) {
             console.error(error)
             toast.error(error.message || "Unable to load notes")
@@ -77,6 +77,7 @@ const NotesContent = () => {
             const json = await res.json()
 
             if (json.success) {
+                console.log("c" + JSON.stringify(json.data))
                 setClientsList(json.data)
             } else {
                 setClientsList([])
@@ -106,6 +107,7 @@ const NotesContent = () => {
             const json = await res.json()
 
             if (json.success) {
+                console.log("p" + JSON.stringify(json.data))
                 setProjectsList(json.data)
             } else {
                 setProjectsList([])
@@ -119,7 +121,7 @@ const NotesContent = () => {
 
     const filteredData =
         selectTab === "alls" ? data : data.filter(note => note.category === selectTab)
-
+    console.log("filteredData", filteredData)
     const handleDeleteNote = (id) => setData(prev => prev.filter(note => note.id !== id))
     const handleFavourite = (id) =>
         setFavourites(prev =>

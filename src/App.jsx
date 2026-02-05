@@ -21,8 +21,9 @@ const App = () => {
           </RouterProvider>
         </SideBarToggleProvider>
       </NavigationProvider>
-
-      <ToastContainer position="top-right" autoClose={3000} />
+      <span style={{ zIndex: 10 }}>
+        <ToastContainer position="top-right" autoClose={3000} />
+      </span>
       <ThemeCustomizer />
     </>
   )
