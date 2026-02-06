@@ -104,7 +104,6 @@ useEffect(()=>{
     const data = async () =>{
     const res = await getUserRole()
     setRole(res.role_name)
-    console.log("res", res)
     }
     data()
 })

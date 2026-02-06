@@ -19,7 +19,6 @@ export const getUserRole = async () => {
     if (!res.ok) return null
 
     const result = await res.json()
-    console.log("nnff", JSON.stringify(result))
     return result?.data || null // ✅ ROLE OBJECT
   } catch (error) {
     console.error('getUserRole error:', error)

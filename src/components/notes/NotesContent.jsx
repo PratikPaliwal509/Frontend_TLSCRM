@@ -46,7 +46,6 @@ const NotesContent = () => {
                 date: item?.created_at,
                 category: noteType,
             }))
-            console.log(formatted)
             setData(formatted)
             // toast.success("Notes loaded successfully")
         } catch (error) {
@@ -77,7 +76,6 @@ const NotesContent = () => {
             const json = await res.json()
 
             if (json.success) {
-                console.log("c" + JSON.stringify(json.data))
                 setClientsList(json.data)
             } else {
                 setClientsList([])
@@ -107,7 +105,6 @@ const NotesContent = () => {
             const json = await res.json()
 
             if (json.success) {
-                console.log("p" + JSON.stringify(json.data))
                 setProjectsList(json.data)
             } else {
                 setProjectsList([])
@@ -121,7 +118,6 @@ const NotesContent = () => {
 
     const filteredData =
         selectTab === "alls" ? data : data.filter(note => note.category === selectTab)
-    console.log("filteredData", filteredData)
     const handleDeleteNote = (id) => setData(prev => prev.filter(note => note.id !== id))
     const handleFavourite = (id) =>
         setFavourites(prev =>

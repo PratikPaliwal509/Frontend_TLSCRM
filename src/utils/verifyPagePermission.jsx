@@ -1,4 +1,12 @@
-// src/utils/verifyPagePermission.js
+const VIEW_SCOPES = [
+  'all',
+  'agency',
+  'department',
+  'team',
+  'assigned',
+  'client',
+  'own',
+]
 
 export const verifyPagePermission = async (
   moduleKey,
@@ -11,15 +19,9 @@ export const verifyPagePermission = async (
     const user = JSON.parse(localStorage.getItem('user') || '{}')
 
     /* ============================
-       BASIC AUTH VALIDATION
+       AUTH CHECK
     ============================ */
-    if (!token || !user?.user_id || !user?.role_id) {
-      localStorage.clear()
-      navigate(loginPath, { replace: true })
-      return false
-    }
-
-    if (user.is_active === false) {
+    if (!token || !user?.user_id || !user?.role_id || user.is_active === false) {
       localStorage.clear()
       navigate(loginPath, { replace: true })
       return false
@@ -28,69 +30,62 @@ export const verifyPagePermission = async (
     /* ============================
        FETCH ROLE
     ============================ */
-    const response = await fetch(
+    const res = await fetch(
       `http://localhost:5000/api/roles/${user.role_id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     )
 
-    if (response.status === 401 || response.status === 403) {
-      localStorage.clear()
+    if (!res.ok) {
       navigate(loginPath, { replace: true })
       return false
     }
 
-    if (!response.ok) return false
-
-    const result = await response.json()
+    const result = await res.json()
     const permissions = result?.data?.permissions || {}
 
     /* ============================
-       SUPER ADMIN OVERRIDE (OPTIONAL)
-       You can remove this if not needed
+       MODULE EXISTS
     ============================ */
-    if (result?.data?.is_system_role === true) {
-      return true
-    }
-
-    const modulePermissions = permissions?.[moduleKey]
-
-    if (!modulePermissions) {
+    if (!permissions.hasOwnProperty(moduleKey)) {
+      console.warn(`Permission missing for module: ${moduleKey}`)
       navigate(loginPath, { replace: true })
       return false
     }
 
+    const modulePermissions = permissions[moduleKey]
+
     /* ============================
-       VIEW PERMISSION (SCOPE BASED)
+       VIEW (BOOLEAN + SCOPE)
     ============================ */
     if (action === 'view') {
-      // view must exist and be a valid scope string
-      if (typeof modulePermissions.view === 'string' && modulePermissions.view.length > 0) {
+      const viewValue = modulePermissions.view
+
+      // ✅ CASE 1: boolean true
+      if (viewValue === true) {
         return true
       }
 
+      // ✅ CASE 2: scoped string
+      if (typeof viewValue === 'string' && VIEW_SCOPES.includes(viewValue)) {
+        return true
+      }
+
+      // ❌ NOT ALLOWED
       navigate(loginPath, { replace: true })
       return false
     }
 
     /* ============================
-       OTHER ACTIONS (BOOLEAN)
+       OTHER ACTIONS
     ============================ */
-    if (modulePermissions?.[action] === true) {
+    if (modulePermissions[action] === true) {
       return true
     }
 
-    /* ============================
-       NOT ALLOWED
-    ============================ */
     navigate(loginPath, { replace: true })
     return false
   } catch (error) {
     console.error('verifyPagePermission error:', error)
-    localStorage.clear()
     navigate(loginPath, { replace: true })
     return false
   }

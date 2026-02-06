@@ -10,7 +10,6 @@ import { formatDate, formatCurrency, statusLabel } from '@/utils/projectHelpers'
 const TabProjectOverview = ({ project }) => {
   const chartOptions = projectViewAreaChartOptions()
   const members = project?.projectMembers || []
-console.log("project", JSON.stringify(project))
   const imageList = members.map(m => ({
     id: m.member_id,
     user_name: m.user?.full_name,

@@ -16,7 +16,6 @@ const [tasks2, setTasks] =useState(tasks || [])
   useEffect(() => {
     const checkPermission = async () => {
       const res = await verifyAccess('tasks', 'view', 'client')
-      console.log(res)
       setIsClient(res)
     };
     checkPermission();
@@ -39,7 +38,6 @@ const [tasks2, setTasks] =useState(tasks || [])
       )
 
       const data = await res.json()
-console.log("data", JSON.stringify(data)) 
  setTasks((prev) =>
   prev.map((task) =>
     task.id === taskId
@@ -113,7 +111,6 @@ console.log("data", JSON.stringify(data))
                               className="btn btn-sm btn-success"
                               onClick={(e) => {
                                 e.stopPropagation()
-                                console.log('Approve task:', task.id)
                                 // call approve API here
                                 approveTask(task.id)
                               }}
