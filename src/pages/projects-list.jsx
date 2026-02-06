@@ -27,7 +27,7 @@ const ProjectsList = () => {
                     <ProjectTable />
                 </div>
             </div>
-  <Footer />
+            <Footer />
         </>
     )
 }

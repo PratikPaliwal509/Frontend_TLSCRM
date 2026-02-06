@@ -99,6 +99,8 @@ import RolesList from "../pages/role-list";
 import RolesCreate from "../pages/role-add";
 import RolesEdit from "../pages/role-edit";
 import RoleView from "../pages/role-view";
+import TimesheetPage from "../pages/timesheetPage";
+import TeamTimesheetPage from "../pages/teamTimesheetPage";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -326,6 +328,14 @@ export const router = createBrowserRouter([
             {
                 path: "/applications/tasks",
                 element: <AppsTasks />
+            },
+            {
+                path: "/applications/my-timesheet",
+                element: <TimesheetPage />
+            },
+            {
+                path: "/applications/team-timesheet",
+                element: <TeamTimesheetPage />
             },
             {
                 path: "/applications/notes",

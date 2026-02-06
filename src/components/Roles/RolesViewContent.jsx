@@ -35,7 +35,7 @@ const RolesViewContent = ({ role }) => {
 
             {/* ACTIONS */}
             <div className="d-flex flex-wrap gap-3 mb-2">
-              {['view', 'create', 'edit', 'delete', 'assign'].map(action => {
+              {['view', 'create', 'edit', 'delete', 'assign', 'client'].map(action => {
                 if (action === 'view' && ['clients','projects', 'tasks','teams','departments'].includes(page)) return null;
                 return (
                   <div className="form-check" key={action}>

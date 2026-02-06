@@ -12,7 +12,7 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission';
 const VIEW_SCOPES = {
   clients: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
   projects: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
-  tasks: ['all', 'agency', 'department', 'team', 'assigned', 'own'],
+  tasks: ['all', 'agency', 'department', 'team', 'assigned', 'own', 'client'],
   teams: ['all', 'agency', 'department', 'team', 'own'],
   departments: ['all', 'agency', 'department', 'team', 'own'],
 };

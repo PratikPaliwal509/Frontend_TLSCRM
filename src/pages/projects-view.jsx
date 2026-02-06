@@ -52,7 +52,7 @@ const ProjectsView = () => {
   }, [id])
 
   if (loading) {
-    return <Loader/>
+    return <Loader />
   }
 
   if (!project) {
@@ -113,7 +113,7 @@ const ProjectsView = () => {
           </div>
         </div>
       </div>
-        <Footer/>
+      <Footer />
     </>
   )
 }

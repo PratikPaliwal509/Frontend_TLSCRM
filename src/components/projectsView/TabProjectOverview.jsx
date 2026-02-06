@@ -10,7 +10,7 @@ import { formatDate, formatCurrency, statusLabel } from '@/utils/projectHelpers'
 const TabProjectOverview = ({ project }) => {
   const chartOptions = projectViewAreaChartOptions()
   const members = project?.projectMembers || []
-
+console.log("project", JSON.stringify(project))
   const imageList = members.map(m => ({
     id: m.member_id,
     user_name: m.user?.full_name,
@@ -113,13 +113,14 @@ const TabProjectOverview = ({ project }) => {
 
         <div className="col-xl-4">
           <div className="row">
-            <HourCard icon="feather-log-in" color="primary" title="Logged Hours" hours={project?.actual_hours ?? '00:00'} totalBilled="00:00" />
-            <HourCard icon="feather-clipboard" color="warning" title="Billable Hours" hours={project?.actual_hours ?? '00:00'} totalBilled="00:00" />
-            <HourCard icon="feather-check" color="success" title="Billed Hours" hours="00:00" totalBilled="00:00" />
-            <HourCard icon="feather-x" color="danger" title="Unbilled Hours" hours="00:00" totalBilled="00:00" />
+            <HourCard icon="feather-log-in" color="primary" title="Logged Hours" hours={project?.actual_hours ?? '00:00'} totalBilled={project?.actual_hours ?? '00:00'} />
+            <HourCard icon="feather-clipboard" color="warning" title="Billable Hours" hours={project?.time_summary.billable_hours ?? '00:00'} totalBilled={project?.time_summary.billable_amount ?? '00:00'} />
+            <HourCard icon="feather-check" color="success" title="Billed Hours" hours={project?.time_summary.billed_hours ?? '00:00'} totalBilled={project?.time_summary.billed_amount ?? '00:00'} />
+            <HourCard icon="feather-x" color="danger" title="Unbilled Hours" hours={project?.time_summary.unbilled_hours ?? '00:00'} totalBilled={project?.time_summary.unbilled_amount ?? '00:00'} />
           </div>
 
-          <div className="card stretch stretch-full mt-3">
+          <div className="card  mt-3">
+          {/* <div className="card stretch stretch-full mt-3"> */}
             <ReactApexChart options={chartOptions} series={chartOptions?.series} type="area" height={270} />
           </div>
         </div>

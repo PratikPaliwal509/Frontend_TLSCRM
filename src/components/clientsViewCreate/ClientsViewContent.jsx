@@ -2,10 +2,9 @@
 import React from 'react'
 import TabClientsProfile from './TabClientsProfile'
 import ClientsEmptyCard from './ClientsEmptyCard'
-
+import ClientProjectCost from './ClientProjectCost'
 const ClientsViewContent = ({ client }) => {
   const notes = client?.notes || []
-
   return (
     <>
       {/* PROFILE TAB */}
@@ -18,7 +17,17 @@ const ClientsViewContent = ({ client }) => {
           description={`There are no proposals created for ${client?.company_name}`}
         />
       </div> */}
-
+      {/* PROJECT COST TAB */}
+      <div className="tab-pane fade" id="projectCostTab" role="tabpanel">
+        {client?.projectCost.length > 0 ? (
+          <ClientProjectCost projectCost={client?.projectCost} />
+        ) : (
+          <ClientsEmptyCard
+            title="No project cost data"
+            description={`No billing data available for ${client?.company_name}`}
+          />
+        )}
+      </div>
       {/* TASKS TAB */}
       {/* <div className="tab-pane fade" id="tasksTab" role="tabpanel">
         <ClientsEmptyCard

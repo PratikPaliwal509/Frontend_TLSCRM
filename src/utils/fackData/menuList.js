@@ -82,6 +82,18 @@ export const menuList = [
                 subdropdownMenu: false
             },
             {
+                id: 6,
+                name: "My Timelogs",
+                path: "/applications/my-timesheet",
+                subdropdownMenu: false
+            },
+            {
+                id: 7,
+                name: "Team Timelogs",
+                path: "/applications/team-timesheet",
+                subdropdownMenu: false
+            },
+            {
                 id: 5,
                 name: "Storage",
                 path: "/applications/storage",

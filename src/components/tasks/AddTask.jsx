@@ -37,11 +37,14 @@ const AddTask = () => {
         client_approval_required: false,
 
     })
-
     const taskTypeOptions = [
+        { label: 'Content Creation', value: 'content creation' },
+        { label: 'Design', value: 'design' },
+        { label: 'SEO', value: 'seo' },
+        { label: 'Social Media', value: 'social media' },
+        { label: 'Reporting', value: 'reporting' },
         { label: 'Feature', value: 'feature' },
         { label: 'Bug', value: 'bug' },
-        { label: 'Design', value: 'design' },
         { label: 'Meeting', value: 'meeting' },
         { label: 'Review', value: 'review' },
         { label: 'Deployment', value: 'deployment' },

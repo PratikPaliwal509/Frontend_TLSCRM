@@ -49,7 +49,15 @@ const ClientsViewTab = ({ client }) => {
                 Tasks
               </button>
             </li> */}
-
+            <li className="nav-item">
+              <button
+                className="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#projectCostTab"
+              >
+                Project Cost
+              </button>
+            </li>
             <li className="nav-item">
               <button
                 className="nav-link"
@@ -75,11 +83,10 @@ const ClientsViewTab = ({ client }) => {
         {/* OPTIONAL: Client Status Badge */}
         <div className="d-none d-md-flex">
           <span
-            className={`badge ${
-              client?.status === 'active'
+            className={`badge ${client?.status === 'active'
                 ? 'bg-soft-success text-success'
                 : 'bg-soft-danger text-danger'
-            }`}
+              }`}
           >
             {client?.status}
           </span>
