@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import Footer from '@/components/shared/Footer'
 import RolesHeader from '@/components/Roles/RolesHeader'
-import RolesTable from '@/components/roles/RolesTable'
+import RolesTable from '@/components/Roles/RolesTable'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 
