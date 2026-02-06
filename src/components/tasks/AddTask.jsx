@@ -238,6 +238,13 @@ const AddTask = () => {
                 client_approval_required: false,
             })
             closeModal()
+            // notify other components that a task was created
+            try {
+                const created = taskRes?.data || taskRes
+                window.dispatchEvent(new CustomEvent('task:created', { detail: created }))
+            } catch (e) {
+                // ignore dispatch errors
+            }
             // setIsOpen(false);
 
 
