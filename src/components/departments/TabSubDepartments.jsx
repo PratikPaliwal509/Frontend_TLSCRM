@@ -16,7 +16,7 @@ const TabSubDepartments = ({ departmentId }) => {
                 const token = localStorage.getItem('token')
 
                 const response = await fetch(
-                    `http://localhost:5000/api/departments/${departmentId}/sub-departments`,
+                    `https://api-0ggv.onrender.com/api/departments/${departmentId}/sub-departments`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

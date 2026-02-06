@@ -39,8 +39,8 @@ const [actionLoading, setActionLoading] = useState(false)
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tasks/timelogs/active/${taskId}`,
-        // `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
+        `https://api-0ggv.onrender.com/api/tasks/timelogs/active/${taskId}`,
+        // `https://api-0ggv.onrender.com/api/tasks/timelogs/${taskId}/time-logs`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -75,7 +75,7 @@ const [actionLoading, setActionLoading] = useState(false)
 
     try {
       await fetch(
-        `http://localhost:5000/api/tasks/timelogs/${taskId}/timelogs`,
+        `https://api-0ggv.onrender.com/api/tasks/timelogs/${taskId}/timelogs`,
         {
           method: "POST",
           headers: {
@@ -115,7 +115,7 @@ const [actionLoading, setActionLoading] = useState(false)
 
   try {
     await fetch(
-      `http://localhost:5000/api/tasks/timelogs/${log.log_id}/approve`,
+      `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/approve`,
       {
         method: "POST",
         headers: {
@@ -140,7 +140,7 @@ const handleReject = async () => {
 
   try {
     await fetch(
-      `http://localhost:5000/api/tasks/timelogs/${log.log_id}/reject`,
+      `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/reject`,
       {
         method: "POST",
         headers: {

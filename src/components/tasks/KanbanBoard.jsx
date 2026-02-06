@@ -28,7 +28,7 @@ const [tasks2, setTasks] =useState(tasks || [])
     const token = localStorage.getItem('token')
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tasks/${taskId}/approve`,
+        `https://api-0ggv.onrender.com/api/tasks/${taskId}/approve`,
         {
           method: 'POST',
           headers: {

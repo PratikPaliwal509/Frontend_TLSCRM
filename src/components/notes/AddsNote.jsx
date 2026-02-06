@@ -34,8 +34,8 @@ const AddsNote = ({
 
         const url =
             noteType === "clients"
-                ? `http://localhost:5000/api/clients/${selectedClient}`
-                : `http://localhost:5000/api/projects/${selectedProject}`
+                ? `https://api-0ggv.onrender.com/api/clients/${selectedClient}`
+                : `https://api-0ggv.onrender.com/api/projects/${selectedProject}`
 
         const body =
             noteType === "clients"

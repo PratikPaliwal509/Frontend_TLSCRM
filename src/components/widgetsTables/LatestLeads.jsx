@@ -19,7 +19,7 @@ const LatestLeads = ({ title }) => {
         const fetchClients = async () => {
             try {
                 setLoading(true)
-                const res = await fetch('http://localhost:5000/api/clients', {
+                const res = await fetch('https://api-0ggv.onrender.com/api/clients', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
