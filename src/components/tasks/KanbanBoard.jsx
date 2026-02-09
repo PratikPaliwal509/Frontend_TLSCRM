@@ -28,7 +28,7 @@ const KanbanBoard = ({ tasks, onSelect }) => {
     const token = localStorage.getItem('token')
     try {
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/tasks/${taskId}/approve`,
+        `http://localhost:5000/api/tasks/${taskId}/approve`,
         {
           method: 'POST',
           headers: {

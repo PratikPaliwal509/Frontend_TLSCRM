@@ -12,6 +12,7 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import TabProjectMembers from '@/components/projectsView/TabProjectMembers'
 import Footer from '@/components/shared/Footer'
 import Loader from '@/components/loader'
+import KanbanBoard from '../components/kanban/KanbanBoard'
 const ProjectsView = () => {
   const { id } = useParams() // project id from route
   const [project, setProject] = useState(null)
@@ -30,7 +31,7 @@ const ProjectsView = () => {
       try {
         const token = localStorage.getItem('token')
 
-        const res = await fetch(`https://api-0ggv.onrender.com/api/projects/${id}`, {
+        const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,6 +85,10 @@ const ProjectsView = () => {
           <div className="tab-pane fade" id="ganttTab">
             <GanttTimeline projectId={project.project_id} />
           </div>
+          <div className="tab-pane fade" id="tasksTab" role="tabpanel">
+  <KanbanBoard tasks={project?.tasks}
+  />
+</div>
           <div className="tab-pane fade" id="activityTab">
             <LeadsEmptyCard
               title="No activity yet!"

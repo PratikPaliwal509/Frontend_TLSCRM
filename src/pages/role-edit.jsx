@@ -83,7 +83,7 @@ const RolesEdit = () => {
         setLoading(true);
         const token = localStorage.getItem('token');
 
-        const response = await fetch(`https://api-0ggv.onrender.com/api/roles/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/roles/${id}`, {
           method: 'GET',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -149,7 +149,7 @@ const RolesEdit = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`https://api-0ggv.onrender.com/api/roles/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/roles/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

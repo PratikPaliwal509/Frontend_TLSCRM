@@ -3,6 +3,8 @@ import React from 'react'
 import TabClientsProfile from './TabClientsProfile'
 import ClientsEmptyCard from './ClientsEmptyCard'
 import ClientProjectCost from './ClientProjectCost'
+import KanbanBoard from '../kanban/KanbanBoard'
+import ClientProjects from './ClientProjects'
 const ClientsViewContent = ({ client }) => {
   const notes = client?.notes || []
   return (
@@ -58,6 +60,13 @@ const ClientsViewContent = ({ client }) => {
           />
         )}
       </div>
+
+{/* TASKS TAB */}
+<div className="tab-pane fade " id="tasksTab" role="tabpanel">
+  <KanbanBoard tasks={client?.tasks || []} />
+</div>
+<div className="tab-pane fade " id="projectTab" role="tabpanel"><ClientProjects projects={client.projects} /></div>
+
 
       {/* COMMENTS TAB */}
       {/* <div className="tab-pane fade" id="commentTab" role="tabpanel">

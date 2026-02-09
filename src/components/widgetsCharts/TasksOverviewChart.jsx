@@ -20,7 +20,7 @@ const TasksOverviewChart = () => {
           throw new Error('Authentication token missing')
         }
 
-        const res = await fetch('https://api-0ggv.onrender.com/api/tasks/overview', {
+        const res = await fetch('http://localhost:5000/api/tasks/overview', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

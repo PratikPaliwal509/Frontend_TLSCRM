@@ -19,7 +19,7 @@ const Progress = ({ footerShow, title, btnFooter }) => {
         setError(null);
 
         try {
-            const res = await fetch("https://api-0ggv.onrender.com/api/teams/", {
+            const res = await fetch("http://localhost:5000/api/teams/", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"

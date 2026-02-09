@@ -74,7 +74,7 @@ const navigate = useNavigate()
       try {
         const token = localStorage.getItem("token")
 
-        const res = await fetch("https://api-0ggv.onrender.com/api/clients", {
+        const res = await fetch("http://localhost:5000/api/clients", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -119,7 +119,7 @@ const navigate = useNavigate()
     const token = localStorage.getItem("token")
 
     const res = await fetch(
-      `https://api-0ggv.onrender.com/api/clients/${clientId}/status`,
+      `http://localhost:5000/api/clients/${clientId}/status`,
       {
         method: "PATCH",
         headers: {
@@ -156,7 +156,7 @@ const navigate = useNavigate()
 //   try {
 //     const token = localStorage.getItem("token")
 
-//     await fetch(`https://api-0ggv.onrender.com/api/clients/${clientId}`, {
+//     await fetch(`http://localhost:5000/api/clients/${clientId}`, {
 //       method: "DELETE",
 //       headers: {
 //         Authorization: `Bearer ${token}`,

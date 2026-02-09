@@ -12,7 +12,7 @@ const NotificationsModal = () => {
   // 🔹 FETCH NOTIFICATIONS (GET)
   const fetchNotifications = async () => {
     try {
-      const res = await fetch("https://api-0ggv.onrender.com/api/notification", {
+      const res = await fetch("http://localhost:5000/api/notification", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const handleMarkAllAsRead = async () => {
     const token = localStorage.getItem("token");
 
     const res = await fetch(
-      "https://api-0ggv.onrender.com/api/notification/read-all",
+      "http://localhost:5000/api/notification/read-all",
       {
         method: "PATCH",
         headers: {

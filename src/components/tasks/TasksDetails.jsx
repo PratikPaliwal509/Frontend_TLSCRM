@@ -78,7 +78,7 @@ const [usersList, setUsersList] =useState([])
         setLoading(true)
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasksComments/${id}/comments`,
+                `http://localhost:5000/api/tasksComments/${id}/comments`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ const [usersList, setUsersList] =useState([])
             try {
                 setLoadingUsers(true)
 
-                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
@@ -209,7 +209,7 @@ setUsersList(list)
         try {
             setAssigningUserId(userId)
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${taskId}/assign`,
+                `http://localhost:5000/api/tasks/${taskId}/assign`,
                 {
                     method: 'POST',
                     headers: {
@@ -256,7 +256,7 @@ setUsersList(list)
 
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}/assignments/${userId}/remove`,
+                `http://localhost:5000/api/tasks/${id}/assignments/${userId}/remove`,
                 {
                     method: 'PATCH',
                     headers: {

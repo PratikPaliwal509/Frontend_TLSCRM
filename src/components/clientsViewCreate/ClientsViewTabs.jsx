@@ -67,6 +67,24 @@ const ClientsViewTab = ({ client }) => {
                 Notes
               </button>
             </li>
+            <li className="nav-item">
+              <button
+                className="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#tasksTab"
+              >
+                Tasks
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#projectTab"
+              >
+                Projects
+              </button>
+            </li>
 
             {/* <li className="nav-item">
               <button
@@ -84,8 +102,8 @@ const ClientsViewTab = ({ client }) => {
         <div className="d-none d-md-flex">
           <span
             className={`badge ${client?.status === 'active'
-                ? 'bg-soft-success text-success'
-                : 'bg-soft-danger text-danger'
+              ? 'bg-soft-success text-success'
+              : 'bg-soft-danger text-danger'
               }`}
           >
             {client?.status}

@@ -45,7 +45,7 @@ const RoleListContent = ({ title }) => {
       setLoading(true)
       const token = localStorage.getItem("token")
 
-      const res = await fetch("https://api-0ggv.onrender.com/api/roles", {
+      const res = await fetch("http://localhost:5000/api/roles", {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -70,7 +70,7 @@ const RoleListContent = ({ title }) => {
 
     const token = localStorage.getItem("token")
 
-    await fetch(`https://api-0ggv.onrender.com/api/roles/${role.role_id}`, {
+    await fetch(`http://localhost:5000/api/roles/${role.role_id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     })

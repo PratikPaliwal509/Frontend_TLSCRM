@@ -36,7 +36,7 @@ const AddDepartment = () => {
         setManagerLoading(true)
         const token = localStorage.getItem('token')
         const response = await fetch(
-          'https://api-0ggv.onrender.com/api/users/users/by-agency',
+          'http://localhost:5000/api/users/users/by-agency',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -58,7 +58,7 @@ const AddDepartment = () => {
       try {
         const token = localStorage.getItem('token')
         const response = await fetch(
-          'https://api-0ggv.onrender.com/api/departments',
+          'http://localhost:5000/api/departments',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -96,7 +96,7 @@ const AddDepartment = () => {
       }
 
       const response = await fetch(
-        'https://api-0ggv.onrender.com/api/departments',
+        'http://localhost:5000/api/departments',
         {
           method: 'POST',
           headers: {

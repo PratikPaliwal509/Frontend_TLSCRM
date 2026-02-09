@@ -80,7 +80,7 @@ const StatusTableCell = ({ options, defaultSelect, row, onStatusChange }) => {
 
                             try {
                                 const projectId = row.raw.project_id || row.raw.id
-                                const url = `https://api-0ggv.onrender.com/api/projects/${projectId}/status`
+                                const url = `http://localhost:5000/api/projects/${projectId}/status`
                                 const payload = { status: selectedValue }
 
                                 const res = await fetch(url, {
@@ -178,7 +178,7 @@ const ProjectTable = () => {
         const fetchProjects = async () => {
             try {
                 const token = localStorage.getItem('token')
-                const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
+                const res = await fetch('http://localhost:5000/api/projects', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const json = await res.json()

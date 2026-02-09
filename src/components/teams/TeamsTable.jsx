@@ -25,7 +25,7 @@ const TeamsTable = () => {
     const fetchTeams = async () => {
       try {
         const token = localStorage.getItem('token')
-        const res = await fetch('https://api-0ggv.onrender.com/api/teams', {
+        const res = await fetch('http://localhost:5000/api/teams', {
           headers: { Authorization: `Bearer ${token}` },
         })
         const result = await res.json()
