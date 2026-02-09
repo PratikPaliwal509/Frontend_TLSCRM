@@ -12,7 +12,7 @@ const KANBAN_COLUMNS = [
 
 const KanbanBoard = ({ tasks, onSelect }) => {
   const [isClient, setIsClient] = useState(false)
-const [tasks2, setTasks] =useState(tasks || [])
+  const [tasks2, setTasks] = useState(tasks || [])
   useEffect(() => {
     const checkPermission = async () => {
       const res = await verifyAccess('tasks', 'view', 'client')
@@ -20,7 +20,7 @@ const [tasks2, setTasks] =useState(tasks || [])
     };
     checkPermission();
   }, []);
-  useEffect(()=>{
+  useEffect(() => {
     setTasks(tasks)
   }, [tasks])
 
@@ -38,13 +38,13 @@ const [tasks2, setTasks] =useState(tasks || [])
       )
 
       const data = await res.json()
- setTasks((prev) =>
-  prev.map((task) =>
-    task.id === taskId
-      ? { ...task, client_approved: true }
-      : task
-  )
-)
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === taskId
+            ? { ...task, client_approved: true }
+            : task
+        )
+      )
 
       if (!res.ok) {
         throw new Error(data.message)
@@ -58,6 +58,64 @@ const [tasks2, setTasks] =useState(tasks || [])
       throw error
     }
   }
+  const onDragStart = (e, task) => {
+    e.dataTransfer.setData('taskId', task.id)
+    e.dataTransfer.setData('fromStatus', task.status)
+  }
+
+  const onDragOver = (e) => {
+    e.preventDefault() // REQUIRED to allow drop
+  }
+  const onDrop = async (e, newStatus) => {
+    e.preventDefault()
+
+    const taskId = e.dataTransfer.getData('taskId')
+    const fromStatus = e.dataTransfer.getData('fromStatus')
+
+    if (!taskId || fromStatus === newStatus) return
+
+    // optimistic UI update
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === Number(taskId)
+          ? { ...task, status: newStatus }
+          : task
+      )
+    )
+
+    try {
+      const token = localStorage.getItem('token')
+      console.log(taskId)
+      const res = await fetch(
+        `http://localhost:5000/api/tasks/${taskId}/status`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      )
+
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.message)
+
+      toast.success('Task status updated')
+    } catch (err) {
+      toast.error('Failed to update status')
+
+      // rollback if API fails
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === Number(taskId)
+            ? { ...task, status: fromStatus }
+            : task
+        )
+      )
+    }
+  }
 
 
   return (
@@ -65,19 +123,22 @@ const [tasks2, setTasks] =useState(tasks || [])
       {/* <div className="row overflow-x-auto  flex-nowrap d-flex g-4"> */}
       {KANBAN_COLUMNS.map((col) => (
         <div key={col.key} className="col-md-4">
-          <div className="card h-50 fixed-sm-top  col overflow-y-auto  flex-nowrap d-flex g-4">
+          <div className="card h-100   col overflow-y-auto  flex-nowrap d-flex g-4">
             <div className="card-header fw-bold text-center">
               {col.title}
             </div>
 
-            <div className="card-body d-flex flex-column gap-3">
+            <div className="card-body d-flex flex-column gap-3" onDragOver={onDragOver}
+              onDrop={(e) => onDrop(e, col.key)}>
               {tasks2
                 .filter((task) => task.status === col.key)
                 .map((task) => (
-                <div
+                  <div
                     key={task.id}
                     className="p-3 border rounded cursor-pointer hover-shadow"
                     onClick={() => onSelect(task)}
+                    draggable
+                    onDragStart={(e) => onDragStart(e, task)}
                     style={{ cursor: 'pointer' }}
                     data-bs-toggle="offcanvas"
                     data-bs-target="#tasksDetailsOffcanvas"
