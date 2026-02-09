@@ -99,7 +99,7 @@ const AddComment = ({ usersList, taskID, setComments }) => {
           onChange={handleChange}
         />
         {showMentions && filteredUsers.length > 0 && (
-          <div className="mention-dropdown shadow">
+          <div className="mention-dropdown shadow cursor-pointer">
             {filteredUsers.map((user) => (
               <div
                 key={user.user_id}
