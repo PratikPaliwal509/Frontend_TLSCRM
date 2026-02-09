@@ -3,6 +3,8 @@ import Dropdown from '@/components/shared/Dropdown'
 import { emailActions, emailMoreOptions, tagsItems } from '../emails/EmailHeader'
 import { FiActivity, FiAirplay, FiAlignLeft, FiArrowLeft, FiCheckCircle, FiChevronLeft, FiChevronRight, FiClock, FiEye, FiFolderPlus, FiHash, FiPlus, FiSearch, FiTag } from 'react-icons/fi'
 import HeaderSearchForm from '@/components/shared/pageHeader/HeaderSearchForm'
+import SimpleDropdown from './SimpleDropdown'
+import ViewModeSelect from './ViewMode'
 
 export const taskOptions = [
     { label: "All Tasks", icon: <FiHash /> },
@@ -60,8 +62,28 @@ export const labels = [
     { label: "Manages Tag", icon: <FiTag /> },
 ];
 
+export const statusOptions = [
+    { label: 'All', value: 'all' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'In Progress', value: 'inprogress' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'Rejected', value: 'rejected' },
+]
+export const priorityOptions = [
+    { label: 'All', value: 'all' },
+    { label: 'Low', value: 'low' },
+    { label: 'Normal', value: 'normal' },
+    { label: 'Medium', value: 'medium' },
+    { label: 'High', value: 'high' },
+    { label: 'Urgent', value: 'urgent' },
+]
 
-const TaskHeader = ({ setSidebarOpen }) => {
+
+const TaskHeader = ({ setSidebarOpen,
+    activeFilter,
+    setActiveFilter,
+    viewMode,
+    setViewMode }) => {
     const [active, setActive] = useState("Newest")
     const handleFilter = (e) => {
         setActive(e)
@@ -72,15 +94,44 @@ const TaskHeader = ({ setSidebarOpen }) => {
                 <a href="#" className="app-sidebar-open-trigger me-2" onClick={() => setSidebarOpen(true)}>
                     <FiAlignLeft className='fs-20' />
                 </a>
-                <Dropdown
+                {/* <Dropdown
                     dropdownItems={taskOptions}
                     triggerIcon={<FiCheckCircle size={16} className='me-2' />}
                     triggerText="My Tasks"
                     triggerPosition={"0,18"}
                     triggerClass='btn btn-light-brand dropdown-toggle'
                     isAvatar={false}
+                /> */}
+
+                <SimpleDropdown
+                activeFilter={activeFilter}
+                    label="Status"
+                    items={[
+                        { label: 'All', value: 'all' },
+                        { label: 'Pending', value: 'pending' },
+                        { label: 'In Progress', value: 'inprogress' },
+                        { label: 'Completed', value: 'completed' },
+                        { label: 'Rejected', value: 'rejected' },
+                    ]}
+                    onSelect={(item) =>
+                        setActiveFilter({ type: 'status', value: item.label.toLowerCase() })
+                    }
                 />
-                <Dropdown
+
+                <SimpleDropdown
+                activeFilter={activeFilter}
+                 label="Priority" 
+                 items={[{ label: 'All', value: 'all' },
+                { label: 'Low', value: 'low' },
+                { label: 'Normal', value: 'normal' },
+                { label: 'Medium', value: 'medium' },
+                { label: 'High', value: 'high' },
+                { label: 'Urgent', value: 'urgent' },]} onSelect={(item) =>
+                    setActiveFilter({ type: 'priority', value: item.value })
+                } />
+
+
+                {/* <Dropdown
                     dropdownItems={emailActions}
                     triggerIcon={<FiEye />}
                     triggerPosition={"0,22"}
@@ -102,9 +153,12 @@ const TaskHeader = ({ setSidebarOpen }) => {
                     triggerClass='avatar-md'
                     dropdownAutoClose='outside'
                     tooltipTitle={"Labels"}
-                />
+                /> */}
 
             </div>
+
+
+
             <div className="page-header-right ms-auto">
                 <div className="hstack gap-2">
                     <HeaderSearchForm />
@@ -118,8 +172,21 @@ const TaskHeader = ({ setSidebarOpen }) => {
                             <FiChevronRight />
                         </div>
                     </a>
+                    <ViewModeSelect
+                        value={viewMode}
+                        onChange={setViewMode}
+                    />
 
-                    <Dropdown
+                    {/* <button
+                        className="btn btn-light-brand btn-sm rounded-pill dropdown-toggle"
+                        // className="btn btn-outline-secondary btn-sm"
+                        onClick={() =>
+                            setViewMode(v => (v === 'list' ? 'kanban' : 'list'))
+                        }
+                    >
+                        {viewMode === 'list' ? 'Kanban View' : 'List View'}
+                    </button> */}
+                    {/* <Dropdown
                         dropdownItems={taskFilter}
                         triggerPosition={"0,23"}
                         triggerClass='btn btn-light-brand btn-sm rounded-pill dropdown-toggle'
@@ -129,14 +196,24 @@ const TaskHeader = ({ setSidebarOpen }) => {
                         dropdownParentStyle={"d-none d-sm-flex"}
                         onClick={handleFilter}
                         active={active}
-                    />
-                    <Dropdown
+                    /> */}
+                    {/* <Dropdown
                         dropdownItems={emailMoreOptions}
                         triggerPosition={"0,22"}
                         triggerClass='avatar-md'
                         tooltipTitle={"More Options"}
                         dropdownParentStyle={"d-none d-sm-flex"}
-                    />
+                    /> */}
+                    <div className='py-1 btn-primary'>
+                        <button
+                            className="btn btn-primary btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addNewTasks"
+                        >
+                            <FiPlus className="me-1" />
+                            Add Task
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

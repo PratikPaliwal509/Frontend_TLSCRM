@@ -61,11 +61,11 @@ const [tasks2, setTasks] =useState(tasks || [])
 
 
   return (
-    <div className="row  g-4">
+    <div className="row overflow-x-auto  flex-nowrap d-flex g-4 h-100">
       {/* <div className="row overflow-x-auto  flex-nowrap d-flex g-4"> */}
       {KANBAN_COLUMNS.map((col) => (
         <div key={col.key} className="col-md-4">
-          <div className="card h-100">
+          <div className="card h-50 fixed-sm-top  col overflow-y-auto  flex-nowrap d-flex g-4">
             <div className="card-header fw-bold text-center">
               {col.title}
             </div>

@@ -51,7 +51,7 @@ const TasksOverviewChart = () => {
   return (
     <>
       {overviewInfo.map(
-        ({ title, completed_number, total_number, progress, chartColor, color,   chartData, }, index) => (
+        ({ title, completed_number, total_number, progress, chartColor, color, chartData, }, index) => (
           <div key={index} className="col-lg-4 task-overview-card">
             <div className="card mb-4 stretch stretch-full">
               <div className="card-header d-flex align-items-center justify-content-between">
@@ -62,8 +62,8 @@ const TasksOverviewChart = () => {
                         title === 'Tasks Completed'
                           ? 'feather-star'
                           : title === 'New Tasks'
-                          ? 'feather-file-text'
-                          : 'feather-airplay'
+                            ? 'feather-file-text'
+                            : 'feather-airplay'
                       )}
                     </i>
                   </div>
@@ -81,11 +81,11 @@ const TasksOverviewChart = () => {
 
               <div className="card-body d-flex align-items-center justify-content-between gap-4">
                 <ReactApexChart
-          options={{ ...chartOptions, colors: [chartColor] }}
-          series={[{ name: title, data: chartData }]}
-          type="area"
-          height={100}
-        />
+                  options={{ ...chartOptions, colors: [chartColor] }}
+                  series={[{ name: title, data: chartData }]}
+                  type="area"
+                  height={100}
+                />
 
                 <div className="fs-12 text-muted text-nowrap">
                   <span className={`fw-semibold text-${color}`}>

@@ -157,14 +157,14 @@ const TaskContent = () => {
 
     return (
         <>
-            <TaskSidebar
+            {/* <TaskSidebar
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
                 onFilterChange={setActiveFilter}
                 activeFilter={activeFilter}
                 viewMode={viewMode}
                 setViewMode={setViewMode}
-            />
+            /> */}
 
 
             <ToastProvider />
@@ -172,9 +172,15 @@ const TaskContent = () => {
 
             <div className="content-area">
                 <PerfectScrollbar>
-                    <TaskHeader setSidebarOpen={setSidebarOpen} />
+                    <TaskHeader setSidebarOpen={setSidebarOpen}
+                        sidebarOpen={sidebarOpen}
+                        onFilterChange={setActiveFilter}
+                        activeFilter={activeFilter}
+                        setActiveFilter={setActiveFilter}
+                        viewMode={viewMode}
+                        setViewMode={setViewMode} />
 
-                    <div className="content-area-body">
+                    <div className="content-area-body   overflow-hidden" style={{ height: '67vh' }}>
                         {loading ? (
                             <div className="d-flex justify-content-center align-items-center py-5">
                                 <div className="spinner-border text-primary" role="status">
