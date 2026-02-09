@@ -1,10 +1,55 @@
+import { userList } from '@/utils/fackData/userList'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 
-const AddComment = ({ taskID, setComments }) => {
+const AddComment = ({ usersList, taskID, setComments }) => {
+  console.log(usersList)
   const [comment, setComment] = useState('')
   const [loading, setLoading] = useState(false)
   const token = localStorage.getItem('token')
+  const [showMentions, setShowMentions] = useState(false)
+  const [filteredUsers, setFilteredUsers] = useState([])
+  const [mentionedUsers, setMentionedUsers] = useState([])
+  const [cursorPosition, setCursorPosition] = useState(0)
+  const handleChange = (e) => {
+    const value = e.target.value
+    const cursor = e.target.selectionStart
+
+    setComment(value)
+    setCursorPosition(cursor)
+
+    const textBeforeCursor = value.slice(0, cursor)
+    const match = textBeforeCursor.match(/@(\w*)$/)
+
+    if (match) {
+      const search = match[1].toLowerCase()
+
+      const filtered = usersList.filter((u) =>
+        u.full_name.toLowerCase().includes(search)
+      )
+
+      setFilteredUsers(filtered)
+      setShowMentions(true)
+    } else {
+      setShowMentions(false)
+    }
+  }
+  const selectUser = (user) => {
+    const textBeforeCursor = comment.slice(0, cursorPosition)
+    const textAfterCursor = comment.slice(cursorPosition)
+
+    const updatedText = textBeforeCursor.replace(
+      /@(\w*)$/,
+      `@${user.full_name} `
+    )
+
+    setComment(updatedText + textAfterCursor)
+    setShowMentions(false)
+
+    setMentionedUsers((prev) =>
+      prev.includes(user.user_id) ? prev : [...prev, user.user_id]
+    )
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -12,8 +57,9 @@ const AddComment = ({ taskID, setComments }) => {
 
     setLoading(true)
     try {
+      console.log(mentionedUsers)
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/tasksComments/${taskID}/comments`,
+        `http://localhost:5000/api/tasksComments/${taskID}/comments`,
         {
           method: 'POST',
           headers: {
@@ -22,6 +68,7 @@ const AddComment = ({ taskID, setComments }) => {
           },
           body: JSON.stringify({
             comment_text: comment,
+            mentioned_users: mentionedUsers,
           }),
         }
       )
@@ -43,15 +90,27 @@ const AddComment = ({ taskID, setComments }) => {
   return (
     <div className="pt-4">
       <label className="mb-1">Add Comment</label>
-
-      <textarea
-        rows={5}
-        className="form-control"
-        placeholder="Your comment...."
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-      />
-
+      <div className="position-relative">
+        <textarea
+          rows={5}
+          className="form-control"
+          placeholder="Your comment...."
+          value={comment}
+          onChange={handleChange}
+        />
+        {showMentions && filteredUsers.length > 0 && (
+          <div className="mention-dropdown shadow">
+            {filteredUsers.map((user) => (
+              <div
+                key={user.user_id}
+                className="mention-item"
+                onClick={() => selectUser(user)}
+              >
+                @{user.full_name}
+              </div>
+            ))}
+          </div>
+        )}</div>
       <button
         className="btn btn-primary d-inline-block mt-4"
         onClick={handleSubmit}

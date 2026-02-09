@@ -13,7 +13,6 @@ const SimpleDropdown = ({
     const ref = useRef(null)
     const isActive = (type, value) =>
         activeFilter?.type === type && activeFilter?.value === value
-    console.log("active fi", activeFilter)
     // close on outside click
     useEffect(() => {
         const handleClickOutside = (e) => {
