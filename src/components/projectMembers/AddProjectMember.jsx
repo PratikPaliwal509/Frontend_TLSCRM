@@ -178,7 +178,7 @@ const AddProjectMember = () => {
             </option>
             {!usersLoading && users.map((u) => (
               <option key={u.user_id} value={u.user_id}>
-                {u.full_name || u.email}
+                {u.full_name || u.email}{" ("+u.role?.role_name+")"}
               </option>
             ))}
           </select>

@@ -20,10 +20,10 @@ const UsersListTable = ({ users, loading }) => {
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>Status</th>
-                                    <th>Two Factor Enabled</th>
-                                    <th>Created At</th>
+                                    {/* <th>Two Factor Enabled</th> */}
+                                    {/* <th>Created At</th>
                                     <th>Updated At</th>
-                                    <th>Created By</th>
+                                    <th>Created By</th> */}
                                     <th>Date Of Joining</th>
                                     <th>Role</th>
                                     <th>Department</th>
@@ -55,15 +55,15 @@ const UsersListTable = ({ users, loading }) => {
                                                 {user.is_active ? "TRUE" : "FALSE"}
                                             </span>
                                         </td>
-                                        <td>
+                                        {/* <td>
                                             <span
                                                 className={`badge 
                                                      ${user.two_factor_enabled ? "bg-success" : "bg-secondary"}`}
                                             >
                                                 {user.two_factor_enabled ? "TRUE" : "FALSE"}
                                             </span>
-                                        </td>
-                                        <td className="text-capitalize">
+                                        </td> */}
+                                        {/* <td className="text-capitalize">
                                             {user.created_at}
                                         </td>
                                         <td className="text-capitalize">
@@ -71,12 +71,12 @@ const UsersListTable = ({ users, loading }) => {
                                         </td>
                                         <td className="text-capitalize">
                                             {user.created_by ? user.created_by : "-"}
-                                        </td>
+                                        </td> */}
                                         <td className="text-capitalize">
                                             {user.date_of_joining ? user.date_of_joining : "-"}
                                         </td>
                                         <td className="text-capitalize">
-                                            {user.role_id}
+                                            {user.role.role_name}
                                         </td>
                                         <td>
                                             {user.department?.department_name || '—'}

@@ -23,7 +23,7 @@ const ClientProjects = ({ projects = [] }) => {
           >
             <div className="card-body">
               <h5 className="card-title mb-2">
-                {project.name}
+                {project.project_name}
               </h5>
 
               <p className="card-text text-muted fs-13 text-truncate">
