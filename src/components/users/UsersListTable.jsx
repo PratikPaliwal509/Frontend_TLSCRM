@@ -42,11 +42,21 @@ const UsersListTable = ({ users, loading }) => {
 
                                 {users.map(user => (
                                     <tr key={user.user_id}>
-                                        <td>{user.user_id}</td>
-                                        <td>{user.first_name}</td>
-                                        <td>{user.last_name}</td>
-                                        <td>{user.email}</td>
-                                        <td>
+                                        <td onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                } className="cursor-pointer">{user.user_id}</td>
+                                        <td onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                } className="cursor-pointer">{user.first_name}</td>
+                                        <td onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                } className="cursor-pointer">{user.last_name}</td>
+                                        <td onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                } className="cursor-pointer">{user.email}</td>
+                                        <td onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                } className="cursor-pointer">
                                             <span
                                                 className={`badge ${user.is_active ? "bg-success" : "bg-secondary"
 
@@ -72,13 +82,19 @@ const UsersListTable = ({ users, loading }) => {
                                         <td className="text-capitalize">
                                             {user.created_by ? user.created_by : "-"}
                                         </td> */}
-                                        <td className="text-capitalize">
+                                        <td onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                } className="cursor-pointer text-capitalize">
                                             {user.date_of_joining ? user.date_of_joining : "-"}
                                         </td>
-                                        <td className="text-capitalize">
+                                        <td   onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                } className="cursor-pointer text-capitalize">
                                             {user.role.role_name}
                                         </td>
-                                        <td>
+                                        <td className='cursor-pointer' onClick={() =>
+                                                    navigate(`/user/view/${user.user_id}`)
+                                                }>
                                             {user.department?.department_name || '—'}
                                         </td>
                                         <td className="d-flex">
