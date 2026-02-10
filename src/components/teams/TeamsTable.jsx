@@ -79,14 +79,18 @@ const TeamsTable = () => {
     {
       accessorKey: 'name',
       header: 'Team Name',
-      cell: (info) => (
+      cell: (info) => {
+        console.log(info)
+         const teamId = info.row.original.id
+        return(
+        
         <div className="hstack gap-3">
           <div className="avatar-text avatar-md">
             {info.getValue()?.charAt(0)}
           </div>
-          <span>{info.getValue()}</span>
+          <span  className="cursor-pointer " onClick={() => navigate(`/teams/view/${teamId}`)}>{info.getValue()}</span>
         </div>
-      ),
+      )}
     },
     {
       accessorKey: 'code',

@@ -86,16 +86,24 @@ const RolesTable = () => {
         {
             accessorKey: 'role_name',
             header: () => 'Role',
-            cell: ({ row }) => (
-                <div className="hstack gap-2">
-                    <div className="avatar-text avatar-sm bg-primary-soft text-primary">
-                        <FiShield />
+            cell: ({ row }) => {
+                const roleId = row.original.role_id
+                return (
+
+                    <div className="hstack gap-2">
+                        <div className="avatar-text avatar-sm bg-primary-soft text-primary">
+                            <FiShield />
+                        </div>
+                        <span className="cursor-pointer fw-semibold" onClick={() =>
+              navigate(`/roles/view/${row.original.role_id}`, {
+                state: { role: row.original },
+              })
+            }>
+                            {row.original.role_name}
+                        </span>
                     </div>
-                    <span className="fw-semibold">
-                        {row.original.role_name}
-                    </span>
-                </div>
-            ),
+                )
+            }
         },
         {
             accessorKey: 'role_description',

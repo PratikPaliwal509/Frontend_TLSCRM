@@ -198,8 +198,11 @@ const navigate = useNavigate()
     {
       accessorKey: 'clients',
       header: () => 'Clients',
+      
       cell: (info) => {
+        console.log(info)
         const client = info.getValue()
+       const clientId = info.row.original.id
         return (
           <div className="hstack gap-3">
             {client?.img ? (
@@ -207,11 +210,11 @@ const navigate = useNavigate()
                 <img src={client.img} alt="" />
               </div>
             ) : (
-              <div className="avatar-text avatar-md">
+              <div   className="avatar-text avatar-md">
                 {client?.name?.charAt(0)}
               </div>
             )}
-            <span>{client?.name}</span>
+            <span  className="cursor-pointer fw-semibold" onClick={() => navigate(`/clients/view/${clientId}`)}>{client?.name}</span>
           </div>
         )
       }

@@ -13,6 +13,8 @@ import TabProjectMembers from '@/components/projectsView/TabProjectMembers'
 import Footer from '@/components/shared/Footer'
 import Loader from '@/components/loader'
 import KanbanBoard from '../components/kanban/KanbanBoard'
+import ClientEdit from './clients-edit'
+import ClientTab from '@/components/projectsView/ClientTab'
 const ProjectsView = () => {
   const { id } = useParams() // project id from route
   const [project, setProject] = useState(null)
@@ -86,9 +88,13 @@ const ProjectsView = () => {
             <GanttTimeline projectId={project.project_id} />
           </div>
           <div className="tab-pane fade" id="tasksTab" role="tabpanel">
-  <KanbanBoard tasks={project?.tasks}
-  />
-</div>
+            <KanbanBoard tasks={project?.tasks}
+            />
+          </div>
+          <div className="tab-pane fade" id="clientTab" role="tabpanel">
+            <ClientTab client={project?.client}
+            />
+          </div>
           <div className="tab-pane fade" id="activityTab">
             <LeadsEmptyCard
               title="No activity yet!"
