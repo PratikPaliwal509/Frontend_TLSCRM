@@ -8,6 +8,7 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import Loader from '@/components/loader'
 import Footer from '@/components/shared/Footer'
 
+import TeamsViewTabs from '../components/teams/TeamsViewTabs'
 const TeamsView = () => {
   const { id } = useParams()
   const [team, setTeam] = useState(null)
@@ -60,7 +61,7 @@ const TeamsView = () => {
       <PageHeader>
         <TeamHeader team={team}  mode="view"/>
       </PageHeader>
-
+<TeamsViewTabs />
       {/* <TeamsViewTabs team={team} /> */}
 
       <div className="main-content">

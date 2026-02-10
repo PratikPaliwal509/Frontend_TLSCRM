@@ -1,33 +1,39 @@
 import React from 'react'
 import TabsTeamsProfle from './TabsTeamsProfle'
+import TeamMembersTab from './TeamMembersTab'
+import TeamProjectsTab from './TeamProjectsTab'
 // import TeamsEmptyCard from './TeamsEmptyCard'
 
 const TeamsViewContent = ({ team }) => {
   const notes = team?.notes || []
 
   return (
-    <>
-      {/* PROFILE TAB */}
-      <TabsTeamsProfle team={team} />
+    <>    
+    
 
-      {/* MEMBERS TAB */}
-      {/* <div className="tab-pane fade" id="membersTab" role="tabpanel">
+      <div className="tab-content">
+        {/* PROFILE TAB */}
+        <TabsTeamsProfle team={team} />
+        <TeamMembersTab members={team?.members || []} />
+        <TeamProjectsTab projects={team?.projects || []} />
+        {/* MEMBERS TAB */}
+        {/* <div className="tab-pane fade" id="membersTab" role="tabpanel">
         <TeamsEmptyCard
           title="No members yet!"
           description={`There are no members added to ${team?.team_name}`}
         />
       </div> */}
 
-      {/* PROJECTS TAB */}
-      {/* <div className="tab-pane fade" id="projectsTab" role="tabpanel">
+        {/* PROJECTS TAB */}
+        {/* <div className="tab-pane fade" id="projectsTab" role="tabpanel">
         <TeamsEmptyCard
           title="No projects yet!"
           description={`There are no projects assigned to ${team?.team_name}`}
         />
       </div> */}
 
-      {/* NOTES TAB */}
-      {/* <div className="tab-pane fade" id="notesTab" role="tabpanel">
+        {/* NOTES TAB */}
+        {/* <div className="tab-pane fade" id="notesTab" role="tabpanel">
         {notes.length > 0 ? (
           <div className="card">
             <div className="card-body">
@@ -47,6 +53,7 @@ const TeamsViewContent = ({ team }) => {
           />
         )}
       </div> */}
+      </div>
     </>
   )
 }
