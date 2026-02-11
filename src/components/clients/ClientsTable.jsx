@@ -15,6 +15,7 @@ import Dropdown from '@/components/shared/Dropdown'
 import SelectDropdown from '@/components/shared/SelectDropdown'
 import { useNavigate } from 'react-router-dom'
 import Loader from '../loader'
+import { toast } from 'react-toastify'
 
 
 /* ---------- Actions ---------- */
@@ -43,12 +44,13 @@ import Loader from '../loader'
 //     />
 //   )
 // })
-const TableCell = ({ value, onChange }) => {
+const TableCell = ({ value, onChange, disabled }) => {
   return (
     <select
       value={value.status}
       onChange={(e) => onChange(e.target.value)}
       className="form-select"
+      disabled={disabled}
     >
       <option value="active">Active</option>
       <option value="inactive">Inactive</option>
@@ -60,14 +62,17 @@ const TableCell = ({ value, onChange }) => {
 
 
 
+
 // export default TableCell
 
 /* ---------- Main Component ---------- */
 const ClientssTable = () => {
+  const [updatingStatusId, setUpdatingStatusId] = useState(null)
+
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
 
-const navigate = useNavigate()
+  const navigate = useNavigate()
   /* ---------- Fetch Clients ---------- */
   useEffect(() => {
     const fetchClients = async () => {
@@ -114,67 +119,76 @@ const navigate = useNavigate()
 
     fetchClients()
   }, [])
-  const handleStatusUpdate = async (clientId, status) => {
-  try {
-    const token = localStorage.getItem("token")
-
-    const res = await fetch(
-      `http://localhost:5000/api/clients/${clientId}/status`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
-      }
-    )
-
-    if (!res.ok) throw new Error("Failed to update status")
-
-    // ✅ Update string value
-  setClients(prev =>
-  prev.map(client =>
-    client.id === clientId
-      ? {
-          ...client,
-          status: {
-            ...client.status,
-            status: status,
-          },
-        }
-      : client
+  const handleStatusUpdate = async (clientId, newStatus, currentStatus) => {
+     const confirmUpdate = window.confirm(
+    `Are you sure you want to change status from "${currentStatus}" to "${newStatus}"?`
   )
-)
-  } catch (error) {
-    console.error("Status update error:", error)
+
+  if (!confirmUpdate) return
+    try {
+      setUpdatingStatusId(clientId)
+      const token = localStorage.getItem("token")
+const status = newStatus
+      const res = await fetch(
+        `http://localhost:5000/api/clients/${clientId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status  }),
+        }
+      )
+
+      if (!res.ok) throw new Error("Failed to update status")
+      toast.success("Status updated successfullly!")
+      // ✅ Update string value
+      setClients(prev =>
+        prev.map(client =>
+          client.id === clientId
+            ? {
+              ...client,
+              status: {
+                ...client.status,
+                status: newStatus ,
+              },
+            }
+            : client
+        )
+      )
+    } catch (error) {
+      console.error("Status update error:", error)
+      toast.error("Failed to update status")
+    } finally {
+      setUpdatingStatusId(null)  // 🔥 stop loading
+    }
   }
-}
 
 
-// const handleDeleteClient = async (clientId) => {
-//   try {
-//     const token = localStorage.getItem("token")
+  // const handleDeleteClient = async (clientId) => {
+  //   try {
+  //     const token = localStorage.getItem("token")
 
-//     await fetch(`http://localhost:5000/api/clients/${clientId}`, {
-//       method: "DELETE",
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     })
+  //     await fetch(`http://localhost:5000/api/clients/${clientId}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
 
 
-//     // Optional: update UI
-//     setClients(prev => prev.filter(c => c.id !== clientId))
+  //     // Optional: update UI
+  //     setClients(prev => prev.filter(c => c.id !== clientId))
 
-//   } catch (error) {
-//     console.error("Delete failed", error)
-//   }
-// }
+  //   } catch (error) {
+  //     console.error("Delete failed", error)
+  //   }
+  // }
 
   /* ---------- Table Columns ---------- */
   const columns = [
-    
+
     {
       accessorKey: 'id',
       header: ({ table }) => (
@@ -198,11 +212,11 @@ const navigate = useNavigate()
     {
       accessorKey: 'clients',
       header: () => 'Clients',
-      
+
       cell: (info) => {
         console.log(info)
         const client = info.getValue()
-       const clientId = info.row.original.id
+        const clientId = info.row.original.id
         return (
           <div className="hstack gap-3">
             {client?.img ? (
@@ -210,11 +224,11 @@ const navigate = useNavigate()
                 <img src={client.img} alt="" />
               </div>
             ) : (
-              <div   className="avatar-text avatar-md">
+              <div className="avatar-text avatar-md">
                 {client?.name?.charAt(0)}
               </div>
             )}
-            <span  className="cursor-pointer fw-semibold" onClick={() => navigate(`/clients/view/${clientId}`)}>{client?.name}</span>
+            <span className="cursor-pointer fw-semibold" onClick={() => navigate(`/clients/view/${clientId}`)}>{client?.name}</span>
           </div>
         )
       }
@@ -233,69 +247,82 @@ const navigate = useNavigate()
       accessorKey: 'date',
       header: () => 'Created Date',
     },
-   {
-  accessorKey: 'status',
-  header: () => 'Status',
-  cell: (info) => {
-    const row = info.row.original
+    {
+      accessorKey: 'status',
+      header: () => 'Status',
+      cell: (info) => {
+        const row = info.row.original
+        const isLoading = updatingStatusId === row.id
         return (
-          <TableCell
-            value={row.status}   // ✅ STRING
-            onChange={(value) => handleStatusUpdate(row.id, value)}
-          />
+          <div className="position-relative">
+            {!isLoading && <TableCell
+              value={row.status}   // ✅ STRING
+              onChange={(value) => handleStatusUpdate(row.id, value, row.status.status)}
+              disabled={isLoading}
+            />}
+
+            {isLoading && (
+              <div className="d-flex justify-content-center align-items-center ">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            )}
+          </div>
         )
+
       },
     },
 
 
     {
-  accessorKey: 'actions',
-  header: () => "Actions",
-  cell: ({ row }) => {
-    const clientId = row.original.id
+      accessorKey: 'actions',
+      header: () => "Actions",
+      cell: ({ row }) => {
+        const clientId = row.original.id
 
-    const rowActions = [
-      {
-        label: "Edit",
-        icon: <FiEdit3 />,
-        onClick: () => navigate(`/clients/edit/${clientId}`),
+        const rowActions = [
+          {
+            label: "Edit",
+            icon: <FiEdit3 />,
+            onClick: () => navigate(`/clients/edit/${clientId}`),
+          },
+          // { type: "divider" },
+          // {
+          //   label: "Delete",
+          //   icon: <FiTrash2 />,
+          //   onClick: () => {
+          //     handleDeleteClient(clientId);
+          //     // call delete API here
+          //   },
+          // },
+        ]
+
+        return (
+          <div className="hstack gap-2 justify-content-end">
+            <span className="avatar-text avatar-md">
+              <FiEye
+                onClick={() => navigate(`/clients/view/${clientId}`)}
+                className="cursor-pointer"
+              />
+            </span>
+
+            <Dropdown
+              dropdownItems={rowActions}
+              triggerClass="avatar-md"
+              triggerPosition={"0,21"}
+              triggerIcon={<FiMoreHorizontal />}
+            />
+          </div>
+        )
       },
-      // { type: "divider" },
-      // {
-      //   label: "Delete",
-      //   icon: <FiTrash2 />,
-      //   onClick: () => {
-      //     handleDeleteClient(clientId);
-      //     // call delete API here
-      //   },
-      // },
-    ]
-
-    return (
-      <div className="hstack gap-2 justify-content-end">
-        <span className="avatar-text avatar-md">
-          <FiEye
-            onClick={() => navigate(`/clients/view/${clientId}`)}
-            className="cursor-pointer"
-          />
-        </span>
-
-        <Dropdown
-          dropdownItems={rowActions}
-          triggerClass="avatar-md"
-          triggerPosition={"0,21"}
-          triggerIcon={<FiMoreHorizontal />}
-        />
-      </div>
-    )
-  },
-  meta: { headerClassName: 'text-end' }
-}
-,
+      meta: { headerClassName: 'text-end' }
+    }
+    ,
   ]
 
   // if (loading) return <p>Loading clients...</p>
-  if (loading) return <Loader/>
+  if (loading) return <Loader />
 
 
   return <Table data={clients} columns={columns} />
