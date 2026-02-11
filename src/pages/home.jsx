@@ -27,7 +27,7 @@ const Home = () => {
             </PageHeader>
             <div className='main-content'>
                 <div className='row'>
-                    <SiteOverviewStatistics />
+                    {/* <SiteOverviewStatistics /> */}
                     {/* <PaymentRecordChart /> */}
                     {/* <SalesMiscellaneous isFooterShow={true} dataList={projectsDataTwo} /> */}
                     <TasksOverviewChart />

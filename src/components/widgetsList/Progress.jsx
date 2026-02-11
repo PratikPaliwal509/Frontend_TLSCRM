@@ -109,7 +109,7 @@ const Progress = ({ footerShow, title, btnFooter }) => {
                                     : <div className="text-white avatar-text user-avatar-text">{team_name.substring(0, 1)}</div>
                                 }
                                 <div>
-                                    <Link to="#">{team_name}</Link>
+                                    <Link to={`/teams/view/${team_id}`}>{team_name}</Link>
                                     <div className="fs-11 text-muted">{description.substring(0, 28)+"..."}</div>
                                     <div className="fs-11 text-muted">{position}</div>
                                 </div>

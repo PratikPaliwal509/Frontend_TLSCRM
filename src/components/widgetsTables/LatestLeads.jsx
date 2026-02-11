@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FiMoreVertical } from 'react-icons/fi'
+import { FiEdit, FiEye, FiMoreVertical, FiTrash, FiTrash2 } from 'react-icons/fi'
 import CardHeader from '@/components/shared/CardHeader'
 import Pagination from '@/components/shared/Pagination'
 import { userList } from '@/utils/fackData/userList'
 import useCardTitleActions from '@/hooks/useCardTitleActions'
 import CardLoader from '@/components/shared/CardLoader'
 
+
 const LatestLeads = ({ title }) => {
+    
     const { refreshKey, isRemoved, isExpanded, handleRefresh, handleExpand, handleDelete } = useCardTitleActions();
 
     const [clients, setClients] = useState([])
@@ -74,8 +76,8 @@ const LatestLeads = ({ title }) => {
                                                             :
                                                             <div className="text-white avatar-text user-avatar-text">{company_name.substring(0, 1)}</div>
                                                     }
-                                                    <a href="#">
-                                                        <span className="d-block">{company_name}</span>
+                                                    <a href={`/clients/view/${client_id}`}>
+                                                        <span className="d-block ">{company_name}</span>
                                                         <span className="fs-12 d-block fw-normal text-muted">{primary_contact_email}</span>
                                                     </a>
                                                 </div>
@@ -86,13 +88,46 @@ const LatestLeads = ({ title }) => {
                                             <td>{new Date(created_at).toISOString().split('T')[0]}</td>
                                             <td>
                                                 <span className={`badge ${is_active
-                                                        ? 'bg-soft-success text-success'
-                                                        : 'bg-soft-danger text-danger'
+                                                    ? 'bg-soft-success text-success'
+                                                    : 'bg-soft-danger text-danger'
                                                     }`}>{is_active ? "Active" : "Inactive"}</span>
                                             </td>
-                                            <td className="text-end">
-                                                <Link to="#"><FiMoreVertical size={16} /></Link>
+                                          
+                                            <td className="">
+                                                <div className="dropdown">
+                                                    <button
+                                                        className="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                                                        type="button"
+                                                         style={{ width: "32px", height: "32px", padding: 0 }}
+                                                        data-bs-toggle="dropdown"
+                                                        aria-expanded="false"
+                                                    >
+                                                        <FiMoreVertical size={16} />
+                                                    </button>
+
+                                                    <ul className="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <Link className="dropdown-item d-flex align-items-center gap-2" to={`/clients/view/${client_id}`}>
+                                                                <FiEye size={14} /> View
+                                                            </Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link className="dropdown-item d-flex align-items-center gap-2" to={`/clients/edit/${client_id}`}>
+                                                                <FiEdit size={14} /> Edit
+                                                            </Link>
+                                                        </li>
+                                                        {/* <li>
+                                                            <button
+                                                                className="dropdown-item text-danger d-flex align-items-center gap-2"
+                                                                onClick={() => handleDelete(client_id)}
+                                                            >
+                                                                <FiTrash2 size={14} /> Delete
+                                                            </button>
+                                                        </li> */}
+                                                    </ul>
+                                                </div>
                                             </td>
+
                                         </tr>
                                     )
                                     )
