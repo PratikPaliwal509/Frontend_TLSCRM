@@ -10,6 +10,7 @@ import TasksDetails from './TasksDetails'
 import CheckList from '../CheckList'
 import { toast } from 'react-toastify';
 import KanbanBoard from './KanbanBoard'
+import CalendarConteent from './CalendarContent '
 const actions = [
     { label: 'Edit Task', icon: '' },
     { label: 'View Task', icon: '' },
@@ -180,7 +181,12 @@ const TaskContent = () => {
                         viewMode={viewMode}
                         setViewMode={setViewMode} />
 
-                    <div className="content-area-body   overflow-hidden" style={{ height: '67vh' }}>
+                    <div className="content-area-body   overflow-hidden" style={
+                        viewMode === 'kanban'
+                            ? {height: '67vh' }
+                            : { }
+                    }>
+                        {/* <div className="content-area-body   overflow-hidden" style={{ height: '67vh' }}> */}
                         {loading ? (
                             <div className="d-flex justify-content-center align-items-center py-5">
                                 <div className="spinner-border text-primary" role="status">
@@ -198,7 +204,10 @@ const TaskContent = () => {
                                 <div className="fs-13">
                                     Try changing filters or create a new task
                                 </div>
-                            </div>) : (
+                            </div>) : viewMode === 'calendar' ? (<div >  <CalendarConteent
+                                tasks={filteredTasks}
+                                onSelect={(task) => setSelectedTask(task)}
+                            /></div>) : (
                             Object.keys(groupedTasks).map((group) =>
                                 groupedTasks[group].length > 0 ? (
                                     <div key={group} className="card mb-4">

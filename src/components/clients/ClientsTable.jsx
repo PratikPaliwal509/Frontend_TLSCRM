@@ -214,7 +214,6 @@ const status = newStatus
       header: () => 'Clients',
 
       cell: (info) => {
-        console.log(info)
         const client = info.getValue()
         const clientId = info.row.original.id
         return (

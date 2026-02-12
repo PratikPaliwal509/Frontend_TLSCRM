@@ -37,16 +37,13 @@ export const verifyAccess = async (
     const result = await response.json()
     const role = result?.data
     const permissions = role?.permissions || {}
-console.log(result, role, permissions)
     /* ============================
        SUPER ADMIN OVERRIDE
     ============================ */
     // if (role?.is_system_role === true) {
     //   return true
     // }
-console.log('after')
 const modulePermissions = permissions?.[moduleKey]
-console.log('after', modulePermissions)
 
     if (!modulePermissions) {
       navigate(loginPath, { replace: true })
@@ -56,7 +53,6 @@ console.log('after', modulePermissions)
     /* ============================
        VIEW (SCOPE BASED)
     ============================ */
-    console.log("action", action)
     if (action === 'view') {
       const viewScope = modulePermissions.view
 

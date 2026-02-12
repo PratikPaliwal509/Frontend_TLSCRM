@@ -8,9 +8,7 @@ const AppsNotes = () => {
 
 //   useEffect(() => {
 //   const checkPermission = async () => {
-//     console.log('CHECKING NOTES')
 //     const allowed = await verifyPagePermission('notes', 'view', navigate)
-//     console.log('ALLOWED:', allowed)
 //   }
 //   checkPermission()
 // }, [navigate])

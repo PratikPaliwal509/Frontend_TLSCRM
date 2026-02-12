@@ -47,7 +47,6 @@ const [actionLoading, setActionLoading] = useState(false)
       )
 
       const result = await res.json()
-
       setLog(result || null)
       // setLog(result?.data?.[0] || null)
     } catch (err) {

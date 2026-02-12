@@ -80,7 +80,6 @@ const TeamsTable = () => {
       accessorKey: 'name',
       header: 'Team Name',
       cell: (info) => {
-        console.log(info)
          const teamId = info.row.original.id
         return(
         

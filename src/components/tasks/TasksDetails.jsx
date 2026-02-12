@@ -58,7 +58,7 @@ const TasksDetails = ({ task, user_id }) => {
         tags?.includes(opt.value)
 
     )
-const [usersList, setUsersList] =useState([])
+    const [usersList, setUsersList] = useState([])
     const [users, setUsers] = useState([])
     const [assignees, setAssignees] = useState([])
     const [loadingUsers, setLoadingUsers] = useState(false)
@@ -152,7 +152,7 @@ const [usersList, setUsersList] =useState([])
 
                 const result = await res.json()
                 const list = Array.isArray(result?.data) ? result.data : []
-setUsersList(list)
+                setUsersList(list)
                 const mappedUsers = list.map((user) => ({
                     value: user.user_id,
                     label: user.full_name,
@@ -535,7 +535,7 @@ setUsersList(list)
                     <Comments comments={comments} loading={loading} setComments={setComments} portal_user_id={user_id} />
                     {/* <Comments taskID={id} /> */}
                     <AddComment
-                    usersList={usersList}
+                        usersList={usersList}
                         taskID={id}
                         setComments={setComments}
                     />

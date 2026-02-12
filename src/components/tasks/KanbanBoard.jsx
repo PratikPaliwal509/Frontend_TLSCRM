@@ -85,7 +85,6 @@ const KanbanBoard = ({ tasks, onSelect }) => {
 
     try {
       const token = localStorage.getItem('token')
-      console.log(taskId)
       const res = await fetch(
         `http://localhost:5000/api/tasks/${taskId}/status`,
         {

@@ -66,6 +66,12 @@ export const menuList = [
                 path: "/applications/storage",
                 subdropdownMenu: false
             },
+             {
+                id: 6,
+                name: "Calender",
+                path: "/applications/calender",
+                subdropdownMenu: false
+            },
         ]
     },
     {

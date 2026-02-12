@@ -49,10 +49,8 @@ const KanbanBoard = ({ tasks = [] }) => {
 
     const onDrop = async (e, newStatus) => {
         e.preventDefault()
-        console.log("hi",e.dataTransfer.getData('text/plain'))
         const taskId = Number(e.dataTransfer.getData('text/plain'))
         const fromStatus = e.dataTransfer.getData('fromStatus')
-        console.log(taskId, fromStatus)
         if (!taskId || fromStatus === newStatus) return
 
         // ✅ optimistic UI

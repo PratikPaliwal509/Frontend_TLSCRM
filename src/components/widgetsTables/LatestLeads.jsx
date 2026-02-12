@@ -59,7 +59,7 @@ const LatestLeads = ({ title }) => {
                                     <th>Industry</th>
                                     <th>Date</th>
                                     <th>Status</th>
-                                    <th className="text-end">Actions</th>
+                                    <th className="">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

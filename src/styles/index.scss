@@ -18,3 +18,78 @@
 .cursor-pointer {
   cursor: pointer;
 }
+
+
+// 
+.calendar-wrapper {
+  height: 1000px;
+  display: flex;
+  flex-direction: column;
+}
+/* Top month navigation */
+.calendar-header-top {
+  padding: 10px 0;
+  flex-shrink: 0;
+}
+
+/* Week header */
+.calendar-week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #f1f3f5;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
+/* Scroll body */
+.calendar-scroll-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Calendar grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+/* Each cell */
+.calendar-cell {
+  border: 1px solid #eaeaea;
+  min-height: 140px;
+  padding: 6px;
+  background: #fff;
+}
+
+.calendar-cell.muted {
+  background: #f8f9fa;
+  opacity: 0.6;
+}
+
+.calendar-date {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.calendar-date.today {
+  background: #0d6efd;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.calendar-task {
+  font-size: 11px;
+  padding: 4px 6px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

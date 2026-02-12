@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 
 const AddComment = ({ usersList, taskID, setComments }) => {
-  console.log(usersList)
   const [comment, setComment] = useState('')
   const [loading, setLoading] = useState(false)
   const token = localStorage.getItem('token')
@@ -57,7 +56,6 @@ const AddComment = ({ usersList, taskID, setComments }) => {
 
     setLoading(true)
     try {
-      console.log(mentionedUsers)
       const res = await fetch(
         `http://localhost:5000/api/tasksComments/${taskID}/comments`,
         {
