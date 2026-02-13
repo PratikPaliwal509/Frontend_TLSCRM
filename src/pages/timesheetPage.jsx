@@ -40,7 +40,7 @@ const TimesheetPage = () => {
                     <h4 className="mb-0">My Timesheet</h4>
                 </PageHeader>
 
-                <div className="main-content ">
+                <div className="main-content " style={{minHeight:"66vh"}}>
                     <div className="card m-4">
                         {/* SUMMARY SECTION */}
                         <div className="row mb-4 mt-2 mx-2">
