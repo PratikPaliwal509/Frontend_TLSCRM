@@ -46,7 +46,7 @@ const UsersCreate = () => {
             try {
                 setRolesLoading(true)
                 const token = localStorage.getItem('token')
-                const res = await fetch('http://localhost:5000/api/roles', {
+                const res = await fetch('https://api-0ggv.onrender.com/api/roles', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const result = await res.json()
@@ -66,7 +66,7 @@ const UsersCreate = () => {
             try {
                 setDepartmentsLoading(true)
                 const token = localStorage.getItem('token')
-                const res = await fetch('http://localhost:5000/api/departments', {
+                const res = await fetch('https://api-0ggv.onrender.com/api/departments', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -91,8 +91,8 @@ const UsersCreate = () => {
                 setTeamsLoading(true)
                 const token = localStorage.getItem('token')
                 const res = await fetch(
-                    `http://localhost:5000/api/teams/`,
-                    // `http://localhost:5000/api/teams?department_id=${formData.department_id}`,
+                    `https://api-0ggv.onrender.com/api/teams/`,
+                    // `https://api-0ggv.onrender.com/api/teams?department_id=${formData.department_id}`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 const data = await res.json()
@@ -163,7 +163,7 @@ const UsersCreate = () => {
             setLoading(true)
             const token = localStorage.getItem('token')
 
-            const res = await fetch('http://localhost:5000/api/users/users', {
+            const res = await fetch('https://api-0ggv.onrender.com/api/users/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

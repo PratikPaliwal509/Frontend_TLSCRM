@@ -27,7 +27,7 @@ const totalPages = Math.ceil(teamMembers.length / itemsPerPage)
         setError(null);
 
         try {
-            const res = await fetch("http://localhost:5000/api/teams/", {
+            const res = await fetch("https://api-0ggv.onrender.com/api/teams/", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"

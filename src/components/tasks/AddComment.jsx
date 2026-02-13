@@ -57,7 +57,7 @@ const AddComment = ({ usersList, taskID, setComments }) => {
     setLoading(true)
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tasksComments/${taskID}/comments`,
+        `https://api-0ggv.onrender.com/api/tasksComments/${taskID}/comments`,
         {
           method: 'POST',
           headers: {

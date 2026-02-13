@@ -34,7 +34,7 @@ const GanttTimeline = ({ projectId }) => {
       setError(null)
       const token = localStorage.getItem('token')
 
-      const res = await fetch(`http://localhost:5000/api/tasks/project/${projectId}`, {
+      const res = await fetch(`https://api-0ggv.onrender.com/api/tasks/project/${projectId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ const GanttTimeline = ({ projectId }) => {
 
     try {
       const token = localStorage.getItem('token')
-      await fetch(`http://localhost:5000/api/tasks/${task.id}`, {
+      await fetch(`https://api-0ggv.onrender.com/api/tasks/${task.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const GanttTimeline = ({ projectId }) => {
 
     try {
       const token = localStorage.getItem('token')
-      await fetch(`http://localhost:5000/api/tasks/${task.id}`, {
+      await fetch(`https://api-0ggv.onrender.com/api/tasks/${task.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

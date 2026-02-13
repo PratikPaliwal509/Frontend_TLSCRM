@@ -109,7 +109,7 @@ const StatusCell = ({ project, onStatusChange }) => {
 
                             try {
                                 const res = await fetch(
-                                    `http://localhost:5000/api/projects/${project.project_id}/status`,
+                                    `https://api-0ggv.onrender.com/api/projects/${project.project_id}/status`,
                                     {
                                         method: 'PATCH',
                                         headers: {
@@ -191,7 +191,7 @@ const ProjectTable = () => {
         const fetchProjects = async () => {
             try {
                 const res = await fetch(
-                    'http://localhost:5000/api/projects',
+                    'https://api-0ggv.onrender.com/api/projects',
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem(

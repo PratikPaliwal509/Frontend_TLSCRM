@@ -35,7 +35,7 @@ const [users, setUsers] = useState([])
             try {
                 setLoading(true)
                 const token = localStorage.getItem('token')
-                const response = await fetch(`http://localhost:5000/api/departments/only-one/${id}`, {
+                const response = await fetch(`https://api-0ggv.onrender.com/api/departments/only-one/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const [users, setUsers] = useState([])
           try {
             const token = localStorage.getItem('token')
             const response = await fetch(
-              'http://localhost:5000/api/departments',
+              'https://api-0ggv.onrender.com/api/departments',
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
@@ -90,8 +90,8 @@ const [users, setUsers] = useState([])
         const fetchUsers = async () => {
           const token = localStorage.getItem('token')
           const res = await fetch(
-            // 'http://localhost:5000/api/users/users/by-agency',
-            'http://localhost:5000/api/users/users/by-agency',
+            // 'https://api-0ggv.onrender.com/api/users/users/by-agency',
+            'https://api-0ggv.onrender.com/api/users/users/by-agency',
             { headers: { Authorization: `Bearer ${token}` } }
           )
           const data = await res.json()
@@ -110,7 +110,7 @@ const [users, setUsers] = useState([])
             setLoading(true)
             const token = localStorage.getItem('token')
 
-            const response = await fetch(`http://localhost:5000/api/departments/${id}`, {
+            const response = await fetch(`https://api-0ggv.onrender.com/api/departments/${id}`, {
                 method: 'PUT', // use PUT for update
                 headers: {
                     'Content-Type': 'application/json',

@@ -24,7 +24,7 @@ const UsersList = () => {
                 setLoading(true)
                 const token = localStorage.getItem('token')
 
-                const res = await fetch('http://localhost:5000/api/users/user', {
+                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
 
