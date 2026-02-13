@@ -103,3 +103,79 @@
 }
 
 // task calender css end 
+
+//Dashboard client/leads start
+.fade-in {
+  animation: fadeInUp 0.25s ease-in-out;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    // transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    // transform: translateY(0);
+  }
+}
+.row-animate {
+  animation: fadeInUp 0.3s ease-in-out;
+}
+
+//Dashboard client/leads end
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.page-btn,
+.page-number {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled),
+.page-number:hover {
+  background: #f3f4f6;
+}
+
+.page-number.active {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.table-body-transition {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.table-fade-out {
+  opacity: 0;
+  // transform: translateY(8px);
+}
+
+.table-fade-in {
+  opacity: 1;
+  // transform: translateY(0);
+}

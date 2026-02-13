@@ -4,6 +4,7 @@ import CardHeader from '@/components/shared/CardHeader'
 import { projectsData } from '@/utils/fackData/projectsData'
 import useCardTitleActions from '@/hooks/useCardTitleActions'
 import CardLoader from '@/components/shared/CardLoader'
+import Pagination from '@/components/shared/Pagination'
 
 const Project = ({ cardYSpaceClass, borderShow, title }) => {
     // const data = projectsData.runningProjects;
@@ -13,6 +14,13 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const token = localStorage.getItem("token");
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 4
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentProjects = projects.slice(indexOfFirstItem, indexOfLastItem)
+
+    const totalPages = Math.ceil(projects.length / itemsPerPage)
 
     // Fetch projects from API
     const fetchProjects = async () => {
@@ -42,46 +50,15 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
         }
     };
 
+
     useEffect(() => {
         fetchProjects();
     }, []);
-
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [projects])
     if (isRemoved) return null;
     return (
-        // <div className="col-xxl-4">
-        //     <div className={`card stretch stretch-full ${isExpanded ? "card-expand" : ""} ${refreshKey ? "card-loading" : ""}`}>
-        //         <CardHeader title={title} refresh={handleRefresh} remove={handleDelete} expanded={handleExpand} />
-
-        //         <div className="card-body custom-card-action project-status">
-        //             <div className="mb-3">
-        //                 {data.map(({ id, progress, project_category, project_logo, project_name, progress_color }, index) => (
-        //                     <Fragment key={id}>
-        //                         {borderShow ? <hr className="border-dashed my-3" /> : ""}
-        //                         <div className={`d-flex ${index === data.length - 1 ? "mb-0" : cardYSpaceClass}`}>
-        //                             <div className="d-flex w-50 align-items-center me-3">
-        //                                 <img src={project_logo} alt="sketch-logo" className="me-3" width="35" />
-        //                                 <div>
-        //                                     <a href="E" className="text-truncate-1-line">{project_name}</a>
-        //                                     <div className="fs-11 text-muted">{project_category}</div>
-        //                                 </div>
-        //                             </div>
-        //                             <div className="d-flex flex-grow-1 align-items-center">
-        //                                 <div className="progress w-100 me-3 ht-5">
-        //                                     <div className={`progress-bar ${progress_color}`} role="progressbar" style={{ width: `${progress}%` }} aria-valuenow="29" aria-valuemin="0" aria-valuemax="100"></div>
-        //                                 </div>
-        //                                 <span className="text-muted">{progress}%</span>
-        //                             </div>
-        //                         </div>
-        //                     </Fragment>
-        //                 )
-
-        //                 )}
-        //             </div>
-        //         </div>
-        //         <Link to="#" className="card-footer fs-11 fw-bold text-uppercase text-center">Upcomming Projects</Link>
-        //     </div>
-        //     <CardLoader refreshKey={refreshKey} />
-        // </div>
         <div className="col-xxl-4">
             <div className={`card stretch stretch-full ${isExpanded ? "card-expand" : ""} ${refreshKey ? "card-loading" : ""}`}>
                 <CardHeader title={title} refresh={handleRefresh} remove={handleDelete} expanded={handleExpand} />
@@ -90,7 +67,7 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
                     {loading && <p className="text-center py-3">Loading projects...</p>}
                     {error && <p className="text-center text-danger py-3">{error}</p>}
 
-                    {!loading && !error && projects.map(({ project_id, progress = 0, category, description, logo_url, project_name, progress_color = 'bg-primary' }, index) => (
+                    {!loading && !error && currentProjects.map(({ project_id, progress = 0, category, description, logo_url, project_name, progress_color = 'bg-primary' }, index) => (
                         <Fragment key={project_id}>
                             {borderShow && index !== 0 && <hr className="border-dashed my-3" />}
                             <div className={`d-flex ${index === projects.length - 1 ? "mb-0" : cardYSpaceClass}`}>
@@ -126,7 +103,21 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
                     ))}
                 </div>
 
-                <Link to="#" className="card-footer fs-11 fw-bold text-uppercase text-center">Upcoming Projects</Link>
+                <div className="card-footer d-flex flex-column gap-2">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
+
+                    <Link
+                        to="#"
+                        className="fs-11 fw-bold text-uppercase text-center"
+                    >
+                        Upcoming Projects
+                    </Link>
+                </div>
+
             </div>
             <CardLoader refreshKey={refreshKey} />
         </div>

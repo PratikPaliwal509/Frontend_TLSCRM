@@ -58,11 +58,6 @@ const TableCell = ({ value, onChange, disabled }) => {
   )
 }
 
-
-
-
-
-
 // export default TableCell
 
 /* ---------- Main Component ---------- */
@@ -240,7 +235,7 @@ const status = newStatus
     {
       accessorKey: 'phone',
       header: () => 'Phone',
-      cell: (info) => <a href={`tel:${info.getValue()}`}>{info.getValue()}</a>
+      cell: (info) => <a href={`tel:${info.getValue()}`}>{info.getValue()?info.getValue():"-----"}</a>
     },
     {
       accessorKey: 'date',

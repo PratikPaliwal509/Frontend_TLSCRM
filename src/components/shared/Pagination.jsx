@@ -1,25 +1,47 @@
-import React from 'react'
-import { BsArrowLeft, BsArrowRight, BsDot } from 'react-icons/bs'
-import { Link } from 'react-router-dom'
+import React from "react"
+import { BsArrowLeft, BsArrowRight } from "react-icons/bs"
 
-const Pagination = () => {
-    return (
-        <ul className="list-unstyled d-flex align-items-center gap-2 mb-0 pagination-common-style">
-            <li>
-                <Link to="#"><BsArrowLeft size={16} /></Link>
-            </li>
-            <li><Link to="#" className="active">1</Link></li>
-            <li><Link to="#">2</Link></li>
-            <li>
-                <Link to="#"><BsDot size={16} /></Link>
-            </li>
-            <li><Link to="#">8</Link></li>
-            <li><Link to="#">9</Link></li>
-            <li>
-                <Link to="#"><BsArrowRight size={16} /></Link>
-            </li>
-        </ul>
-    )
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  if (totalPages <= 1) return null
+
+  const pages = []
+
+  for (let i = 1; i <= totalPages; i++) {
+    pages.push(i)
+  }
+
+  return (
+    <div className="pagination-wrapper">
+      {/* Previous */}
+      <button
+        className="page-btn"
+        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
+      >
+        <BsArrowLeft size={14} />
+      </button>
+
+      {/* Page Numbers */}
+      {pages.map((page) => (
+        <button
+          key={page}
+          className={`page-number ${currentPage === page ? "active" : ""}`}
+          onClick={() => onPageChange(page)}
+        >
+          {page}
+        </button>
+      ))}
+
+      {/* Next */}
+      <button
+        className="page-btn"
+        disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+      >
+        <BsArrowRight size={14} />
+      </button>
+    </div>
+  )
 }
 
 export default Pagination

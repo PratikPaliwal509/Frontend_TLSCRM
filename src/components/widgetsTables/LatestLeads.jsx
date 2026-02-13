@@ -9,11 +9,19 @@ import CardLoader from '@/components/shared/CardLoader'
 
 
 const LatestLeads = ({ title }) => {
-    
+
     const { refreshKey, isRemoved, isExpanded, handleRefresh, handleExpand, handleDelete } = useCardTitleActions();
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 5
+    const [isAnimating, setIsAnimating] = useState(false)
 
     const [clients, setClients] = useState([])
     const [loading, setLoading] = useState(false)
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentClients = clients.slice(indexOfFirstItem, indexOfLastItem)
+
+    const totalPages = Math.ceil(clients.length / itemsPerPage)
 
     const token = localStorage.getItem('token')
     /* -------- FETCH CLIENTS -------- */
@@ -41,6 +49,16 @@ const LatestLeads = ({ title }) => {
 
         fetchClients()
     }, [refreshKey])
+    const handlePageChange = (page) => {
+        if (page === currentPage) return
+
+        setIsAnimating(true)
+
+        setTimeout(() => {
+            setCurrentPage(page)
+            setIsAnimating(false)
+        }, 250) // must match CSS transition duration
+    }
 
     if (isRemoved) return null
 
@@ -62,10 +80,17 @@ const LatestLeads = ({ title }) => {
                                     <th className="">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody
+                                className={`table-body-transition ${isAnimating ? "table-fade-out" : "table-fade-in"
+                                    }`}
+                            >
+
+
                                 {
-                                    clients.slice(0, 5).map(({ created_at, client_id, industry, primary_contact_email, user_img, company_name, is_active, color }) => (
+                                    currentClients.map(({ created_at, client_id, industry, primary_contact_email, user_img, company_name, is_active, color }) => (
                                         <tr key={client_id} className='chat-single-item'>
+
+
                                             <td>
                                                 <div className="d-flex align-items-center gap-3">
                                                     {
@@ -92,20 +117,20 @@ const LatestLeads = ({ title }) => {
                                                     : 'bg-soft-danger text-danger'
                                                     }`}>{is_active ? "Active" : "Inactive"}</span>
                                             </td>
-                                          
+
                                             <td className="">
                                                 <div className="dropdown">
                                                     <button
                                                         className="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center"
                                                         type="button"
-                                                         style={{ width: "32px", height: "32px", padding: 0 }}
+                                                        style={{ width: "32px", height: "32px", padding: 0 }}
                                                         data-bs-toggle="dropdown"
                                                         aria-expanded="false"
                                                     >
                                                         <FiMoreVertical size={16} />
                                                     </button>
 
-                                                    <ul className="dropdown-menu dropdown-menu-end">
+                                                    <ul className="dropdown-menu dropdown-menu-end z-3">
                                                         <li>
                                                             <Link className="dropdown-item d-flex align-items-center gap-2" to={`/clients/view/${client_id}`}>
                                                                 <FiEye size={14} /> View
@@ -133,46 +158,13 @@ const LatestLeads = ({ title }) => {
                                     )
                                 }
                             </tbody>
-                            {/* <tbody>
-                                {
-                                    userList(0, 5).map(({ date, id, proposal, user_email, user_img, user_name, user_status, color }) => (
-                                        <tr key={id} className='chat-single-item'>
-                                            <td>
-                                                <div className="d-flex align-items-center gap-3">
-                                                    {
-                                                        user_img ?
-                                                            <div className="avatar-image">
-                                                                <img src={user_img} alt="user-img" className="img-fluid" />
-                                                            </div>
-                                                            :
-                                                            <div className="text-white avatar-text user-avatar-text">{user_name.substring(0, 1)}</div>
-                                                    }
-                                                    <a href="#">
-                                                        <span className="d-block">{user_name}</span>
-                                                        <span className="fs-12 d-block fw-normal text-muted">{user_email}</span>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span className="badge bg-gray-200 text-dark">{proposal}</span>
-                                            </td>
-                                            <td>{date}</td>
-                                            <td>
-                                                <span className={`badge bg-soft-${color} text-${color}`}>{user_status}</span>
-                                            </td>
-                                            <td className="text-end">
-                                                <Link to="#"><FiMoreVertical size={16} /></Link>
-                                            </td>
-                                        </tr>
-                                    )
-                                    )
-                                }
-                            </tbody> */}
                         </table>
                     </div>
                 </div>
                 <div className="card-footer">
-                    <Pagination />
+                    <Pagination currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange} />
                 </div>
                 <CardLoader refreshKey={refreshKey} />
             </div>
