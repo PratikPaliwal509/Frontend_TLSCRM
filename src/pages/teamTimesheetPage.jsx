@@ -36,7 +36,7 @@ const TeamTimesheet = () => {
             {/* <TeamTimesheetTabs /> */}
 
             <div className="main-content">
-                <div className="tab-content">
+                <div className="tab-content m-4 " style={{minHeight:"60vh"}}>
                     <TeamTimesheetContent data={data} />
                 </div>
             </div>

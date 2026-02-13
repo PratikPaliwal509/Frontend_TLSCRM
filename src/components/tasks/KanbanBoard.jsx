@@ -99,11 +99,11 @@ const KanbanBoard = ({ tasks, onSelect }) => {
 
       const data = await res.json()
 
-      if (!res.ok) throw new Error(data.message)
+      if (!res.ok) throw new Error(data.message || 'Status update failed')
 
       toast.success('Task status updated')
     } catch (err) {
-      toast.error('Failed to update status')
+      toast.error(err.message || 'Failed to update status')
 
       // rollback if API fails
       setTasks((prev) =>
