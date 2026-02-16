@@ -1,11 +1,13 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FiBell, FiCheck, FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { io } from "socket.io-client";
 
 const NotificationsModal = () => {
   const [notifications, setNotifications] = useState([]);
   const token = localStorage.getItem("token");
+  const socketRef = useRef(null);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -32,9 +34,42 @@ const NotificationsModal = () => {
     }
   };
 
-  // fetch once on load
+  // fetch once on load and setup socket
   useEffect(() => {
     fetchNotifications();
+
+    // Setup socket.io connection
+    socketRef.current = io("http://localhost:5000", {
+      auth: { token },
+      transports: ["websocket"]
+    });
+
+    socketRef.current.on("connect", () => {
+      console.log("Socket connected! id:", socketRef.current.id);
+    });
+    socketRef.current.on("connect_error", (err) => {
+      console.error("Socket connection error:", err);
+    });
+    socketRef.current.on("disconnect", (reason) => {
+      console.warn("Socket disconnected:", reason);
+    });
+
+    // Listen for all events for debugging
+    socketRef.current.onAny((event, ...args) => {
+      console.log("Socket event:", event, args);
+    });
+
+    // Listen for new notifications
+    socketRef.current.on("notification", (notification) => {
+      console.log("Received notification event:", notification);
+      setNotifications(prev => [notification, ...prev]);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
   }, []);
 
   // 🔹 MARK ALL AS READ (OPTIONAL UI ONLY)

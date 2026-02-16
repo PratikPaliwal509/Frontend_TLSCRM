@@ -39,6 +39,16 @@ const TeamsViewTabs = () => {
           Projects
         </button>
       </li>
+      <li className="nav-item" role="presentation">
+        <button
+          className="nav-link"
+          data-bs-toggle="tab"
+          data-bs-target="#tasksTab"
+          type="button"
+        >
+          Tasks
+        </button>
+      </li>
     </ul>
     </div>
     </div>

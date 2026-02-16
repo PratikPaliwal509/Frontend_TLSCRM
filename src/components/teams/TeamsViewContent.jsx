@@ -2,20 +2,24 @@ import React from 'react'
 import TabsTeamsProfle from './TabsTeamsProfle'
 import TeamMembersTab from './TeamMembersTab'
 import TeamProjectsTab from './TeamProjectsTab'
+import KanbanBoard from '../kanban/KanbanBoard'
 // import TeamsEmptyCard from './TeamsEmptyCard'
 
 const TeamsViewContent = ({ team }) => {
   const notes = team?.notes || []
 
   return (
-    <>    
-    
+    <>
+
 
       <div className="tab-content">
         {/* PROFILE TAB */}
         <TabsTeamsProfle team={team} />
         <TeamMembersTab members={team?.members || []} />
         <TeamProjectsTab projects={team?.projects || []} />
+        <div className="tab-pane fade " id="tasksTab" role="tabpanel" style={{height:"56vh" }}>
+          <KanbanBoard tasks={team?.tasks || []} />
+        </div>
         {/* MEMBERS TAB */}
         {/* <div className="tab-pane fade" id="membersTab" role="tabpanel">
         <TeamsEmptyCard

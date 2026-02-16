@@ -21,6 +21,7 @@ const KanbanBoard = ({ tasks = [] }) => {
        INIT
     ========================== */
     useEffect(() => {
+        console.log(tasks)
         setBoardTasks(tasks)
     }, [tasks])
 
@@ -96,10 +97,10 @@ const KanbanBoard = ({ tasks = [] }) => {
         <>
             <TasksDetails task={selectedTask} user_id={user_id} />
 
-            <div className="row flex-nowrap overflow-x-auto g-4 h-100">
+            <div className="row flex-nowrap overflow-x-auto g-4 h-100 ">
                 {COLUMNS.map((col) => (
-                    <div key={col.key} className="col-md-4">
-                        <div className="card h-100">
+                    <div key={col.key} className="col-md-4 mb-4">
+                        <div className="card h-100 overflow-y-auto  flex-nowrap">
                             <div className="card-header fw-bold text-center">
                                 {col.title}
                             </div>
@@ -113,7 +114,7 @@ const KanbanBoard = ({ tasks = [] }) => {
                                     .filter((t) => t.status === col.key)
                                     .map((task) => (
                                         <div
-                                            key={task.id}
+                                            key={task.task_id}
                                             className="p-3 border rounded hover-shadow"
                                             draggable
                                             onDragStart={(e) => onDragStart(e, task)}
@@ -123,7 +124,7 @@ const KanbanBoard = ({ tasks = [] }) => {
                                             style={{ cursor: 'pointer' }}
                                         >
                                             <div className="fw-semibold mb-1">
-                                                {task.title}
+                                                {task.title || task.task_title}
                                             </div>
 
                                             <div className="fs-12 text-muted text-truncate mb-2">

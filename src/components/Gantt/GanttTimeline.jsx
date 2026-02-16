@@ -111,9 +111,10 @@ const GanttTimeline = ({ projectId }) => {
   if (error) return <div className="p-4 alert alert-danger">Error: {error}</div>
 
   return (
-    <div className="row">
-      <div className="col-lg-3 mb-3">
-        <div className="card">
+    <div className="row ">
+      <div className=" mb-3">
+      {/* <div className="col-lg-3 mb-3"> */}
+        <div className="card" >
           <div className="card-body">
             <h6 className="mb-3">Task Hierarchy</h6>
             {tasks.length > 0 ? (

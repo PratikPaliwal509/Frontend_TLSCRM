@@ -15,14 +15,14 @@ const TeamsView = () => {
   const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
-  
-   useEffect(() => {
-      const checkPermission = async () => {
-        await verifyPagePermission('teams', 'view', navigate);
-      };
-  
-      checkPermission();
-    }, []);
+
+  useEffect(() => {
+    const checkPermission = async () => {
+      await verifyPagePermission('teams', 'view', navigate);
+    };
+
+    checkPermission();
+  }, []);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -53,15 +53,15 @@ const TeamsView = () => {
     fetchTeam()
   }, [id])
 
-  if (loading) return <Loader/>
+  if (loading) return <Loader />
   if (!team) return <p>Team not found</p>
 
   return (
     <>
       <PageHeader>
-        <TeamHeader team={team}  mode="view"/>
+        <TeamHeader team={team} mode="view" />
       </PageHeader>
-<TeamsViewTabs />
+      <TeamsViewTabs />
       {/* <TeamsViewTabs team={team} /> */}
 
       <div className="main-content">
@@ -69,7 +69,7 @@ const TeamsView = () => {
           <TeamsViewContent team={team} />
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   )
 }

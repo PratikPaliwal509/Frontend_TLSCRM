@@ -87,7 +87,7 @@ const ProjectsView = () => {
           <div className="tab-pane fade" id="ganttTab">
             <GanttTimeline projectId={project.project_id} />
           </div>
-          <div className="tab-pane fade" id="tasksTab" role="tabpanel">
+          <div className="tab-pane fade" id="tasksTab" role="tabpanel" style={{height:"56vh" }}>
             <KanbanBoard tasks={project?.tasks}
             />
           </div>

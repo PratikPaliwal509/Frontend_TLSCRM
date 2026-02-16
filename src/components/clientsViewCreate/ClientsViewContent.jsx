@@ -39,9 +39,9 @@ const ClientsViewContent = ({ client }) => {
       </div> */}
 
       {/* NOTES TAB */}
-      <div className="tab-pane fade" id="notesTab" role="tabpanel">
+      <div className="tab-pane fade" id="notesTab" role="tabpanel"  style={{minHeight:"50vh" }}>
         {notes.length > 0 ? (
-          <div className="card">
+          <div className="card"  >
             <div className="card-body">
               <ul className="list-group list-group-flush">
                 {/* {notes.map(note => (
@@ -61,11 +61,11 @@ const ClientsViewContent = ({ client }) => {
         )}
       </div>
 
-{/* TASKS TAB */}
-<div className="tab-pane fade " id="tasksTab" role="tabpanel">
-  <KanbanBoard tasks={client?.tasks || []} />
-</div>
-<div className="tab-pane fade " id="projectTab" role="tabpanel"><ClientProjects projects={client.projects} /></div>
+      {/* TASKS TAB */}
+      <div className="tab-pane fade " id="tasksTab" role="tabpanel" style={{height:"56vh" }}>
+        <KanbanBoard tasks={client?.tasks || []} />
+      </div>
+      <div className="tab-pane fade " id="projectTab" role="tabpanel" style={{minHeight:"56vh" }}><ClientProjects projects={client.projects} /></div>
 
 
       {/* COMMENTS TAB */}
