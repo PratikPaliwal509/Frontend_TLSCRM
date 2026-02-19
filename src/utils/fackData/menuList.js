@@ -124,7 +124,7 @@ export const menuList = [
                 name: "Members create",
                 path: "/projects/members/create",
                 subdropdownMenu: false
-            ,permissionKey: "projects",
+                , permissionKey: "projects",
                 permissionAction: "edit"
             },
 
@@ -195,7 +195,7 @@ export const menuList = [
                 name: "Department List",
                 path: "/departments/list",
                 subdropdownMenu: false,
-                permissionKey: "department",
+                permissionKey: "departments",
                 permissionAction: "view"
 
             },
@@ -204,7 +204,7 @@ export const menuList = [
                 name: "Add Department",
                 path: "/departments/create",
                 subdropdownMenu: false,
-                permissionKey: "department",
+                permissionKey: "departments",
                 permissionAction: "create"
 
             },
