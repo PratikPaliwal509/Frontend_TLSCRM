@@ -49,7 +49,7 @@ const TabProjectOverview = ({ project }) => {
               </div>
               <div className="mt-4 mt-md-0">
                 <div className="d-flex gap-2">
-                  <a href="#" className="btn btn-icon" data-bs-toggle="tooltip" title="Make as Complete">
+                  {/* <a href="#" className="btn btn-icon" data-bs-toggle="tooltip" title="Make as Complete">
                     <FiCheckCircle size={16} />
                   </a>
                   <a href="#" className="btn btn-icon" data-bs-toggle="tooltip" title="Timesheets">
@@ -57,11 +57,11 @@ const TabProjectOverview = ({ project }) => {
                   </a>
                   <a href="#" className="btn btn-icon" data-bs-toggle="tooltip" title="Statistics">
                     <FiBarChart2 size={16} />
-                  </a>
-                  <a href="#" className="btn btn-success" data-bs-toggle="tooltip" title="Start Timer">
+                  </a> */}
+                  {/* <a href="#" className="btn btn-success" data-bs-toggle="tooltip" title="Start Timer">
                     <FiClock size={16} className="me-2" />
                     <span>Start Timer</span>
-                  </a>
+                  </a> */}
                 </div>
               </div>
             </div>

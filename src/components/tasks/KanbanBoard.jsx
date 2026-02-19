@@ -118,11 +118,11 @@ const KanbanBoard = ({ tasks, onSelect }) => {
 
 
   return (
-    <div className="row overflow-x-auto  flex-nowrap g-4 h-100">
+    <div className="row overflow-x-auto  flex-nowrap g-4 h-100 ">
       {/* <div className="row overflow-x-auto  flex-nowrap d-flex g-4"> */}
       {KANBAN_COLUMNS.map((col) => (
-        <div key={col.key} className="col-md-4">
-          <div className="card h-100   col overflow-y-auto  flex-nowrap d-flex g-4">
+        <div key={col.key} className="col-md-4 mb-4">
+          <div className="card h-100  col overflow-y-auto  flex-nowrap d-flex g-4" >
             <div className="card-header fw-bold text-center">
               {col.title}
             </div>

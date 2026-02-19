@@ -10,10 +10,10 @@ const PageHeaderWidgets = () => {
         <>
             <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">
                 <div className="filter-dropdown">
-                    <Link className="btn btn-md btn-light-brand"  style={{paddingTop:"12px", paddingBottom:"12px"}} data-bs-toggle="dropdown" data-bs-offset="0, 10" data-bs-auto-close="outside">
+                    {/* <Link className="btn btn-md btn-light-brand"  style={{paddingTop:"12px", paddingBottom:"12px"}} data-bs-toggle="dropdown" data-bs-offset="0, 10" data-bs-auto-close="outside">
                         <i className="me-2"><FiFilter strokeWidth={1.6} /></i>
                         <span>Filter</span>
-                    </Link>
+                    </Link> */}
                     <div className="dropdown-menu dropdown-menu-end">
                         {filterItems.map((name, index) =>
                             <div key={index} className="dropdown-item">

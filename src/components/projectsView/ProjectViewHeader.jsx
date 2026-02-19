@@ -20,19 +20,19 @@ const socialLinkOptions = [
 ]
 
 const moreOptions = [
-  { label: "Pin Project", icon: "feather-map-pin" },
-  { label: "Edit Project", icon: "feather-edit" },
-  { label: "Copy Project", icon: "feather-copy" },
-  { type: "divider" },
-  { label: "Make as Hold", icon: "feather-pause" },
-  { label: "Make as Started", icon: "feather-star" },
-  { label: "Make as Finished", icon: "feather-check-circle" },
-  { label: "Make as Cancelled", icon: "feather-delete" },
-  { type: "divider" },
-  { label: "Export Project", icon: "feather-cast" },
-  { label: "Project View", icon: "feather-eye" },
-  { type: "divider" },
-  { label: "Delete Project", icon: "feather-trash-2" },
+  { label: "Pin Project", icon: "feather-map-pin" , href:"#"},
+  { label: "Edit Project", icon: "feather-edit", href:"/projects/edit/" },
+  { label: "Copy Project", icon: "feather-copy" , href:"#"},
+  { type: "divider" , href:"#" },
+  { label: "Make as Hold", icon: "feather-pause" , href:"#"},
+  { label: "Make as Started", icon: "feather-star" , href:"#" },
+  { label: "Make as Finished", icon: "feather-check-circle" , href:"#" },
+  { label: "Make as Cancelled", icon: "feather-delete" , href:"#" },
+  { type: "divider" , href:"#" },
+  { label: "Export Project", icon: "feather-cast", href:"#" },
+  { label: "Project View", icon: "feather-eye", href:"#" },
+  { type: "divider", href:"#" },
+  { label: "Delete Project", icon: "feather-trash-2", href:"#" },
 ]
 
 const ProjectViewHeader = ({ project }) => {
@@ -61,13 +61,14 @@ const ProjectViewHeader = ({ project }) => {
           </a>
 
           <ul className="dropdown-menu dropdown-menu-end">
-            {moreOptions.map(({ icon, label, type }, index) => {
+            {moreOptions.map(({ icon, label, type, href }, index) => {
               if (type === 'divider') {
                 return <li key={index} className="dropdown-divider" />
               }
+              console.log("hfhfhf", label, type, href)
               return (
                 <li key={index}>
-                  <a href="#" className="dropdown-item">
+                  <a href={href+project.project_id} className="dropdown-item">
                     <i className="me-3">{getIcon(icon)}</i>
                     <span>{label}</span>
                   </a>

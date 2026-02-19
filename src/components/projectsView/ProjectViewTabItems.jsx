@@ -42,7 +42,7 @@ const ProjectViewTabItems = ({ tabs = defaultTabs }) => {
                 </button>
               </li>
             ))}
-            <li className="nav-item" role="presentation" key={3}>
+            <li className="nav-item" role="presentation" key={1}>
               <button
                 className="nav-link"
                 data-bs-toggle="tab"
@@ -53,7 +53,7 @@ const ProjectViewTabItems = ({ tabs = defaultTabs }) => {
               </button>
 
             </li>
-            <li className="nav-item" role="presentation" key={3}>
+            <li className="nav-item" role="presentation" key={2}>
               <button
                 className="nav-link"
                 data-bs-toggle="tab"

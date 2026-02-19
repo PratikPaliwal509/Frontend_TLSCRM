@@ -391,7 +391,7 @@ const AddTask = () => {
                                 onChange={(e) =>
                                     setFormData({
                                         ...formData,
-                                        estimated_hours:  e.target.value === '' ? '' : Number(e.target.value),
+                                        estimated_hours: e.target.value === '' ? '' : Number(e.target.value),
                                     })
                                 }
                             />

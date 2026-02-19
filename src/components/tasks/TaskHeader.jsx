@@ -162,7 +162,7 @@ const TaskHeader = ({ setSidebarOpen,
             <div className="page-header-right ms-auto">
                 <div className="hstack gap-2">
                     <HeaderSearchForm />
-                    <a href="#" className="d-none d-sm-flex">
+                    {/* <a href="#" className="d-none d-sm-flex">
                         <div className="avatar-text avatar-md" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Newest">
                             <FiChevronLeft />
                         </div>
@@ -171,7 +171,7 @@ const TaskHeader = ({ setSidebarOpen,
                         <div className="avatar-text avatar-md" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Oldest">
                             <FiChevronRight />
                         </div>
-                    </a>
+                    </a> */}
                     <ViewModeSelect
                         value={viewMode}
                         onChange={setViewMode}

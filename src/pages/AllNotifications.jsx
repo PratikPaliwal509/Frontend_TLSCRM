@@ -32,7 +32,7 @@ const AllNotifications = () => {
     if (!token) return;
 
     // Create socket connection
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io("https://api-0ggv.onrender.com", {
       auth: { token },
       transports: ["websocket"],
     });

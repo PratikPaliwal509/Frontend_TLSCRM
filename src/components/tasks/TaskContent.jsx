@@ -4,7 +4,7 @@ import Dropdown from '@/components/shared/Dropdown'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import TaskHeader from './TaskHeader'
 import Footer from '@/components/shared/Footer'
-import TaskSidebar from './TaskSidebar'
+// import TaskSidebar from './TaskSidebar'
 import ToastProvider from '../ToastProvider'
 import TasksDetails from './TasksDetails'
 import CheckList from '../CheckList'
@@ -181,9 +181,10 @@ const TaskContent = () => {
                         viewMode={viewMode}
                         setViewMode={setViewMode} />
 
-                    <div className="content-area-body   overflow-hidden" style={
+                    <div className="px-4 pt-4   overflow-hidden" style={
+                    // <div className="content-area-body   overflow-hidden" style={
                         viewMode === 'kanban'
-                            ? {height: '67vh' }
+                            ? {height: '66vh' }
                             : { }
                     }>
                         {/* <div className="content-area-body   overflow-hidden" style={{ height: '67vh' }}> */}

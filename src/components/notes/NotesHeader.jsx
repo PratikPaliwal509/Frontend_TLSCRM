@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Dropdown from '@/components/shared/Dropdown'
 import { emailActions, emailMoreOptions, tagsItems } from '../emails/EmailHeader'
-import { FiAlignLeft, FiChevronLeft, FiChevronRight, FiEye, FiFolderPlus, FiTag } from 'react-icons/fi'
+import { FiAlignLeft, FiChevronLeft, FiChevronRight, FiChevronUp, FiEye, FiFolderPlus, FiTag } from 'react-icons/fi'
 import { labels, taskFilter } from '../tasks/TaskHeader'
 import HeaderSearchForm from '@/components/shared/pageHeader/HeaderSearchForm'
 import { FiChevronDown } from 'react-icons/fi'
@@ -74,7 +74,7 @@ const NotesHeader = ({ setSidebarOpen, noteType, setNoteType }) => {
         <div className="hstack gap-2">
           <HeaderSearchForm />
 
-          <a href="#" className="d-none d-sm-flex">
+          {/* <a href="#" className="d-none d-sm-flex">
             <div className="avatar-text avatar-md" title="Newest">
               <FiChevronLeft />
             </div>
@@ -84,9 +84,9 @@ const NotesHeader = ({ setSidebarOpen, noteType, setNoteType }) => {
             <div className="avatar-text avatar-md" title="Oldest">
               <FiChevronRight />
             </div>
-          </a>
+          </a> */}
 
-          <Dropdown
+          {/* <Dropdown
             dropdownItems={taskFilter}
             triggerPosition={"0,23"}
             triggerClass="btn btn-light-brand btn-sm rounded-pill dropdown-toggle"
@@ -96,15 +96,15 @@ const NotesHeader = ({ setSidebarOpen, noteType, setNoteType }) => {
             dropdownParentStyle="d-none d-sm-flex"
             onClick={handleFilter}
             active={active}
-          />
+          /> */}
 
-          <Dropdown
+          {/* <Dropdown
             dropdownItems={emailMoreOptions}
             triggerPosition={"0,22"}
             triggerClass="avatar-md"
             tooltipTitle="More Options"
             dropdownParentStyle="d-none d-sm-flex"
-          />
+          /> */}
         </div>
       </div>
     </div>
@@ -134,10 +134,11 @@ const NotesTypeDropdown = ({ options, value, onChange }) => {
     <div className="dropdown" ref={dropdownRef} style={{ position: "relative" }}>
       <button
         type="button"
-        className="btn btn-light-brand dropdown-toggle"
+        className="btn btn-light-brand"
         onClick={() => setOpen(prev => !prev)}
       >
-        {selectedOption?.label || "Select Notes"} <FiChevronDown className="ms-2" />
+        {selectedOption?.label || "Select Notes"} 
+        {open ? <FiChevronUp className="ms-2" /> :<FiChevronDown className="ms-2" />}
       </button>
 
       {open && (

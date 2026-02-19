@@ -81,12 +81,12 @@ const StorageSidebar = ({sidebarOpen, setSidebarOpen}) => {
             }
           </ul>
           <ul className="nav flex-column nxl-content-sidebar-item">
-            <li className="px-4 mx-2 my-2 fs-10 fw-bold text-uppercase text-muted text-spacing-1 d-flex align-items-center justify-content-between">
+            {/* <li className="px-4 mx-2 my-2 fs-10 fw-bold text-uppercase text-muted text-spacing-1 d-flex align-items-center justify-content-between">
               <span>Filter</span>
               <a href="#">
                 <span className="avatar-text avatar-sm" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Add New"> <FiPlus /> </span>
               </a>
-            </li>
+            </li> */}
             <li className="nav-item">
               <a className="nav-link" href="#">
                 <FiClock size={16} strokeWidth={1.6} />

@@ -126,13 +126,13 @@ const NotesContent = () => {
 
     return (
         <>
-            <NotesSidebar
+            {/* <NotesSidebar
                 selectTab={selectTab}
                 setSelectTab={setSelectTab}
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
                 setShowAddModal={setShowAddModal}
-            />
+            /> */}
 
             <div className="content-area">
                 <PerfectScrollbar>
