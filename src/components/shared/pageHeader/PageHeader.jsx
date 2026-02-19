@@ -27,7 +27,7 @@ const PageHeader = ({ children }) => {
             </div>
             <div className="page-header-right ms-auto">
                 {/* Date and Filter on main header */}
-                {/* <div className={`page-header-right-items ${openSidebar ? "page-header-right-open" : ""}`}>
+                <div className={`page-header-right-items ${openSidebar ? "page-header-right-open" : ""}`}>
                     <div className="d-flex d-md-none">
                         <Link to="#" onClick={() => setOpenSidebar(false)} className="page-header-right-close-toggle">
                             <FiArrowLeft size={16} className="me-2" />
@@ -35,12 +35,12 @@ const PageHeader = ({ children }) => {
                         </Link>
                     </div>
                     {children}
-                </div> */}
-                {/* <div className="d-md-none d-flex align-items-center">
+                </div>
+                <div className="d-md-none d-flex align-items-center">
                     <Link to="#" onClick={() => setOpenSidebar(true)} className="page-header-right-open-toggle">
                         <FiAlignRight className="fs-20" />
                     </Link>
-                </div> */}
+                </div>
             </div>
         </div>
     )
