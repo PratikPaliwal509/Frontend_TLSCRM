@@ -4,23 +4,38 @@ import { tasksOverviewChartOption } from '@/utils/chartsLogic/tasksOverviewChatO
 import getIcon from '@/utils/getIcon'
 import { toast } from 'react-toastify'
 
-const TasksOverviewChart = () => {
+const TasksOverviewChart = ({ filters }) => {
   const [overviewInfo, setOverviewInfo] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  const data = [44, 55, 41, 60, 52, 66, 51]
   const chartOptions = tasksOverviewChartOption()
 
   useEffect(() => {
     const fetchOverview = async () => {
       try {
+        setLoading(true)
+
         const token = localStorage.getItem('token')
+        if (!token) throw new Error('Authentication token missing')
 
-        if (!token) {
-          throw new Error('Authentication token missing')
-        }
+        // ✅ Build Query Params
+        const queryParams = new URLSearchParams()
 
-        const res = await fetch('https://api-0ggv.onrender.com/api/tasks/overview', {
+        if (filters?.startDate)
+          queryParams.append('startDate', filters.startDate)
+
+        if (filters?.endDate)
+          queryParams.append('endDate', filters.endDate)
+
+        if (filters?.selectedFilters?.length)
+          queryParams.append(
+            'filters',
+            filters.selectedFilters.join(',')
+          )
+
+        const url = `http://localhost:5000/api/tasks/overview?${queryParams.toString()}`
+
+        const res = await fetch(url, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -42,7 +57,7 @@ const TasksOverviewChart = () => {
     }
 
     fetchOverview()
-  }, [])
+  }, [filters]) // ✅ Refetch when filters change
 
   if (loading) {
     return <div className="text-center py-5">Loading overview...</div>
@@ -51,7 +66,18 @@ const TasksOverviewChart = () => {
   return (
     <>
       {overviewInfo.map(
-        ({ title, completed_number, total_number, progress, chartColor, color, chartData, }, index) => (
+        (
+          {
+            title,
+            completed_number,
+            total_number,
+            progress,
+            chartColor,
+            color,
+            chartData,
+          },
+          index
+        ) => (
           <div key={index} className="col-lg-4 task-overview-card">
             <div className="card mb-4 stretch stretch-full">
               <div className="card-header d-flex align-items-center justify-content-between">
@@ -62,8 +88,8 @@ const TasksOverviewChart = () => {
                         title === 'Tasks Completed'
                           ? 'feather-star'
                           : title === 'New Tasks'
-                            ? 'feather-file-text'
-                            : 'feather-airplay'
+                          ? 'feather-file-text'
+                          : 'feather-airplay'
                       )}
                     </i>
                   </div>

@@ -21,7 +21,6 @@ const KanbanBoard = ({ tasks = [] }) => {
        INIT
     ========================== */
     useEffect(() => {
-        console.log(tasks)
         setBoardTasks(tasks)
     }, [tasks])
 

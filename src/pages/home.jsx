@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import LeadsOverviewChart from '@/components/widgetsCharts/LeadsOverviewChart'
 import LatestLeads from '@/components/widgetsTables/LatestLeads'
 import Schedule from '@/components/widgetsList/Schedule'
@@ -16,21 +16,31 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { verifyPagePermission } from '@/utils/verifyPagePermission'
 const Home = () => {
-      const navigate = useNavigate();
-     useEffect(() => {
+    const navigate = useNavigate();
+    // ✅ FILTER STATE
+    const [filters, setFilters] = useState({
+        startDate: null,
+        endDate: null,
+        selectedFilters: []
+    })
+    useEffect(() => {
         verifyPagePermission('dashboard', 'view', navigate);
-      }, []);
+    }, []);
+    useEffect(() => {
+        console.log(filters)
+    }, [filters])
     return (
         <>
             <PageHeader >
-                <PageHeaderDate />
+                <PageHeaderDate filters={filters}
+                    setFilters={setFilters} />
             </PageHeader>
             <div className='main-content'>
                 <div className='row'>
                     {/* <SiteOverviewStatistics /> */}
                     {/* <PaymentRecordChart /> */}
                     {/* <SalesMiscellaneous isFooterShow={true} dataList={projectsDataTwo} /> */}
-                    <TasksOverviewChart />
+                    <TasksOverviewChart filters={filters} />
                     {/* <LeadsOverviewChart chartHeight={315} /> */}
                     <LatestLeads title={"Latest Leads"} />
                     {/* <Schedule title={"Upcoming Schedule"} /> */}

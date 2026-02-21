@@ -65,7 +65,6 @@ const ProjectViewHeader = ({ project }) => {
               if (type === 'divider') {
                 return <li key={index} className="dropdown-divider" />
               }
-              console.log("hfhfhf", label, type, href)
               return (
                 <li key={index}>
                   <a href={href+project.project_id} className="dropdown-item">

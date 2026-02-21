@@ -71,7 +71,6 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
 
                         // ✅ Calculate progress from tasks //Warning for progress, progress_percentage, 
                         let progress = 0;
-                        console.log(tasks.length)
                         if (tasks.length > 0) {
                             const totalProgress = tasks.reduce(
                                 (sum, task) => sum + (task.progress_percentage || 0),
