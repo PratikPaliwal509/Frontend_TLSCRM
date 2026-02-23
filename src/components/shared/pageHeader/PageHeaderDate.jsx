@@ -207,7 +207,7 @@ const PageHeaderDate = ({ filters, setFilters }) => {
         </button>
 
         {showDatePicker && (
-          <div className="card p-3 shadow position-absolute mt-2" style={{ zIndex: 1000, width: 280 }}>
+          <div className="card p-3 shadow position-absolute end-0" style={{ zIndex: 1000, width: 280 }}>
             
             <div className="mb-3 fw-semibold">Quick Select</div>
 

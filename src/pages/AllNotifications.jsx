@@ -139,7 +139,7 @@ const handleMarkAsViewed = async (id) => {
         >
           <Link to={`${notification.action_url}`} onClick={() => handleMarkAsViewed(notification.notification_id)}>
           <div >
-            <p className="mb-1 fw-semibold">{notification.title}</p>
+            <p className="mb-1 fw-semibold ">{notification.title}</p>
             <small className="text-muted">{notification.message}</small>
           </div>
           </Link>
