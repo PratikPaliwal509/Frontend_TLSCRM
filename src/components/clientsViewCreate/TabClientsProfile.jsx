@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import getIcon from '@/utils/getIcon'
 const InfoRow = ({ title, content }) => (
   <div className="row mb-4">
@@ -24,7 +24,9 @@ const GeneralCard = ({ title, icon, text }) => (
 
 const TabClientsProfile = ({ client }) => {
   if (!client) return null
-
+const [invoiceData, setInvoiceData] = useState(null)
+const [showInvoice, setShowInvoice] = useState(false)
+const [loading, setLoading] = useState(false)
   /* -------- Lead Info (Left Section) -------- */
   const leadInfoData = [
     {
@@ -115,9 +117,87 @@ const TabClientsProfile = ({ client }) => {
       text: new Date(client.created_at).toDateString(),
     },
   ]
+const handleCreateInvoice = async () => {
+  try {
+    setLoading(true)
 
+    const response = await fetch(
+      `http://localhost:5000/api/clients/generate/${client.client_id}`, {
+
+        method: "POST",
+
+        headers: {
+          // "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },  
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      alert(data.message || "Failed to generate invoice")
+      return
+    }
+
+    setInvoiceData(data.data)
+    setShowInvoice(true)
+
+  } catch (error) {
+    console.error(error)
+    alert("Something went wrong")
+  } finally {
+    setLoading(false)
+  }
+}
   return (
-    <div className="tab-pane fade show active" id="profileTab" role="tabpanel">
+    <div className="tab-pane fade show active" id="profileTab" role="tabpanel"><>
+    {showInvoice && invoiceData && (
+  <div className="invoice-modal">
+    <div className="invoice-overlay" onClick={() => setShowInvoice(false)} />
+    
+    <div className="invoice-content card p-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h4 className="mb-0">Invoice</h4>
+        <button
+          className="btn btn-sm btn-light"
+          onClick={() => setShowInvoice(false)}
+        >
+          Close
+        </button>
+      </div>
+
+      <hr />
+
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Task</th>
+            <th>Hours</th>
+            <th>Rate</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {invoiceData.items.map((item, index) => (
+            <tr key={index}>
+              <td>{item.project}</td>
+              <td>{item.task}</td>
+              <td>{item.hours.toFixed(2)}</td>
+              <td>₹{item.rate}</td>
+              <td>₹{item.amount.toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="text-end fw-bold fs-5">
+        Total: ₹{invoiceData.total_amount.toFixed(2)}
+      </div>
+    </div>
+  </div>
+)}</>
       {/* -------- Lead Info -------- */}
       <div className="card card-body lead-info">
         <div className="mb-4 d-flex align-items-center justify-content-between">
@@ -127,9 +207,13 @@ const TabClientsProfile = ({ client }) => {
               Following information for your client
             </span>
           </h5>
-          <a href="#" className="btn btn-sm btn-light-brand">
-            Create Invoice
-          </a>
+          <button
+  className="btn btn-sm btn-light-brand"
+  onClick={handleCreateInvoice}
+  disabled={loading}
+>
+  {loading ? "Generating..." : "Create Invoice"}
+</button>
         </div>
 
         {leadInfoData.map((data, index) => (

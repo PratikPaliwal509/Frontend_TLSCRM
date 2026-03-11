@@ -13,7 +13,7 @@ const STATUS_OPTIONS = [
     { label: 'Planning', value: 'planning' },
     { label: 'In Progress', value: 'in_progress' },
     { label: 'On Hold', value: 'on_hold' },
-    { label: 'Completed', value: 'completed' },
+    { label: 'Completed', value: 'finished' },
 ]
 
 const getStatusOption = (value) => {

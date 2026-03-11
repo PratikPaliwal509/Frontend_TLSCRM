@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { FiChevronDown, FiList, FiColumns, FiCalendar } from 'react-icons/fi'
 export const VIEW_MODES = [
-  { label: 'List View', value: 'list' },
   { label: 'Kanban View', value: 'kanban' },
+  { label: 'List View', value: 'list' },
   { label: 'Calendar View', value: 'calendar' },
 ]
 const icons = {
