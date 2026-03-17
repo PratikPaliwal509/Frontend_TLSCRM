@@ -24,7 +24,7 @@ const AddTask = () => {
         description: '',
         start_date: null,
         due_date: null,
-        estimated_hours: null,
+        estimated_hours: '',
         status: 'to_do',
         priority: 'medium',
         labels: [],
@@ -225,7 +225,7 @@ const AddTask = () => {
                 description: '',
                 start_date: null,
                 due_date: null,
-                estimated_hours: null,
+                estimated_hours: '',
                 status: 'to_do',
                 priority: 'medium',
                 labels: [],
@@ -386,17 +386,16 @@ const AddTask = () => {
                                 type="number"
                                 className="form-control"
                                 placeholder="e.g. 12"
-                                // min="0"
-                                value={formData.estimated_hours}
+                                min={0}                        // prevents negative input
+                                value={formData.estimated_hours ?? ''} // fallback to '' if null
                                 onChange={(e) =>
                                     setFormData({
                                         ...formData,
-                                        estimated_hours: e.target.value === '' ? '' : Number(e.target.value),
+                                        estimated_hours: e.target.value === '' ? null : Number(e.target.value), // store as number
                                     })
                                 }
                             />
                         </div>
-
                         {/* Status */}
                         <TaskStatus
                             label="Status:"

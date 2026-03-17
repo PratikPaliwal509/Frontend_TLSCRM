@@ -116,8 +116,9 @@ const NotesContent = () => {
 
 
 
-    const filteredData =
-        selectTab === "alls" ? data : data.filter(note => note.category === selectTab)
+    const filteredData = selectTab === "alls" ? data : data.filter(note => note.category === selectTab)
+    
+    console.log("filteredData", filteredData)
     const handleDeleteNote = (id) => setData(prev => prev.filter(note => note.id !== id))
     const handleFavourite = (id) =>
         setFavourites(prev =>
@@ -134,7 +135,7 @@ const NotesContent = () => {
                 setShowAddModal={setShowAddModal}
             /> */}
 
-            <div className="content-area">
+            <div className="content-area" >
                 <PerfectScrollbar>
                     <NotesHeader
                         setSidebarOpen={setSidebarOpen}
@@ -142,22 +143,21 @@ const NotesContent = () => {
                         setNoteType={setNoteType}
                     />
 
-                    <div className="content-area-body pb-0">
+                    <div className="content-area-body pb-0" style={{minHeight:"65vh" }}>
                         {loading ? (
                             <div className="d-flex justify-content-center align-items-center py-5">
                                 <div className="spinner-border text-primary" role="status">
                                     <span className="visually-hidden">Loading...</span>
                                 </div>
                             </div>
-                        ) : filteredData.length === 0 ? (
+                        ) : filteredData.filter(n => n.content && n.content.trim() !== "").length === 0 ? (
                             <div className="d-flex flex-column align-items-center justify-content-center py-5 text-muted">
                                 <h6 className="mb-1">No notes found</h6>
                                 <p className="fs-12">Add a note to get started</p>
                             </div>
                         ) : (
                             <div className="row note-has-grid">
-                                {filteredData.map(note => (<>
-                                    {note.content && <div key={note.id} className="col-xxl-4 col-xl-6 col-lg-4 col-sm-6">
+                                {filteredData.map(note => (note.content && <div key={note.id} className="col-xxl-4 col-xl-6 col-lg-4 col-sm-6">
                                         <div className="card card-body mb-4 stretch stretch-full">
                                             <h5 className="note-title text-truncate mb-1">{note.title}</h5>
                                             <p className="fs-11 text-muted">
@@ -185,8 +185,8 @@ const NotesContent = () => {
                                                 </span>
                                             </div>
                                         </div>
-                                    </div>}
-                                </>
+                                    </div>
+                            
                                 )
                                 )}
                             </div>
