@@ -109,7 +109,7 @@ const RolesTable = () => {
             accessorKey: 'role_description',
             header: () => 'Description',
             cell: info => (
-                <span className="text-muted">
+                <span className="text-muted ">
                     {info.getValue() || '—'}
                 </span>
             ),

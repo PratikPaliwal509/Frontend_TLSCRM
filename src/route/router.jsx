@@ -101,6 +101,7 @@ import RolesEdit from "../pages/role-edit";
 import RoleView from "../pages/role-view";
 import TimesheetPage from "../pages/timesheetPage";
 import TeamTimesheetPage from "../pages/teamTimesheetPage";
+import UserHierarchy from "../pages/UserHierchy";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -293,6 +294,10 @@ export const router = createBrowserRouter([
             {
                 path: "/user/edit/:id",
                 element: <UserEditPage />
+            },
+            {
+                path: "/user/hierarchy",
+                element: <UserHierarchy />
             },
             {
                 path:"/roles/list",

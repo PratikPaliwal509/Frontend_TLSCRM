@@ -17,7 +17,7 @@ const RolesHeader = () => {
             {canUser('roles', 'create') && (
                 <button
                     className="btn btn-primary p-2"
-                    onClick={() => navigate('/settings/roles/create')}
+                    onClick={() => navigate('/roles/create')}
                 >
                     Add Role
                 </button>

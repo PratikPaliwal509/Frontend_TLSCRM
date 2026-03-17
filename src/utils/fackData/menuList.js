@@ -225,13 +225,23 @@ export const menuList = [
                 permissionKey: "users",
                 permissionAction: "view"
 
-            }, {
+            },
+            {
                 id: 1,
                 name: "User Add",
                 path: "/user/create",
                 subdropdownMenu: false,
                 permissionKey: "users",
                 permissionAction: "create"
+
+            },
+            {
+                id: 3,
+                name: "User Hierarchy",
+                path: "/user/hierarchy",
+                subdropdownMenu: false,
+                permissionKey: "users",
+                permissionAction: "view"
 
             },
         ]
