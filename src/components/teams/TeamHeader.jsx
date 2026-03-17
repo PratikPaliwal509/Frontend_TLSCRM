@@ -31,7 +31,7 @@ const TeamHeader = ({
     view: {
       title: 'Team Details',
       subtitle: 'View team information',
-      primaryText: 'Edit Team',
+      primaryText: 'Create Team',
       primaryIcon: <FiEdit2 />,
     },
   }
@@ -75,7 +75,7 @@ const TeamHeader = ({
 
         {/* VIEW */}
         {mode === 'view' && (
-          <Link to={`${backTo}/edit`} className="btn btn-primary">
+          <Link to={`/teams/create`} className="btn btn-primary">
             {current.primaryIcon}
             <span className="ms-2">{current.primaryText}</span>
           </Link>
