@@ -15,7 +15,7 @@ const MegaMenu = () => {
 
   return (
     <div className="dropdown nxl-h-item nxl-mega-menu">
-      <a href="#" className="btn btn-light-brand" data-bs-toggle="dropdown" data-bs-auto-close="outside"> Mega Menu </a>
+      {/* <a href="#" className="btn btn-light-brand" data-bs-toggle="dropdown" data-bs-auto-close="outside"> Mega Menu </a> */}
       <div className={`dropdown-menu nxl-h-dropdown ${activeMegaManu}`}>
         <div className={`d-lg-flex align-items-start`}>
 

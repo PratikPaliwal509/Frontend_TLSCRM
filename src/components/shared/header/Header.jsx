@@ -184,7 +184,8 @@ const Header = () => {
                 <!--! [Start] Header Right !--> */}
                 <div className="header-right ms-auto">
                     <div className="d-flex align-items-center">
-                        <SearchModal />
+
+                        {/* <SearchModal /> */}
                         {/* <LanguagesModal /> */}
                         <div className="nxl-h-item d-none d-sm-flex" >
                             <div className="full-screen-switcher">
