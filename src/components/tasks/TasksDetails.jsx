@@ -317,13 +317,13 @@ const TasksDetails = ({ task, user_id }) => {
                 </div>
                 <div className="d-none d-md-flex gap-1 align-items-center justify-content-center">
                     {isAssignedUser && (<TaskTimer taskId={id} project_id={project_id} />)}
-                    <a href="#"
+                    {/* <a href="#"
                         className="d-none d-lg-flex align-items-center fs-9 fw-bold text-uppercase text-dark py-2 px-3 border border-gray-2 rounded"
                     >
                         <FiLink2 size={16} strokeWidth={1.7} className='me-2' />
                         <span className="text-nowrap">Copy Link</span>
-                    </a>
-                    <a href="#" className="d-flex">
+                    </a> */}
+                    {/* <a href="#" className="d-flex">
                         <div
                             className="avatar-text avatar-md"
                             data-bs-toggle="tooltip"
@@ -332,8 +332,8 @@ const TasksDetails = ({ task, user_id }) => {
                         >
                             <FiPlus strokeWidth={1.6} />
                         </div>
-                    </a>
-                    <a href="#" className="d-flex" onClick={handleClick}>
+                    </a> */}
+                    {/* <a href="#" className="d-flex" onClick={handleClick}>
                         <div
                             className="avatar-text avatar-md"
                             data-bs-toggle="tooltip"
@@ -342,8 +342,8 @@ const TasksDetails = ({ task, user_id }) => {
                         >
                             <FiBell strokeWidth={1.6} />
                         </div>
-                    </a>
-                    <a href="#" className="d-flex" onClick={handleClick}>
+                    </a> */}
+                    {/* <a href="#" className="d-flex" onClick={handleClick}>
                         <div
                             className="avatar-text avatar-md"
                             data-bs-toggle="tooltip"
@@ -352,8 +352,8 @@ const TasksDetails = ({ task, user_id }) => {
                         >
                             <FiStar strokeWidth={1.6} />
                         </div>
-                    </a>
-                    <a href="#" className="d-flex" onClick={handleClick}>
+                    </a> */}
+                    {/* <a href="#" className="d-flex" onClick={handleClick}>
                         <div
                             className="avatar-text avatar-md"
                             data-bs-toggle="tooltip"
@@ -362,13 +362,13 @@ const TasksDetails = ({ task, user_id }) => {
                         >
                             <FiCalendar strokeWidth={1.6} />
                         </div>
-                    </a>
-                    <Dropdown
+                    </a> */}
+                    {/* <Dropdown
                         triggerClass='avatar-md'
                         tooltipTitle="More Options"
                         dropdownItems={detailsMoreOptions}
                         triggerPosition={"0,25"}
-                    />
+                    /> */}
 
                 </div>
             </div>

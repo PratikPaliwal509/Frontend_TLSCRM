@@ -11,6 +11,7 @@ const TeamTimesheet = () => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        console.log('Fetching team timesheet data...')
         const fetchTeamTimesheet = async () => {
             const token = localStorage.getItem('token')
             const res = await fetch('https://api-0ggv.onrender.com/api/timesheet/team', {
