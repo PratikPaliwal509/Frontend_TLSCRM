@@ -268,10 +268,16 @@ export const menuList = [
         dropdownMenu: [
             {
                 id: 1,
-                name: "login",
-                path: "/authentication/login",
+                name: "Logout",
+                path: "/authentication/logout",
                 subdropdownMenu: false
             },
+            // {
+            //     id: 1,
+            //     name: "login",
+            //     path: "/authentication/login",
+            //     subdropdownMenu: false
+            // },
             // {
             //     id: 2,
             //     name: "register",

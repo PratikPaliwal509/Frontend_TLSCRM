@@ -102,6 +102,7 @@ import RoleView from "../pages/role-view";
 import TimesheetPage from "../pages/timesheetPage";
 import TeamTimesheetPage from "../pages/teamTimesheetPage";
 import UserHierarchy from "../pages/UserHierchy";
+import Logout from "../pages/logout";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -446,6 +447,10 @@ export const router = createBrowserRouter([
             {
                 path: "/authentication/login",
                 element: <LoginCover />
+            },
+            {
+                path: "/authentication/logout",
+                element: <Logout />
             },
             // {
             //     path: "/authentication/login/minimal",
