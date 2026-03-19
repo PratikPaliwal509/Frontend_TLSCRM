@@ -21,9 +21,9 @@ const ProjectsList = () => {
             <PageHeader>
                 <ProjectsListHeader />
             </PageHeader>
-            <div className='main-content'>
+            <div className='main-content '>
                 <ToastProvider />
-                <div className='row'>
+                <div className='row ' style={{ height: "61vh" }}>
                     <ProjectTable />
                 </div>
             </div>
