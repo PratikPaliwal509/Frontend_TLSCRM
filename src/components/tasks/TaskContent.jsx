@@ -155,7 +155,20 @@ const TaskContent = () => {
 
     const groupedTasks = groupTasksByDate(filteredTasks)
     const hasNoTasks = !loading && filteredTasks.length === 0
-
+const handleTaskStatusUpdate = (taskId, newStatus) => {
+  setTasks(prev =>
+    prev.map(task =>
+      task.id === taskId ? { ...task, status: newStatus } : task
+    )
+  );
+};
+const handleTaskPriorityUpdate = (taskId, newPriority) => {
+  setTasks(prev =>
+    prev.map(task =>
+      task.id === taskId ? { ...task, priority: newPriority } : task
+    )
+  );
+};
     return (
         <>
             {/* <TaskSidebar
@@ -169,7 +182,7 @@ const TaskContent = () => {
 
 
             <ToastProvider />
-            <TasksDetails task={selectedTask} user_id={user_id} />
+            <TasksDetails task={selectedTask} user_id={user_id}  onStatusChange={handleTaskStatusUpdate}  onPriorityChange={handleTaskPriorityUpdate}/>
 
             <div className="content-area">
                 <PerfectScrollbar>

@@ -37,7 +37,11 @@ const detailsMoreOptions = [
 ];
 
 
-const TasksDetails = ({ task, user_id }) => {
+const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
+    console.log("Rendering TasksDetails with task:", task?.priority)
+    const [status, setStatus] = useState(task?.status || 'to_do');
+    const [priority, setPriority] = useState(task?.priority || 'medium');                                       
+    const [taskType, setTaskType] = useState(task?.taskType || '');
     const { canRemoveAssignee } = useVerifyRole()
     const [value, setValue] = useState('');
     const [assigningUserId, setAssigningUserId] = useState(null)
@@ -45,11 +49,8 @@ const TasksDetails = ({ task, user_id }) => {
     const inputRef = useRef(null);
     const id = task?.id;
     const tags = task?.tags || [];
-    const status = task?.status || 'to_do';
     const title = task?.title || '';
     const description = task?.description || '';
-    const priority = task?.priority || 'medium';
-    const taskType = task?.taskType || '';
     const user_img = task?.user_img || '/images/avatar/1.png';
     const start_date = task?.start_date || null;
     const checklist = task?.checklist || [];
@@ -100,6 +101,11 @@ const TasksDetails = ({ task, user_id }) => {
             setLoading(false)
         }
     }
+    useEffect(() => {
+    setStatus(task?.status || 'to_do');
+    setPriority(task?.priority || 'medium');
+    setTaskType(task?.task_type || '');
+}, [task]);
     useEffect(() => {
         const data = async () => {
             const res = await getUserRole()
@@ -245,8 +251,85 @@ const TasksDetails = ({ task, user_id }) => {
             e.target.value = ''
         }
     }
+    const handleStatusChange = async (selectedOption) => {
+        console.log("Selected status:", selectedOption)
+        setStatus(selectedOption); // Optimistically update UI
+        try {
 
+            const res = await fetch(
+                `https://api-0ggv.onrender.com/api/tasks/${id}/status`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ status: selectedOption }),
+                }
+            )
 
+            if (!res.ok) throw new Error()
+
+                 // 🔥 IMPORTANT: update parent state
+        onStatusChange && onStatusChange(id, selectedOption);
+            topTost("Status updated", "success")
+        } catch (err) {
+            console.error(err)
+            topTost("Failed to update status", "error")
+        }
+    }
+    const handlePriorityChange = async (selectedOption) => {
+        const newPriority = selectedOption?.value || selectedOption;
+
+        console.log("Selected priority:", selectedOption)
+        setPriority(newPriority); 
+        try {
+            const res = await fetch(
+                `https://api-0ggv.onrender.com/api/tasks/${id}/priority`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ priority: newPriority }),
+                }
+            )
+
+            if (!res.ok) throw new Error()
+  // 🔥 update parent state
+        onPriorityChange && onPriorityChange(id, newPriority);
+            topTost("Priority updated", "success")
+        } catch (err) {
+            console.error(err)
+            topTost("Failed to update priority", "error")
+        }
+    }
+
+    const handleTypeChange = async (selectedOption) => {
+        console.log("Selected type:", selectedOption)
+        setTaskType(selectedOption); // Optimistically update UI
+        try {
+            const res = await fetch(
+                `https://api-0ggv.onrender.com/api/tasks/${id}/type`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ task_type: selectedOption }),
+                }
+            )
+
+            if (!res.ok) throw new Error()
+
+            topTost("Task type updated", "success")
+        } catch (err) {
+            console.error(err)
+            topTost("Failed to update type", "error")
+        }
+    }
     const handleClick = () => {
         topTost()
     };
@@ -375,17 +458,17 @@ const TasksDetails = ({ task, user_id }) => {
             <div className="offcanvas-body">
                 <div className="row">
                     <div className="col-sm-6">
-                        <TaskStatus label={"Status:"} options={taskStatusOptions} value={status} defaultSelect={status} />
+                        <TaskStatus label={"Status:"} options={taskStatusOptions} value={status} defaultSelect={status} onChange={handleStatusChange} />
                     </div>
                     <div className="col-sm-6">
-                        <TaskStatus options={taskPriorityOptions} label={"Priority:"} value={priority} defaultSelect={priority} />
+                        <TaskStatus label={"Priority:"}  options={taskPriorityOptions} value={priority} defaultSelect={priority} onChange={handlePriorityChange} />
                         {/* <TaskStatus options={taskPriorityOptions} label={"Priority:"} defaultSelect={priority} /> */}
                     </div>
                     {/* <div className="col-sm-6">
                         <TaskStatus options={taskLabelsOptions} label={"Labels:"} value={selectedTags} defaultSelect={selectedTags} />
                     </div> */}
                     <div className="col-sm-6">
-                        <TaskStatus options={taskTypeOptions} label={"Types:"} value={taskType} defaultSelect={taskType} />
+                        <TaskStatus  label={"Types:"} options={taskTypeOptions} value={taskType} defaultSelect={taskType} onChange={handleTypeChange} />
                     </div>
 
                     <div className="col-sm-6">
