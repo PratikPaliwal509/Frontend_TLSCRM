@@ -38,10 +38,11 @@ const detailsMoreOptions = [
 
 
 const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
-    console.log("Rendering TasksDetails with task:", task?.priority)
+    console.log("Rendering TasksDetails with task:", task)
     const [status, setStatus] = useState(task?.status || 'to_do');
-    const [priority, setPriority] = useState(task?.priority || 'medium');                                       
+    const [priority, setPriority] = useState(task?.priority || 'medium');
     const [taskType, setTaskType] = useState(task?.taskType || '');
+    const [selectedTags, setSelectedTags] = useState([]);
     const { canRemoveAssignee } = useVerifyRole()
     const [value, setValue] = useState('');
     const [assigningUserId, setAssigningUserId] = useState(null)
@@ -55,10 +56,10 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
     const start_date = task?.start_date || null;
     const checklist = task?.checklist || [];
     const project_id = task?.project_id || '';
-    const selectedTags = taskLabelsOptions.filter(opt =>
-        tags?.includes(opt.value)
+    // const selectedTags = taskLabelsOptions.filter(opt =>
+    //     tags?.includes(opt.value)
 
-    )
+    // )
     const [usersList, setUsersList] = useState([])
     const [users, setUsers] = useState([])
     const [assignees, setAssignees] = useState([])
@@ -102,10 +103,16 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
         }
     }
     useEffect(() => {
-    setStatus(task?.status || 'to_do');
-    setPriority(task?.priority || 'medium');
-    setTaskType(task?.task_type || '');
-}, [task]);
+        setStatus(task?.status || 'to_do');
+        setPriority(task?.priority || 'medium');
+        setTaskType(task?.task_type || '');
+        if (task?.tags) {
+            const mappedTags = taskLabelsOptions.filter(opt =>
+                task.tags.includes(opt.value)
+            );
+            setSelectedTags(mappedTags);
+        }
+    }, [task]);
     useEffect(() => {
         const data = async () => {
             const res = await getUserRole()
@@ -270,8 +277,8 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
 
             if (!res.ok) throw new Error()
 
-                 // 🔥 IMPORTANT: update parent state
-        onStatusChange && onStatusChange(id, selectedOption);
+            // 🔥 IMPORTANT: update parent state
+            onStatusChange && onStatusChange(id, selectedOption);
             topTost("Status updated", "success")
         } catch (err) {
             console.error(err)
@@ -282,7 +289,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
         const newPriority = selectedOption?.value || selectedOption;
 
         console.log("Selected priority:", selectedOption)
-        setPriority(newPriority); 
+        setPriority(newPriority);
         try {
             const res = await fetch(
                 `https://api-0ggv.onrender.com/api/tasks/${id}/priority`,
@@ -297,8 +304,8 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
             )
 
             if (!res.ok) throw new Error()
-  // 🔥 update parent state
-        onPriorityChange && onPriorityChange(id, newPriority);
+            // 🔥 update parent state
+            onPriorityChange && onPriorityChange(id, newPriority);
             topTost("Priority updated", "success")
         } catch (err) {
             console.error(err)
@@ -330,6 +337,42 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
             topTost("Failed to update type", "error")
         }
     }
+
+    const handletagchange = async (selectedOptions) => {
+    const previousTags = selectedTags; // 🧠 keep backup for rollback
+
+    // optimistic UI update
+    setSelectedTags(selectedOptions || []);
+
+    const tags = selectedOptions ? selectedOptions.map(opt => opt.value) : [];
+
+    try {
+        const response = await fetch(`https://api-0ggv.onrender.com/api/tasks/${id}/tags`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ tags })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'Failed to update tags');
+        }
+
+        topTost('Tags updated successfully', 'success');
+
+    } catch (error) {
+        console.error('Error updating tags:', error);
+
+        // ❌ rollback UI
+        setSelectedTags(previousTags);
+
+        topTost(error.message || 'Failed to update tags', 'error');
+    }
+};
     const handleClick = () => {
         topTost()
     };
@@ -461,20 +504,24 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                         <TaskStatus label={"Status:"} options={taskStatusOptions} value={status} defaultSelect={status} onChange={handleStatusChange} />
                     </div>
                     <div className="col-sm-6">
-                        <TaskStatus label={"Priority:"}  options={taskPriorityOptions} value={priority} defaultSelect={priority} onChange={handlePriorityChange} />
+                        <TaskStatus label={"Priority:"} options={taskPriorityOptions} value={priority} defaultSelect={priority} onChange={handlePriorityChange} />
                         {/* <TaskStatus options={taskPriorityOptions} label={"Priority:"} defaultSelect={priority} /> */}
                     </div>
                     {/* <div className="col-sm-6">
                         <TaskStatus options={taskLabelsOptions} label={"Labels:"} value={selectedTags} defaultSelect={selectedTags} />
                     </div> */}
                     <div className="col-sm-6">
-                        <TaskStatus  label={"Types:"} options={taskTypeOptions} value={taskType} defaultSelect={taskType} onChange={handleTypeChange} />
+                        <TaskStatus label={"Types:"} options={taskTypeOptions} value={taskType} defaultSelect={taskType} onChange={handleTypeChange} />
                     </div>
 
                     <div className="col-sm-6">
                         <div className="form-group mb-4">
                             <label className="form-label">Tags:</label>
-                            <MultiSelectTags options={taskLabelsOptions} value={selectedTags} defaultSelect={[taskLabelsOptions[2]]} />
+                            <MultiSelectTags
+                                options={taskLabelsOptions}
+                                value={selectedTags}
+                                onChange={handletagchange}
+                            />
                         </div>
                     </div>
                     {/* <div className="col-sm-6">

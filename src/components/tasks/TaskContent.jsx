@@ -46,7 +46,7 @@ const TaskContent = () => {
                 throw new Error(errorData.message || 'Failed to fetch tasks');
             }
             const json = await res.json()
-
+            console.log(JSON.stringify(json.data))
             const formattedTasks = Array.isArray(json.data)
                 ? json.data.map((task) => ({
                     id: task.task_id,
@@ -81,7 +81,7 @@ const TaskContent = () => {
                                 : task.status === 'pending'
                                     ? 'soft-warning'
                                     : 'soft-primary',
-                    taskType: task.task_type || 'Task',
+                    taskType: task.task_type || 'Feature',
                     taskTypeColor: 'primary',
                     taskTypeBgColor: 'soft-primary',
                     user_img: '/images/avatar/1.png',

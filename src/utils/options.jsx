@@ -108,7 +108,6 @@ const taskLabelsOptions = [
     { value: 'customs', label: 'Customs', color: '#6610f2' },
 ];
 const taskTypeOptions = [
-    [
         { label: 'Content Creation', value: 'content creation', color: '#3454d1' },
         { label: 'Design', value: 'design', color: '#41b2c4' },
         { label: 'SEO', value: 'seo', color: '#17c666' },
@@ -120,7 +119,7 @@ const taskTypeOptions = [
         { label: 'Review', value: 'review', color: '#0dcaf0' },
         { label: 'Deployment', value: 'deployment', color: '#fd7e14' },
         { label: 'Support', value: 'support', color: '#198754' }
-    ]
+
     // { value: 'new', label: 'New', color: '#3454d1' },
     // { value: 'pending', label: 'Pending', color: '#41b2c4' },
     // { value: 'progress', label: 'Progress', color: '#17c666' },

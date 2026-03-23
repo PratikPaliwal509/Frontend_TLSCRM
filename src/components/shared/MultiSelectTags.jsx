@@ -9,34 +9,33 @@ const MultiSelectTags = ({
     onChange,
 }) => {
     return (
-        <Select
-            isMulti
-            name="tags"
-            options={options}
-            value={value}                 // ✅ CONTROLLED VALUE
-            defaultValue={defaultSelect}  // ✅ INITIAL VALUE
-            onChange={onChange}           // ✅ EMIT CHANGE
-            placeholder={placeholder}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            hideSelectedOptions={false}
-            isSearchable={false}
-            styles={{
-                control: (baseStyles, state) => ({
-                    ...baseStyles,
-                    padding: state.hasValue ? '6px 12px' : '13px',
-                }),
-            }}
-            formatOptionLabel={(tags) => (
-                <div className="user-option d-flex align-items-center gap-2">
-                    <span
-                        className="wd-7 ht-7 rounded-circle"
-                        style={{ backgroundColor: tags.color }}
-                    />
-                    <span>{tags.label}</span>
-                </div>
-            )}
-        />
+       <Select
+    isMulti
+    name="tags"
+    options={options}
+    value={value}                 // ✅ ONLY controlled value
+    onChange={onChange}
+    placeholder={placeholder}
+    className="basic-multi-select"
+    classNamePrefix="select"
+    hideSelectedOptions={false}
+    isSearchable={false}
+    styles={{
+        control: (baseStyles, state) => ({
+            ...baseStyles,
+            padding: state.hasValue ? '6px 12px' : '13px',
+        }),
+    }}
+    formatOptionLabel={(tags) => (
+        <div className="user-option d-flex align-items-center gap-2">
+            <span
+                className="wd-7 ht-7 rounded-circle"
+                style={{ backgroundColor: tags.color }}
+            />
+            <span>{tags.label}</span>
+        </div>
+    )}
+/>
     )
 }
 
