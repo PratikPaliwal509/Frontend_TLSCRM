@@ -17,7 +17,7 @@ const Profile = () => {
     const token = localStorage.getItem("token");
 
 
-const navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -31,9 +31,9 @@ const navigate = useNavigate();
                 const json = await res.json();
 
                 // ⚠️ your API returns array
-              if (json.success && json.data) {
-  setUser(json.data);
-}
+                if (json.success && json.data) {
+                    setUser(json.data);
+                }
 
             } catch (err) {
                 console.error("Failed to fetch profile", err);
@@ -43,31 +43,31 @@ const navigate = useNavigate();
         if (token) fetchUser();
     }, [token]);
 
-   const handleDeleteAccount = async () => {
-  const confirmDelete = window.confirm(
-    "Are you sure? This action will permanently delete your account."
-  );
+    const handleDeleteAccount = async () => {
+        const confirmDelete = window.confirm(
+            "Are you sure? This action will permanently delete your account."
+        );
 
-  if (!confirmDelete) return;
+        if (!confirmDelete) return;
 
-  try {
-    const res = await fetch("https://api-0ggv.onrender.com/api/users/me", {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+        try {
+            const res = await fetch("https://api-0ggv.onrender.com/api/users/me", {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-    if (res.ok) {
-      localStorage.removeItem("token");
-      navigate("/authentication/login");
-    } else {
-      alert("Failed to delete account");
-    }
-  } catch (err) {
-    console.error("Delete failed", err);
-  }
-};
+            if (res.ok) {
+                localStorage.removeItem("token");
+                navigate("/authentication/login");
+            } else {
+                alert("Failed to delete account");
+            }
+        } catch (err) {
+            console.error("Delete failed", err);
+        }
+    };
 
     const handleEditProfile = () => {
         navigate("/profile/edit");
@@ -122,9 +122,9 @@ const navigate = useNavigate();
             {/* ================= WORK INFO ================= */}
             <Section title="Work Information">
                 <Info icon={<FiBriefcase />} label="Job Title" value={user.job_title || "—"} />
-                <Info label="Role ID" value={user.role_id} />
-                <Info label="Department ID" value={user.department_id || "—"} />
-                <Info label="Team ID" value={user.team_id || "—"} />
+                <Info label="Role" value={user.role.role_name} />
+                <Info label="Department" value={user.department.department_name || "—"} />
+                <Info label="Team" value={user.team.team_name || "—"} />
                 <Info label="Hourly Rate" value={user.hourly_rate ? `$${user.hourly_rate}` : "—"} />
             </Section>
 
