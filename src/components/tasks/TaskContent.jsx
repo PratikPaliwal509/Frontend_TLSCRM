@@ -155,20 +155,20 @@ const TaskContent = () => {
 
     const groupedTasks = groupTasksByDate(filteredTasks)
     const hasNoTasks = !loading && filteredTasks.length === 0
-const handleTaskStatusUpdate = (taskId, newStatus) => {
-  setTasks(prev =>
-    prev.map(task =>
-      task.id === taskId ? { ...task, status: newStatus } : task
-    )
-  );
-};
-const handleTaskPriorityUpdate = (taskId, newPriority) => {
-  setTasks(prev =>
-    prev.map(task =>
-      task.id === taskId ? { ...task, priority: newPriority } : task
-    )
-  );
-};
+    const handleTaskStatusUpdate = (taskId, newStatus) => {
+        setTasks(prev =>
+            prev.map(task =>
+                task.id === taskId ? { ...task, status: newStatus } : task
+            )
+        );
+    };
+    const handleTaskPriorityUpdate = (taskId, newPriority) => {
+        setTasks(prev =>
+            prev.map(task =>
+                task.id === taskId ? { ...task, priority: newPriority } : task
+            )
+        );
+    };
     return (
         <>
             {/* <TaskSidebar
@@ -182,7 +182,7 @@ const handleTaskPriorityUpdate = (taskId, newPriority) => {
 
 
             <ToastProvider />
-            <TasksDetails task={selectedTask} user_id={user_id}  onStatusChange={handleTaskStatusUpdate}  onPriorityChange={handleTaskPriorityUpdate}/>
+            <TasksDetails task={selectedTask} user_id={user_id} onStatusChange={handleTaskStatusUpdate} onPriorityChange={handleTaskPriorityUpdate} />
 
             <div className="content-area">
                 <PerfectScrollbar>
@@ -195,10 +195,10 @@ const handleTaskPriorityUpdate = (taskId, newPriority) => {
                         setViewMode={setViewMode} />
 
                     <div className="px-4 pt-4   overflow-hidden" style={
-                    // <div className="content-area-body   overflow-hidden" style={
+                        // <div className="content-area-body   overflow-hidden" style={
                         viewMode === 'kanban'
-                            ? {height: '66vh' }
-                            : { }
+                            ? { height: '66vh' }
+                            : {}
                     }>
                         {/* <div className="content-area-body   overflow-hidden" style={{ height: '67vh' }}> */}
                         {loading ? (

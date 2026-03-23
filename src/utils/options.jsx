@@ -108,11 +108,24 @@ const taskLabelsOptions = [
     { value: 'customs', label: 'Customs', color: '#6610f2' },
 ];
 const taskTypeOptions = [
-    { value: 'new', label: 'New', color: '#3454d1' },
-    { value: 'pending', label: 'Pending', color: '#41b2c4' },
-    { value: 'progress', label: 'Progress', color: '#17c666' },
-    { value: 'completed', label: 'Completed', color: '#ffa21d' },
-    { value: 'everythings', label: 'Everythings', color: '#ea4d4d' },
+    [
+        { label: 'Content Creation', value: 'content creation', color: '#3454d1' },
+        { label: 'Design', value: 'design', color: '#41b2c4' },
+        { label: 'SEO', value: 'seo', color: '#17c666' },
+        { label: 'Social Media', value: 'social media', color: '#ffa21d' },
+        { label: 'Reporting', value: 'reporting', color: '#ea4d4d' },
+        { label: 'Feature', value: 'feature', color: '#6f42c1' },
+        { label: 'Bug', value: 'bug', color: '#dc3545' },
+        { label: 'Meeting', value: 'meeting', color: '#20c997' },
+        { label: 'Review', value: 'review', color: '#0dcaf0' },
+        { label: 'Deployment', value: 'deployment', color: '#fd7e14' },
+        { label: 'Support', value: 'support', color: '#198754' }
+    ]
+    // { value: 'new', label: 'New', color: '#3454d1' },
+    // { value: 'pending', label: 'Pending', color: '#41b2c4' },
+    // { value: 'progress', label: 'Progress', color: '#17c666' },
+    // { value: 'completed', label: 'Completed', color: '#ffa21d' },
+    // { value: 'everythings', label: 'Everythings', color: '#ea4d4d' },
 ];
 
 
