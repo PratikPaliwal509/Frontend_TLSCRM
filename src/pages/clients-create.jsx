@@ -133,7 +133,7 @@ const ClientsCreate = () => {
             setLoading(true)
 
             const token = localStorage.getItem('token') // use correct key
-            const response = await fetch('https://api-0ggv.onrender.com/api/clients', {
+            const response = await fetch('https://api-0ggv.onrender.com/api/clients/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
