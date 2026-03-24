@@ -168,6 +168,7 @@ const ClientsCreate = () => {
             })
             if (!response.ok) {
                 const errorData = await response.json()
+                toast.error("Something went wrong")
                 throw new Error(errorData?.message || 'Something went wrong')
             }
 
