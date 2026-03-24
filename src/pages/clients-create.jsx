@@ -13,13 +13,14 @@ import Footer from '@/components/shared/Footer';
 const ClientsCreate = () => {
     const [agencies, setAgencies] = useState([])
     const [users, setUsers] = useState([])
-const [usersLoading, setUsersLoading] = useState(true);
+    const [usersLoading, setUsersLoading] = useState(true);
 
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         agency_id: '',
         company_name: '',
+        portal_user_id: '',
         industry: '',
         company_size: '',
         website: '',
@@ -167,12 +168,16 @@ const [usersLoading, setUsersLoading] = useState(true);
             })
             if (!response.ok) {
                 const errorData = await response.json()
-                throw errorData
+                throw new Error(errorData?.message || 'Something went wrong')
             }
 
             const data = await response.json()
+            console.log(data)
+            const clientId = data?.data?.id;
+
             // ✅ SUCCESS TOAST
             toast.success('Client created successfully');
+            navigate(`/clients/view/${clientId}`) // or your listing page
         } catch (error) {
             console.error('Create client error', error)
         } finally {
@@ -202,7 +207,7 @@ const [usersLoading, setUsersLoading] = useState(true);
                     />
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     )
 }
