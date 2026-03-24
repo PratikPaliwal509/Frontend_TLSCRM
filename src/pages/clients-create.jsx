@@ -173,7 +173,7 @@ const ClientsCreate = () => {
 
             const data = await response.json()
             console.log(data)
-            const clientId = data?.data?.id;
+            const clientId = data?.data?.client_id;
 
             // ✅ SUCCESS TOAST
             toast.success('Client created successfully');
