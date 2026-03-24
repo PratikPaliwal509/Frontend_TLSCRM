@@ -20,7 +20,6 @@ const ClientsCreate = () => {
     const [formData, setFormData] = useState({
         agency_id: '',
         company_name: '',
-        portal_user_id: '',
         industry: '',
         company_size: '',
         website: '',
