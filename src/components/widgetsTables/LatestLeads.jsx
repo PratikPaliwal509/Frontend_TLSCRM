@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FiEdit, FiEye, FiMoreVertical, FiTrash, FiTrash2 } from 'react-icons/fi'
+import { FiEdit, FiEye, FiMoreVertical } from 'react-icons/fi'
 import CardHeader from '@/components/shared/CardHeader'
 import Pagination from '@/components/shared/Pagination'
-import { userList } from '@/utils/fackData/userList'
+// import { userList } from '@/utils/fackData/userList'
 import useCardTitleActions from '@/hooks/useCardTitleActions'
 import CardLoader from '@/components/shared/CardLoader'
 
@@ -86,8 +86,7 @@ const LatestLeads = ({ title }) => {
                             >
 
 
-                                {
-                                    currentClients.map(({ created_at, client_id, industry, primary_contact_email, user_img, company_name, is_active, color }) => (
+                                {currentClients.length === 0 ? <><tr className='text-center'><td></td><td></td>Loading...</tr></> : currentClients.map(({ created_at, client_id, industry, primary_contact_email, user_img, company_name, is_active, color }) => (
                                         <tr key={client_id} className='chat-single-item'>
 
 

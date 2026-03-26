@@ -22,7 +22,7 @@ const App = () => {
         </SideBarToggleProvider>
       </NavigationProvider>
       <span style={{ zIndex: 10 }}>
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="top-right" autoClose={3000} className={"z-10"} />
       </span>
       <ThemeCustomizer />
     </>

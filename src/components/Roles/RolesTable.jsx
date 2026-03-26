@@ -95,10 +95,10 @@ const RolesTable = () => {
                             <FiShield />
                         </div>
                         <span className="cursor-pointer fw-semibold" onClick={() =>
-              navigate(`/roles/view/${row.original.role_id}`, {
-                state: { role: row.original },
-              })
-            }>
+                            navigate(`/roles/view/${row.original.role_id}`, {
+                                state: { role: row.original },
+                            })
+                        }>
                             {row.original.role_name}
                         </span>
                     </div>
@@ -108,10 +108,11 @@ const RolesTable = () => {
         {
             accessorKey: 'role_description',
             header: () => 'Description',
+             size: 200,
             cell: info => (
-                <span className="text-muted ">
+                <div className="text-muted w-20 text-wrap">
                     {info.getValue() || '—'}
-                </span>
+                </div>
             ),
         },
         {
