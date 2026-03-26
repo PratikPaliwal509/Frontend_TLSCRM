@@ -191,10 +191,14 @@ const KanbanBoard = ({ tasks, onSelect }) => {
                           )}
 
                         {/* ✅ Approved badge */}
-                        {task.client_approved && (
+                        {!task.client_approval_required ? task.client_approved && (
                           <div className="mt-2">
                             <span className="badge bg-secondary">
                               Client Approved
+                            </span>
+                          </div>) : (<div className="mt-2 bg-light ">
+                            <span className="badge text-black">
+                              Client Approval Required
                             </span>
                           </div>
                         )}
