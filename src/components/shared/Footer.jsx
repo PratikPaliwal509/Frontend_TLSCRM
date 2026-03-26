@@ -7,11 +7,11 @@ const Footer = () => {
                 <span>Copyright ©</span>
                 {new Date().getFullYear()}
             </p>
-            <div className="d-flex align-items-center gap-4">
+            {/* <div className="d-flex align-items-center gap-4">
                 <a href="#" className="fs-11 fw-semibold text-uppercase">Help</a>
                 <a href="#" className="fs-11 fw-semibold text-uppercase">Terms</a>
                 <a href="#" className="fs-11 fw-semibold text-uppercase">Privacy</a>
-            </div>
+            </div> */}
         </footer>
     )
 }
