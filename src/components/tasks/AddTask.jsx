@@ -541,7 +541,7 @@ const AddTask = () => {
                         </div>
 
                         <div className="mb-4">
-                            <label className="form-label">Blocks</label>
+                            <label className="form-label">Blocking Task</label>
 
                             <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
                                 {blocksOptions.map(task => (

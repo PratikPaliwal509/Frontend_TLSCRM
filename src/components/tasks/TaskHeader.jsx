@@ -108,9 +108,10 @@ const TaskHeader = ({ setSidebarOpen,
                     label="Status"
                     items={[
                         { label: 'All', value: 'all' },
-                        { label: 'Pending', value: 'pending' },
-                        { label: 'In Progress', value: 'inprogress' },
+                        { label: 'To_Do', value: 'to_do' },
+                        { label: 'InProgress', value: 'inprogress' },
                         { label: 'Completed', value: 'completed' },
+                        { label: 'Pending', value: 'pending' },
                         { label: 'Rejected', value: 'rejected' },
                     ]}
                     onSelect={(item) =>
