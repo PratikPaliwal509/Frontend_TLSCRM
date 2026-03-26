@@ -122,9 +122,9 @@ const Profile = () => {
             {/* ================= WORK INFO ================= */}
             <Section title="Work Information">
                 <Info icon={<FiBriefcase />} label="Job Title" value={user.job_title || "—"} />
-                <Info label="Role" value={user.role.role_name} />
-                <Info label="Department" value={user.department.department_name || "—"} />
-                <Info label="Team" value={user.team.team_name || "—"} />
+                <Info label="Role" value={user.role?.role_name} />
+                <Info label="Department" value={user.department?.department_name || "—"} />
+                <Info label="Team" value={user.team?.team_name || "—"} />
                 <Info label="Hourly Rate" value={user.hourly_rate ? `$${user.hourly_rate}` : "—"} />
             </Section>
 
