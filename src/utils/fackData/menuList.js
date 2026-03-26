@@ -266,12 +266,12 @@ export const menuList = [
         path: "#",
         icon: 'feather-power',
         dropdownMenu: [
-            {
-                id: 1,
-                name: "Logout",
-                path: "/authentication/logout",
-                subdropdownMenu: false
-            },
+            // {
+            //     id: 1,
+            //     name: "Logout",
+            //     path: "/authentication/logout",
+            //     subdropdownMenu: false
+            // },
             // {
             //     id: 1,
             //     name: "login",
