@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { FiChevronDown, FiList, FiColumns, FiCalendar } from 'react-icons/fi'
+import { FiChevronDown, FiList, FiColumns, FiCalendar, FiChevronUp } from 'react-icons/fi'
 export const VIEW_MODES = [
   { label: 'Kanban View', value: 'kanban' },
   { label: 'List View', value: 'list' },
@@ -30,12 +30,13 @@ const ViewModeSelect = ({ value, onChange }) => {
       {/* Trigger */}
       <button
         type="button"
-        className="btn btn-light-brand btn-sm rounded-pill dropdown-toggle d-flex align-items-center gap-1"
+        className="btn btn-light-brand btn-sm rounded-pill  d-flex align-items-center gap-1"
         onClick={() => setOpen(v => !v)}
       >
         {icons[value]}
         <span className="ms-1 text-capitalize">{value} view</span>
-        <FiChevronDown size={14} />
+        {!open ? <FiChevronDown size={14} />
+        : <FiChevronUp size={14} />}
       </button>
 
       {/* Menu */}
