@@ -11,6 +11,7 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
         { label: 'Software', value: 'SOFTWARE' },
         { label: 'Hardware', value: 'HARDWARE' },
         { label: 'Consulting', value: 'CONSULTING' },
+        { label: 'Marketing', value: 'MARKETING' },
     ]
 
 
