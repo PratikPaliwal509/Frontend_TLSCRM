@@ -186,12 +186,12 @@ const ClientEdit = () => {
 
             // ❌ HTTP error
             if (!response.ok) {
-                throw new Error(result.message || 'Update failed');
+                throw new Error(response.message || 'Update failed');
             }
 
             // ❌ Logical failure (very important)
-            if (result.success === false) {
-                throw new Error(result.message || 'Client not updated');
+            if (response.success === false) {
+                throw new Error(response.message || 'Client not updated');
             }
 
             const data = await response.json();
