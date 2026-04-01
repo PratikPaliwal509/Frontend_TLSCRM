@@ -149,9 +149,9 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
           </div>
 
           {/* End / Release Date */}
-          <div className="mb-4">
-            <label htmlFor="projectEndDate" className="form-label">
-              End Date / Release Date <span className="text-danger">*</span>
+          <div className="mb-4 ">
+            <label htmlFor="projectEndDate" className="form-label " style={{ marginRight: '4px' }}>
+              End Date / Release Date 
             </label>
             <DatePicker
               selected={endDate}
@@ -160,7 +160,7 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
                 handleChange('end_date', date)
               }}
               placeholderText="Pick end date"
-              className="form-control"
+              className="form-control "
               dateFormat="yyyy-MM-dd"
               minDate={startDate}
             />
