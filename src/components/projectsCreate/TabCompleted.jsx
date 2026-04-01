@@ -1,14 +1,13 @@
-
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-// import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom'
+
 const TabCompleted = ({ formData, resetForm }) => {
-  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState('idle')
   const [error, setError] = useState(null)
   const navigate = useNavigate()
 
   const handleCreateProject = async () => {
-    setLoading(true)
+    setStatus('loading')
     setError(null)
 
     try {
@@ -28,41 +27,59 @@ const TabCompleted = ({ formData, resetForm }) => {
       if (!res.ok) {
         throw new Error(data.message || 'Failed to create project')
       }
-      // ✅ Optional: reset form
+
+      setStatus('success')
+
       resetForm && resetForm()
-      // toast.success('Project created successfully');
-      // ✅ Navigate to project view page
-      navigate(`/projects/view/${data.data.project_id}`)
+
+      // small delay for UX (optional)
+      setTimeout(() => {
+        navigate(`/projects/view/${data.data.project_id}`)
+      }, 1000)
 
     } catch (err) {
       console.error(err)
       setError(err.message)
-    } finally {
-      setLoading(false)
+      setStatus('error')
     }
   }
 
   return (
     <section className="step-body mt-4 text-center">
-      <img src="/images/general/completed-steps.png" alt="Completed" className="img-fluid wd-300 mb-4" />
-      <h4 className="fw-bold">Project Created!</h4>
+      <img
+        src="/images/general/completed-steps.png"
+        alt="Completed"
+        className="img-fluid wd-300 mb-4"
+      />
+
+      {/* ✅ Dynamic Heading */}
+      <h4 className="fw-bold">
+        {status === 'success'
+          ? 'Project Created!'
+          : status === 'loading'
+          ? 'Creating Project...'
+          : status === 'error'
+          ? 'Something went wrong'
+          : 'Ready to Create Project'}
+      </h4>
+
+      {/* ✅ Dynamic Message */}
       <p className="text-muted mt-2">
-        {error ? `Error: ${error}` : 'Your project is ready.'}
+        {status === 'error'
+          ? `Error: ${error}`
+          : status === 'success'
+          ? 'Your project is ready.'
+          : 'Click below to create your project.'}
       </p>
 
       <div className="d-flex justify-content-center gap-1 mt-5">
         <button
-          className="btn btn-light"
+          className="btn btn-primary"
           onClick={handleCreateProject}
-          disabled={loading}
+          disabled={status === 'loading'}
         >
-          {loading ? 'Creating...' : 'Create New Project'}
+          {status === 'loading' ? 'Creating...' : 'Create Project'}
         </button>
-
-        {/* Optional: Preview project link */}
-        {/* <Link to="/projects/view" className="btn btn-primary">
-          Preview Project
-        </Link> */}
       </div>
     </section>
   )
