@@ -230,7 +230,17 @@ const status = newStatus
     {
       accessorKey: 'email',
       header: () => 'Email',
-      cell: (info) => <a href={`mailto:${info.getValue()}`}>{info.getValue()}</a>
+       size: 200,
+
+      cell: (info) => <div style={{
+      display: "block",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      width: "200px", 
+      // textOverflow: "ellipsis"
+    }}><a href={`mailto:${info.getValue()}`}>{  info.getValue().length > 20
+      ? info.getValue().substring(0, 20) + "..."
+      : info.getValue() }</a></div>
     },
     {
       accessorKey: 'phone',

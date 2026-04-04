@@ -54,7 +54,7 @@ const Table = ({ data = [], columns = [], isLoading = false, emptyMessage = "No 
                                                         {
                                                             headerGroup.headers.map((header) => {
                                                                 return (
-                                                                    <th key={header.id} className={" w-20"}>
+                                                                    <th key={header.id} style={{ width: header.column.getSize() }}>
                                                                         {
                                                                             header.id === "id" ?
                                                                                 <div className='d-flex gap-2'>
@@ -90,7 +90,7 @@ const Table = ({ data = [], columns = [], isLoading = false, emptyMessage = "No 
                                                         <tr key={row.id} className='single-item chat-single-item'>
                                                             {row.getVisibleCells().map((cell) => {
                                                                 return (
-                                                                    <td key={cell.id} className={" w-20"}>
+                                                                    <td key={cell.id} style={{ width: cell.column.getSize() }}>
                                                                         {
                                                                             flexRender(
                                                                                 cell.column.columnDef.cell,
