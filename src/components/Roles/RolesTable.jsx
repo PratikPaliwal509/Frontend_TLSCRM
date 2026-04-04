@@ -108,9 +108,9 @@ const RolesTable = () => {
         {
             accessorKey: 'role_description',
             header: () => 'Description',
-             size: 200,
+             size: 380,
             cell: info => (
-                <div className="text-muted w-20 text-wrap">
+                <div className="text-muted w-24 text-wrap">
                     {info.getValue() || '—'}
                 </div>
             ),
@@ -126,7 +126,7 @@ const RolesTable = () => {
             accessorKey: 'actions',
             header: () => 'Actions',
             cell: ({ row }) => (
-                <div className="hstack gap-2 justify-content-end">
+                <div className="hstack gap-2 ">
                     <div
                         className="avatar-text avatar-md"
                         style={{ cursor: 'pointer' }}

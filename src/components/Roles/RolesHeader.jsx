@@ -7,7 +7,7 @@ const RolesHeader = () => {
 
     return (
         <div className="d-flex justify-content-between align-items-center">
-            <div>
+            <div className='me-3'>
                 <h4 className="fw-bold mb-1">Roles</h4>
                 <p className="text-muted fs-12 mb-0">
                     Manage system and custom roles
