@@ -62,47 +62,47 @@ const ProjectCreateContent = () => {
         }
         return true;
     };
-const handleNext = (e) => {
-    e.preventDefault();
+    const handleNext = (e) => {
+        e.preventDefault();
 
-    let isValid = true;
+        let isValid = true;
 
-    // STEP 0 → Type
-    if (currentStep === 0) {
-        if (!formData.agency_id || !formData.client_id) {
-            isValid = false;
+        // STEP 0 → Type
+        if (currentStep === 0) {
+            if (!formData.agency_id || !formData.client_id) {
+                isValid = false;
+            }
         }
-    }
 
-    // STEP 1 → Details
-    if (currentStep === 1) {
-        if (!formData.project_name || !formData.project_type) {
-            isValid = false;
+        // STEP 1 → Details
+        if (currentStep === 1) {
+            if (!formData.project_name || !formData.project_type) {
+                isValid = false;
+            }
         }
-    }
 
-    // STEP 2 → Budget
-    // if (currentStep === 2) {
-    //     if (!formData.budget_amount) {
-    //         isValid = false;
-    //     }
-    // }
+        // STEP 2 → Budget
+        // if (currentStep === 2) {
+        //     if (!formData.budget_amount) {
+        //         isValid = false;
+        //     }
+        // }
 
-    // STEP 3 → Assigned
-    if (currentStep === 3) {
-        if (!formData.project_manager_id) {
-            isValid = false;
+        // STEP 3 → Assigned
+        if (currentStep === 3) {
+            if (!formData.project_manager_id) {
+                isValid = false;
+            }
         }
-    }
 
-    if (!isValid) {
-        setError(true);
-        return;
-    }
+        if (!isValid) {
+            setError(true);
+            return;
+        }
 
-    setError(false);
-    setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
-};
+        setError(false);
+        setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+    };
     // const handleNext = (e) => {
     //     e.preventDefault(); // Prevent <a> default navigation
 

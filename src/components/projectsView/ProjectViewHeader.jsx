@@ -39,8 +39,8 @@ const ProjectViewHeader = ({ project }) => {
   return (
     <div className="w-100 d-flex align-items-center justify-content-between">
       {/* LEFT: Project Info */}
-      <div className=''>
-        <h4 className="fw-bold mb-1">
+      <div className='me-2'>
+        <h4 className="fw-bold mb-1 ">
           {project?.project_name ?? '—'}
         </h4>
         <span className="badge bg-soft-primary text-primary">
