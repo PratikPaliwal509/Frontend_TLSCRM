@@ -14,7 +14,6 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
         { label: 'Marketing', value: 'MARKETING' },
     ]
 
-
   useEffect(() => {
     // Sync editor value with formData
     setValue(formData.description || '')
@@ -110,7 +109,9 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
           {/* Project Description */}
           <div className="mb-4">
             <label className="form-label">
-              Project Description <span className="text-danger">*</span>
+              Project Description 
+              {/* <span className="text-danger">*</span> */}
+              
             </label>
             {/* <ReactQuillSafe
               theme="snow"

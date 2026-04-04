@@ -100,7 +100,8 @@ const handleEstimatedHoursChange = (e) => {
 
                         <div className="mb-4">
                             <label htmlFor="tragetTags" className="form-label">
-                                Project tags <span className="text-danger">*</span>
+                                Project tags 
+                                {/* <span className="text-danger">*</span> */}
                             </label>
 
                             <MultiSelectTags
@@ -116,7 +117,8 @@ const handleEstimatedHoursChange = (e) => {
                         {/* PRIORITY */}
                         <div className="mb-4">
                             <label className="form-label">
-                                Priority <span className="text-danger">*</span>
+                                Priority 
+                                {/* <span className="text-danger">*</span> */}
                             </label>
 
                             <select

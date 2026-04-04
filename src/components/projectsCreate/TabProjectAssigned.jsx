@@ -44,7 +44,7 @@ const TabProjectAssigned = ({ formData = {}, setFormData, error }) => {
 
   return (
     <section>
-      <label className="form-label">Project Manager</label>
+      <label className="form-label">Project Manager<span className="text-danger">*</span></label>
 
       <select
         className="form-select"

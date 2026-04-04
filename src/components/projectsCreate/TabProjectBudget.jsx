@@ -6,7 +6,8 @@ const TabProjectBudget = ({ formData, setFormData, error }) => {
     <section className="space-y-3 ">
       {/* Budget Amount */}
       <label htmlFor="budgetAmount" className="form-label">
-        Budget Amount <span className="text-danger">*</span>
+        Budget Amount 
+        {/* <span className="text-danger">*</span> */}
       </label>
       <input
         type="number"
@@ -23,7 +24,8 @@ const TabProjectBudget = ({ formData, setFormData, error }) => {
 
       {/* Billing Type */}
       <label htmlFor="billingType" className="form-label">
-        Billing Type <span className="text-danger">*</span>
+        Billing Type 
+        {/* <span className="text-danger">*</span> */}
       </label>
       <select
         className="form-control "

@@ -62,19 +62,87 @@ const ProjectCreateContent = () => {
         }
         return true;
     };
+const handleNext = (e) => {
+    e.preventDefault();
 
-    const handleNext = (e) => {
-        e.preventDefault(); // Prevent <a> default navigation
+    let isValid = true;
 
-        // validation: agency & client must be selected
-        if (formData.agency_id === null || formData.client_id === null) {
-            setError(true)
-            return
+    // STEP 0 → Type
+    if (currentStep === 0) {
+        if (!formData.agency_id || !formData.client_id) {
+            isValid = false;
         }
-
-        setError(false)
-        setCurrentStep(prev => prev + 1)
     }
+
+    // STEP 1 → Details
+    if (currentStep === 1) {
+        if (!formData.project_name || !formData.project_type) {
+            isValid = false;
+        }
+    }
+
+    // STEP 2 → Budget
+    // if (currentStep === 2) {
+    //     if (!formData.budget_amount) {
+    //         isValid = false;
+    //     }
+    // }
+
+    // STEP 3 → Assigned
+    if (currentStep === 3) {
+        if (!formData.project_manager_id) {
+            isValid = false;
+        }
+    }
+
+    if (!isValid) {
+        setError(true);
+        return;
+    }
+
+    setError(false);
+    setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+};
+    // const handleNext = (e) => {
+    //     e.preventDefault(); // Prevent <a> default navigation
+
+    //     if (index < currentStep) {
+    //         setError(false)
+    //         setCurrentStep(index)
+    //         return
+    //     }
+    //     if (index > currentStep) {
+    //         if (index > 0 && (formData.agency_id === null || formData.client_id === null)) {
+    //             setError(true)
+    //             return
+    //         }
+    //         if (index > 1 && (formData.project_name === "" || formData.project_type === "")) {
+    //             setError(true)
+    //             return
+    //         }
+    //         console.log(formData.project_manager_id)
+    //         if (index > 3 && formData.project_manager_id === null) {
+    //             setError(true)
+    //             return
+    //         }
+    //         setError(false)
+    //         setCurrentStep(index)
+    //         return
+    //     }
+
+    //     // validate only when moving forward
+    //     if (validateFields()) {
+    //         setCurrentStep(index)
+    //     }
+    //     // validation: agency & client must be selected
+    //     // if (formData.agency_id === null || formData.client_id === null) {
+    //     //     setError(true)
+    //     //     return
+    //     // }
+
+    //     // setError(false)
+    //     // setCurrentStep(prev => prev + 1)
+    // }
 
 
     // Handle prev button click
@@ -164,8 +232,9 @@ const ProjectCreateContent = () => {
                             >
                                 <div className={`p-2 border-2-gray bg-primary rounded-2 text-white  ${currentStep === steps.length - 1 ? "disabled" : ""}`}
                                     onClick={handleNext}
-                                    style={{ cursor: currentStep === steps.length - 1 ? 'not-allowed' : 'pointer' }}>Next</div>
-
+                                    style={{ cursor: currentStep === steps.length - 1 ? 'not-allowed' : 'pointer' }}>
+                                    Next
+                                </div>
                             </li>
 
                         </ul>
