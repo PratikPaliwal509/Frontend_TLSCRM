@@ -49,6 +49,7 @@ const AddTask = () => {
         { label: 'Review', value: 'review' },
         { label: 'Deployment', value: 'deployment' },
         { label: 'Support', value: 'support' },
+        { label: 'Billing', value: 'billing' },
     ]
 
 

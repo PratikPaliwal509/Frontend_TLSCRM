@@ -106,6 +106,8 @@ const taskLabelsOptions = [
     { value: 'personal', label: 'Personal', color: '#ffa21d' },
     { value: 'promotions', label: 'Promotions', color: '#ea4d4d' },
     { value: 'customs', label: 'Customs', color: '#6610f2' },
+    { value: 'finance', label: 'Finance', color: '#20c997' },
+    { value: 'billing', label: 'Billing', color: '#fd7e14' },
 ];
 const taskTypeOptions = [
         { label: 'Content Creation', value: 'content creation', color: '#3454d1' },
@@ -118,8 +120,8 @@ const taskTypeOptions = [
         { label: 'Meeting', value: 'meeting', color: '#20c997' },
         { label: 'Review', value: 'review', color: '#0dcaf0' },
         { label: 'Deployment', value: 'deployment', color: '#fd7e14' },
-        { label: 'Support', value: 'support', color: '#198754' }
-
+        { label: 'Support', value: 'support', color: '#198754' },
+        { label: 'Billing', value: 'billing', color: '#ffc107' },
     // { value: 'new', label: 'New', color: '#3454d1' },
     // { value: 'pending', label: 'Pending', color: '#41b2c4' },
     // { value: 'progress', label: 'Progress', color: '#17c666' },
