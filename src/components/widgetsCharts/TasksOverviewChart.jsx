@@ -51,7 +51,7 @@ const TasksOverviewChart = ({ filters }) => {
         setOverviewInfo(json.data || [])
       } catch (error) {
         console.error('Task overview error:', error)
-        toast.error(error.message || 'Unable to load task overview')
+        // toast.error(error.message || 'Unable to load task overview')
       } finally {
         setLoading(false)
       }

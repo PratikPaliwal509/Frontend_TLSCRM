@@ -1,22 +1,22 @@
 import React, { useState } from 'react'
 import TabProjectType from './TabProjectType'
 import TabProjectDetails from './TabProjectDetails';
-// import TabProjectSettings from './TabProjectSettings';
 import TabProjectBudget from './TabProjectBudget';
 import TabProjectAssigned from './TabProjectAssigned';
 import TabProjectTarget from './TabProjectTarget';
-// import TabAttachement from './TabAttachement';
 import TabCompleted from './TabCompleted';
+// import TabAttachement from './TabAttachement';
+// import TabProjectSettings from './TabProjectSettings';
 
 const steps = [
     { name: "Type", required: true },
     { name: "Details", required: false },
-    // { name: "Settings", required: false },
     { name: "Budget", required: true },
     { name: "Assagined", required: false },
     { name: "Target", required: false },
-    // { name: "Attachment", required: false },
     { name: "Completed", required: false },
+    // { name: "Settings", required: false },
+    // { name: "Attachment", required: false },
 ];
 
 const ProjectCreateContent = () => {
@@ -108,6 +108,7 @@ const ProjectCreateContent = () => {
                 setError(true)
                 return
             }
+            console.log(formData.project_manager_id)
             if (index > 3 && formData.project_manager_id === null) {
                 setError(true)
                 return
