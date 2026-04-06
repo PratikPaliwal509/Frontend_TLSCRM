@@ -340,40 +340,40 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
     }
 
     const handletagchange = async (selectedOptions) => {
-    const previousTags = selectedTags; // 🧠 keep backup for rollback
+        const previousTags = selectedTags; // 🧠 keep backup for rollback
 
-    // optimistic UI update
-    setSelectedTags(selectedOptions || []);
+        // optimistic UI update
+        setSelectedTags(selectedOptions || []);
 
-    const tags = selectedOptions ? selectedOptions.map(opt => opt.value) : [];
+        const tags = selectedOptions ? selectedOptions.map(opt => opt.value) : [];
 
-    try {
-        const response = await fetch(`https://api-0ggv.onrender.com/api/tasks/${id}/tags`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ tags })
-        });
+        try {
+            const response = await fetch(`https://api-0ggv.onrender.com/api/tasks/${id}/tags`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ tags })
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data?.message || 'Failed to update tags');
+            if (!response.ok) {
+                throw new Error(data?.message || 'Failed to update tags');
+            }
+
+            topTost('Tags updated successfully', 'success');
+
+        } catch (error) {
+            console.error('Error updating tags:', error);
+
+            // ❌ rollback UI
+            setSelectedTags(previousTags);
+
+            topTost(error.message || 'Failed to update tags', 'error');
         }
-
-        topTost('Tags updated successfully', 'success');
-
-    } catch (error) {
-        console.error('Error updating tags:', error);
-
-        // ❌ rollback UI
-        setSelectedTags(previousTags);
-
-        topTost(error.message || 'Failed to update tags', 'error');
-    }
-};
+    };
     const handleClick = () => {
         topTost()
     };
@@ -436,19 +436,19 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                     <a href="#">
                         <h2 className="fs-14 fw-bold text-truncate-1-line">
                             <span className="text-truncate">
-        {title}
-    </span>
-    {projectName && (
-        <span className="text-muted fw-normal ms-2 flex-shrink-0">
-            - {projectName}
-        </span>
-    )}
+                                {title}
+                            </span>
+                            {projectName && (
+                                <span className="text-muted fw-normal ms-2 flex-shrink-0">
+                                    - {projectName}
+                                </span>
+                            )}
 
                         </h2>
                         <span className="fs-12 fw-normal text-muted text-truncate-1-line">
                             {description}
                         </span>
-                        
+
                     </a>
                 </div>
                 <div className="d-none d-md-flex gap-1 align-items-center justify-content-center">
