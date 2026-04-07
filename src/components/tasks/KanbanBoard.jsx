@@ -22,7 +22,6 @@ const KanbanBoard = ({ tasks, onSelect }) => {
     checkPermission();
   }, []);
   useEffect(() => {
-    console.log('Tasks updated:', tasks)
     setTasks(tasks)
   }, [tasks])
 
@@ -134,7 +133,6 @@ const KanbanBoard = ({ tasks, onSelect }) => {
               {tasks2
                 .filter((task) => task.status === col.key)
                 .map((task) => {
-                  console.log('Rendering task:', task?.due_date)  
                   const today = new Date();
                   today.setHours(0, 0, 0, 0);
 
@@ -163,7 +161,6 @@ const KanbanBoard = ({ tasks, onSelect }) => {
                       badgeClass = "badge bg-success";
                     }
                   }
-                  console.log('badgeClass task:', badgeClass);
                   return (
                     <div
                       key={task.id}

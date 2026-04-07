@@ -38,7 +38,6 @@ const detailsMoreOptions = [
 
 
 const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
-    console.log("Rendering TasksDetails with task:", task)
     const [status, setStatus] = useState(task?.status || 'to_do');
     const [priority, setPriority] = useState(task?.priority || 'medium');
     const [taskType, setTaskType] = useState(task?.taskType || '');
@@ -260,7 +259,6 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
         }
     }
     const handleStatusChange = async (selectedOption) => {
-        console.log("Selected status:", selectedOption)
         setStatus(selectedOption); // Optimistically update UI
         try {
 
@@ -289,7 +287,6 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
     const handlePriorityChange = async (selectedOption) => {
         const newPriority = selectedOption?.value || selectedOption;
 
-        console.log("Selected priority:", selectedOption)
         setPriority(newPriority);
         try {
             const res = await fetch(
@@ -315,7 +312,6 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
     }
 
     const handleTypeChange = async (selectedOption) => {
-        console.log("Selected type:", selectedOption)
         setTaskType(selectedOption); // Optimistically update UI
         try {
             const res = await fetch(
