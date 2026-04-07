@@ -438,19 +438,23 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                             <span className="text-truncate">
                                 {title}
                             </span>
-                            {projectName && (
+                            {/* {projectName && (
                                 <span className="text-muted fw-normal ms-2 flex-shrink-0">
                                     - {projectName}
                                 </span>
-                            )}
+                            )} */}
 
                         </h2>
-                        <span className="fs-12 fw-normal text-muted text-truncate-1-line">
-                            {description}
+                        <span className="text-muted fw-normal flex-shrink-0">
+                            {projectName}
                         </span>
+                        {/* <span className="fs-12 fw-normal text-muted text-truncate-1-line">
+                            {description}
+                        </span> */}
 
                     </a>
                 </div>
+
                 <div className="d-none d-md-flex gap-1 align-items-center justify-content-center">
                     {isAssignedUser && (<TaskTimer taskId={id} project_id={project_id} />)}
                     {/* <a href="#"
@@ -509,6 +513,19 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                 </div>
             </div>
             <div className="offcanvas-body">
+                <div className="col-12">
+                    <div className="form-group mb-4">
+                        <label className="form-label">Description:</label>
+
+                        <textarea
+                            className="form-control"
+                            rows={4}
+                            value={description}
+                            onChange={(e) => setTaskDescription(e.target.value)}
+                            placeholder="Enter task description..."
+                        />
+                    </div>
+                </div>
                 <div className="row">
                     <div className="col-sm-6">
                         <TaskStatus label={"Status:"} options={taskStatusOptions} value={status} defaultSelect={status} onChange={handleStatusChange} />
@@ -615,7 +632,19 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                         </div>
                     </div>
 
+                    <div className="col-sm-6">
+                        <label className="form-label">Create By:</label>
+                        <select
+                            className="form-control"
+                            value={task?.createdByName}
+                            onChange={(e) => onSelectOption(e.target.value)}
+                        >
+                            <option key={task?.createdByName} value={task?.createdByName}>
+                                {task?.createdByName}
+                            </option>
+                        </select>
 
+                    </div>
                     <TaskDateRange
                         initialStartDate={task?.start_date ? new Date(task.start_date) : null}
                         initialEndDate={task?.due_date ? new Date(task.due_date) : null}
