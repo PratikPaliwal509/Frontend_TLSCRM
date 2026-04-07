@@ -84,13 +84,13 @@ const ClientsCreateContent = ({ formData, agencies = [], users = [], onChange, u
                     </div> */}
 
                     <Input label="Tax ID" value={formData.tax_id} onChange={e => onChange('tax_id', e.target.value)} />
-                    <Input label="Company Name" value={formData.company_name} onChange={e => onChange('company_name', e.target.value)} />
+                    <Input required={true}  label="Company Name" value={formData.company_name} onChange={e => onChange('company_name', e.target.value)} />
                     <Input label="Industry" value={formData.industry} onChange={e => onChange('industry', e.target.value)} />
-                    <Input label="Company Size" value={formData.company_size} onChange={e => onChange('company_size', e.target.value)} />
+                    <Input label="Company Size" placeholder="e.g. 10-20" value={formData.company_size} onChange={e => onChange('company_size', e.target.value)} />
                     <Input label="Website" value={formData.website} onChange={e => onChange('website', e.target.value)} />
 
-                    <Input label="Primary Contact Name" value={formData.primary_contact_name} onChange={e => onChange('primary_contact_name', e.target.value)} />
-                    <Input label="Primary Contact Email" type="email" value={formData.primary_contact_email} onChange={e => onChange('primary_contact_email', e.target.value)} />
+                    <Input required={true}  label="Primary Contact Name" value={formData.primary_contact_name} onChange={e => onChange('primary_contact_name', e.target.value)} />
+                    <Input required={true}  label="Primary Contact Email" type="email" value={formData.primary_contact_email} onChange={e => onChange('primary_contact_email', e.target.value)} />
 
                     <div className="form-check mb-2">
                         <input

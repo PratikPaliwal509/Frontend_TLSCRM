@@ -107,6 +107,9 @@ const ClientsCreate = () => {
     const handleChange = (name, value) => {
         setFormData(prev => ({ ...prev, [name]: value }))
     }
+    const isValidCompanySize = (value) => {
+        return /^\d+-\d+$/.test(value);
+    };
 
     /* ================= CREATE CLIENT ================= */
     const handleSubmit = async (type = 'create') => {
@@ -129,6 +132,15 @@ const ClientsCreate = () => {
             toast.error('Primary Contact Email is required');
             return false;
         }
+        if (formData.company_size) {
+            if (!isValidCompanySize(formData.company_size)) {
+                toast.error('Please enter company size in format 10-20');
+                return false;
+            }
+
+        }
+
+
         try {
             setLoading(true)
 
