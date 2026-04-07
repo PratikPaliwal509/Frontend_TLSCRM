@@ -313,7 +313,7 @@ const AddTask = () => {
 
                         {/* Project */}
                         <div className="mb-4">
-                            <label className="form-label">Project</label>
+                            <label className="form-label">Project<span className="text-danger">*</span> </label>
                             <select
                                 className="form-control"
                                 value={formData.project_id || 0}
@@ -336,7 +336,7 @@ const AddTask = () => {
 
                         {/* Task Name */}
                         <div className="mb-4">
-                            <label className="form-label">Task Title</label>
+                            <label className="form-label">Task Title<span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -388,7 +388,7 @@ const AddTask = () => {
                         <div className="mb-4" />
 
                         <div className="mb-4">
-                            <label className="form-label">Estimated Hours</label>
+                            <label className="form-label">Estimated Hours<span className="text-danger">*</span></label>
                             <input
                                 type="number"
                                 className="form-control"
