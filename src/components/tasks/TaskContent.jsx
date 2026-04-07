@@ -101,7 +101,8 @@ const TaskContent = () => {
                     client_approval_required: task?.client_approval_required,
                     client_approved: task?.client_approved,
                     projectName: task?.project?.project_name, 
-                    createdByName: task?.createdBy?.full_name,    
+                    createdByName: task?.createdBy?.full_name, 
+                    estimated_hours: task?.estimated_hours,   
                 }))
                 : []
             setTasks(formattedTasks)

@@ -434,6 +434,11 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                             <span className="text-truncate">
                                 {title}
                             </span>
+                            {task?.estimated_hours && (
+                                <span className="badge ms-2 bg-primary">
+                                    {task.estimated_hours}h
+                                </span>
+                            )}
                             {/* {projectName && (
                                 <span className="text-muted fw-normal ms-2 flex-shrink-0">
                                     - {projectName}
@@ -522,6 +527,19 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                         />
                     </div>
                 </div>
+                {/* <div className="row">
+                    <div className="col-sm-6">
+                        <div className="form-group mb-4">
+                            <label className="form-label">Estimated Hours:</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                value={task?.estimated_hours || ''}
+                                readOnly
+                            />
+                        </div>
+                    </div>
+                </div> */}
                 <div className="row">
                     <div className="col-sm-6">
                         <TaskStatus label={"Status:"} options={taskStatusOptions} value={status} defaultSelect={status} onChange={handleStatusChange} />
