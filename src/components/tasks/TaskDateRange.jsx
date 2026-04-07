@@ -36,13 +36,13 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
                     showPopperArrow={false}
                     className="form-control"
                     popperPlacement="bottom-start"
-                    // onChange={(date) => {
-                    //     setStartDate(date)
-                    //     onChange?.(
-                    //         date ? new Date(date).toISOString() : null,
-                    //         endDate ? new Date(endDate).toISOString() : null
-                    //     )
-                    // }}
+                    onChange={(date) => {
+                        setStartDate(date)
+                        onChange?.(
+                            date ? new Date(date).toISOString() : null,
+                            endDate ? new Date(endDate).toISOString() : null
+                        )
+                    }}
                 />
 
                 <span className="input-group-text">End Date</span>
@@ -55,13 +55,13 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
                      dateFormat="dd/MM/yyyy"
                     className="form-control"
                     popperPlacement="bottom-start"
-                    // onChange={(date) => {
-                    //     setEndDate(date)
-                    //     onChange?.(
-                    //         startDate ? new Date(startDate).toISOString() : null,
-                    //         date ? new Date(date).toISOString() : null
-                    //     )
-                    // }}
+                    onChange={(date) => {
+                        setEndDate(date)
+                        onChange?.(
+                            startDate ? new Date(startDate).toISOString() : null,
+                            date ? new Date(date).toISOString() : null
+                        )
+                    }}
                 />
             </div>
         </div>
