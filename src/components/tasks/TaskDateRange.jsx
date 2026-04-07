@@ -7,8 +7,20 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
 
     // Update state when props change (e.g., when task data loads)
     useEffect(() => {
+//         console.log('initialStartDate:', initialStartDate);
+//         const formatDate = (date) => {
+//     if (!date) return '';
+//     const d = new Date(date);
+//     const day = String(d.getDate()).padStart(2, '0');
+//     const month = String(d.getMonth() + 1).padStart(2, '0');
+//     const year = d.getFullYear();
+//     return `${day}/${month}/${year}`;
+// };
+//         console.log('initialStartDate:', formatDate(initialStartDate));
         setStartDate(initialStartDate || null);
         setEndDate(initialEndDate || null);
+        // setStartDate(initialStartDate || null);
+        // setEndDate(initialEndDate || null);
     }, [initialStartDate, initialEndDate]);
 
     return (
@@ -20,16 +32,17 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
                 <DatePicker
                     placeholderText="Start date..."
                     selected={startDate}
+                     dateFormat="dd/MM/yyyy"
                     showPopperArrow={false}
                     className="form-control"
                     popperPlacement="bottom-start"
-                    onChange={(date) => {
-                        setStartDate(date)
-                        onChange?.(
-                            date ? new Date(date).toISOString() : null,
-                            endDate ? new Date(endDate).toISOString() : null
-                        )
-                    }}
+                    // onChange={(date) => {
+                    //     setStartDate(date)
+                    //     onChange?.(
+                    //         date ? new Date(date).toISOString() : null,
+                    //         endDate ? new Date(endDate).toISOString() : null
+                    //     )
+                    // }}
                 />
 
                 <span className="input-group-text">End Date</span>
@@ -38,15 +51,17 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
                     placeholderText="End date..."
                     selected={endDate}
                     showPopperArrow={false}
+                    initialStartDate
+                     dateFormat="dd/MM/yyyy"
                     className="form-control"
                     popperPlacement="bottom-start"
-                    onChange={(date) => {
-                        setEndDate(date)
-                        onChange?.(
-                            startDate ? new Date(startDate).toISOString() : null,
-                            date ? new Date(date).toISOString() : null
-                        )
-                    }}
+                    // onChange={(date) => {
+                    //     setEndDate(date)
+                    //     onChange?.(
+                    //         startDate ? new Date(startDate).toISOString() : null,
+                    //         date ? new Date(date).toISOString() : null
+                    //     )
+                    // }}
                 />
             </div>
         </div>
