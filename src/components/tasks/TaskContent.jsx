@@ -102,7 +102,9 @@ const TaskContent = () => {
                     client_approved: task?.client_approved,
                     projectName: task?.project?.project_name, 
                     createdByName: task?.createdBy?.full_name, 
-                    estimated_hours: task?.estimated_hours,   
+                    estimated_hours: task?.estimated_hours,
+                    blocksTasks: task?.blocksTasks,
+                    dependsOnTasks: task?.dependsOnTasks,   
                 }))
                 : []
             setTasks(formattedTasks)

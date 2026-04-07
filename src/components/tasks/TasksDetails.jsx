@@ -687,7 +687,43 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                     </div>
                     <CheckList checklist={checklist} taskID={id} />
                 </div>
+               
                 <hr className="my-5" />
+                 <div className="col-12">
+                    <div className="form-group mb-4">
+                        <label className="form-label" >Depends On:</label>
+
+                        {task?.dependsOnTasks?.length > 0 ? (
+                            <div className="d-flex flex-wrap gap-2">
+                                {task?.dependsOnTasks.map(t => (
+                                    <span key={t.task_id} className="badge bg-warning text-dark"  onClick={() => console.log("Dependent Task ID:", t)}>
+                                        #{t.task_id} - {t.task_title}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            <small className="text-muted">No dependencies</small>
+                        )}
+                    </div>
+                </div>
+
+                <div className="col-12">
+                    <div className="form-group mb-4">
+                        <label className="form-label">Blocks:</label>
+
+                        {task?.blocksTasks?.length > 0 ? (
+                            <div className="d-flex flex-wrap gap-2">
+                                {task?.blocksTasks.map(t => (
+                                    <span key={t.task_id} className="badge bg-danger" onClick={() => console.log("Blocked Task ID:", t)}>
+                                        #{t.task_id} - {t.task_title}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            <small className="text-muted">No blocked tasks</small>
+                        )}
+                    </div>
+                </div>
                 {/*! BEGIN: Notes !*/}
                 {/* <div className="notes">
                     <div className="d-flex justify-content-between mb-4">
