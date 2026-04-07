@@ -16,7 +16,8 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
 //     const year = d.getFullYear();
 //     return `${day}/${month}/${year}`;
 // };
-//         console.log('initialStartDate:', formatDate(initialStartDate));
+        console.log('initialStartDate:', initialStartDate);
+        console.log('initialEndDate:', initialEndDate);
         setStartDate(initialStartDate || null);
         setEndDate(initialEndDate || null);
         // setStartDate(initialStartDate || null);

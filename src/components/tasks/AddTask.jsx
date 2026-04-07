@@ -367,15 +367,24 @@ const AddTask = () => {
                         </div>
 
                         {/* Date Range */}
-                        <TaskDateRange
-                            onChange={(start, end) =>
-                                setFormData({
-                                    ...formData,
-                                    start_date: start,
-                                    due_date: end,
-                                })
-                            }
-                        />
+                       <TaskDateRange
+    onChange={(start, end) => {
+        console.log('Selected Start Date:', start);
+        console.log('Selected End Date:', end); 
+        const addOneDay = (dateStr) => {
+            if (!dateStr) return null
+            const d = new Date(dateStr)
+            d.setDate(d.getDate() + 1) // 🔥 add 1 day
+            return d.toISOString()
+        }
+
+        setFormData({
+            ...formData,
+            start_date: addOneDay(start),
+            due_date: addOneDay(end),
+        })
+    }}
+/>
                         <div className="mb-4" />
 
                         <div className="mb-4">
