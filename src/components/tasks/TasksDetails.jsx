@@ -445,8 +445,8 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                             )} */}
 
                         </h2>
-                        <span className="text-muted fw-normal flex-shrink-0">
-                            {projectName}
+                        <span className="fs-13 fw-medium text-secondary">
+                            <span className='fw-bold text-dark'>Project Name:-</span> {projectName}
                         </span>
                         {/* <span className="fs-12 fw-normal text-muted text-truncate-1-line">
                             {description}
