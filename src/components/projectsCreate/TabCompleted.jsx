@@ -7,42 +7,56 @@ const TabCompleted = ({ formData, resetForm }) => {
   const navigate = useNavigate()
 
   const handleCreateProject = async () => {
-    setStatus('loading')
-    setError(null)
+  setStatus('loading');
+  setError(null);
 
-    try {
-      const token = localStorage.getItem('token')
+  try {
+    const { start_date, end_date } = formData;
 
-      const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      })
+    // ✅ Date Validation
+    if (
+      start_date &&
+      end_date &&
+      new Date(end_date) < new Date(start_date)
+    ) {
+      console.log('Date validation failed:', { start_date, end_date });
 
-      const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Failed to create project')
-      }
-
-      setStatus('success')
-
-      resetForm && resetForm()
-
-      // small delay for UX (optional)
-      setTimeout(() => {
-        navigate(`/projects/view/${data.data.project_id}`)
-      }, 1000)
-
-    } catch (err) {
-      console.error(err)
-      setError(err.message)
-      setStatus('error')
+      setError('End date cannot be before start date');
+      setStatus('error');
+      return; // ⛔ stop API call
     }
+
+    const token = localStorage.getItem('token');
+
+    const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to create project');
+    }
+
+    setStatus('success');
+
+    resetForm && resetForm();
+
+    setTimeout(() => {
+      navigate(`/projects/view/${data.data.project_id}`);
+    }, 1000);
+
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+    setStatus('error');
   }
+};
 
   return (
     <section className="step-body mt-4 text-center">

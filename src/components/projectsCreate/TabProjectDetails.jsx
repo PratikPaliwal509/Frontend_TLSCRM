@@ -8,11 +8,11 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
   const [endDate, setEndDate] = useState(formData.end_date ? new Date(formData.end_date) : null)
 
   const projectTypesOptions = [
-        { label: 'Software', value: 'SOFTWARE' },
-        { label: 'Hardware', value: 'HARDWARE' },
-        { label: 'Consulting', value: 'CONSULTING' },
-        { label: 'Marketing', value: 'MARKETING' },
-    ]
+    { label: 'Software', value: 'SOFTWARE' },
+    { label: 'Hardware', value: 'HARDWARE' },
+    { label: 'Consulting', value: 'CONSULTING' },
+    { label: 'Marketing', value: 'MARKETING' },
+  ]
 
   useEffect(() => {
     // Sync editor value with formData
@@ -24,15 +24,15 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
   }
 
   const handleProjectTypeChange = (e) => {
-  const { value } = e.target
+    const { value } = e.target
 
-  setFormData(prev => ({
-    ...prev,
-    project_type: value,
-    task_prefix: value ? value.substring(0, 3).toUpperCase() : '',
-    estimated_hours: '',
-  }))
-}
+    setFormData(prev => ({
+      ...prev,
+      project_type: value,
+      task_prefix: value ? value.substring(0, 3).toUpperCase() : '',
+      estimated_hours: '',
+    }))
+  }
 
   return (
     <section className="step-body mt-4 body current">
@@ -89,8 +89,8 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
                 </option>
               ))}
             </select>
-             {error && formData.project_type === "" && <p className="text-danger mt-2">Project Type is required</p>}
-         
+            {error && formData.project_type === "" && <p className="text-danger mt-2">Project Type is required</p>}
+
           </div>
           {/* <div className="mb-4">
             <label htmlFor="projectCode" className="form-label">
@@ -109,9 +109,9 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
           {/* Project Description */}
           <div className="mb-4">
             <label className="form-label">
-              Project Description 
+              Project Description
               {/* <span className="text-danger">*</span> */}
-              
+
             </label>
             {/* <ReactQuillSafe
               theme="snow"
@@ -152,16 +152,24 @@ const TabProjectDetails = ({ formData = {}, setFormData, error }) => {
           {/* End / Release Date */}
           <div className="mb-4 ">
             <label htmlFor="projectEndDate" className="form-label " style={{ marginRight: '4px' }}>
-              End Date / Release Date 
+              End Date / Release Date
             </label>
             <DatePicker
               selected={endDate}
               onChange={(date) => {
-                setEndDate(date)
-                handleChange('end_date', date)
+                setEndDate(date);
+
+                const addOneDay = (d) => {
+                  if (!d) return null;
+                  const newDate = new Date(d);
+                  newDate.setDate(newDate.getDate() + 1);
+                  return newDate.toISOString(); // same as your previous logic
+                };
+
+                handleChange('end_date', addOneDay(date));
               }}
               placeholderText="Pick end date"
-              className="form-control "
+              className="form-control"
               dateFormat="yyyy-MM-dd"
               minDate={startDate}
             />
