@@ -141,12 +141,12 @@ const AddTask = () => {
             toast.error('Task title is required');
             return false;
         }
-        const hours = Number(formData.estimated_hours);
+        // const hours = Number(formData.estimated_hours);
 
-        if (!hours || hours <= 0) {
-            toast.error('Estimated hours must be greater than 0');
-            return false;
-        }
+        // if (!hours || hours <= 0) {
+        //     toast.error('Estimated hours must be greater than 0');
+        //     return false;
+        // }
 
         if (
             formData.start_date &&
@@ -388,7 +388,7 @@ const AddTask = () => {
                         <div className="mb-4" />
 
                         <div className="mb-4">
-                            <label className="form-label">Estimated Hours<span className="text-danger">*</span></label>
+                            <label className="form-label">Estimated Hours</label>
                             <input
                                 type="number"
                                 className="form-control"
