@@ -388,7 +388,7 @@ const AddTask = () => {
                         <div className="mb-4" />
 
                         <div className="mb-4">
-                            <label className="form-label">Estimated Hours</label>
+                            <label className="form-label">Estimated Hours <span className="text-xs text-gray-500 mt-1">(Optional — add only if you want to estimate effort or track time.)</span></label>
                             <input
                                 type="number"
                                 className="form-control"
@@ -525,7 +525,7 @@ const AddTask = () => {
                         </div>
 
                         <div className="mb-4">
-                            <label className="form-label">Depends On</label>
+                            <label className="form-label">Depends On <span className="text-xs text-gray-500 mt-1">(Select tasks that must be completed before this task starts)</span></label>
 
                             <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
                                 {dependsOnOptions.map(task => (
@@ -549,7 +549,9 @@ const AddTask = () => {
                         </div>
 
                         <div className="mb-4">
-                            <label className="form-label">Blocking Task</label>
+                            <label className="form-label">Blocking Task <span className="text-xs text-gray-500">
+  (Select tasks that will be blocked until this task is completed)
+</span></label>
 
                             <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
                                 {blocksOptions.map(task => (
