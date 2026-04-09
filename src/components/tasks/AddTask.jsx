@@ -521,8 +521,8 @@ const AddTask = () => {
                             />
                             <label className="form-check-label" htmlFor="isMilestone">
                                 Mark as Milestone<span className="text-xs text-gray-500">
-  (Marks this task as a key milestone in the project)
-</span>
+                                    (Marks this task as a key milestone in the project)
+                                </span>
                             </label>
                         </div>
 
