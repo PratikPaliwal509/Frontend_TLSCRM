@@ -163,85 +163,174 @@ const AddTask = () => {
     /* =========================
        Create Task + Assign Users
     ========================== */
+const handleCreateTask = async () => {
+        if (!validateForm()) return;
 
-    const handleCreateTask = async () => {
-    if (!validateForm()) return;
+        setLoading(true);
 
-    setLoading(true);
-
-    try {
-        /* -------- Create Task (WITH ASSIGNEES) -------- */
-        const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                project_id: formData.project_id,
-                task_title: formData.task_title,
-                description: formData.description,
-                start_date: formData.start_date,
-                due_date: formData.due_date,
-                estimated_hours: formData.estimated_hours,
-                status: formData.status,
-                priority: formData.priority,
-                labels: formData.labels.map(l => l.value),
-                task_type: formData.task_type,
-                is_milestone: formData.is_milestone,
-                depends_on: formData.depends_on.map(d => d.value),
-                blocks: formData.blocks.map(b => b.value),
-                visible_to_client: formData.visible_to_client,
-                client_approval_required: formData.client_approval_required,
-
-                // ✅ NEW (IMPORTANT)
-                assignees: formData.assignees.map(a => a.value),
-            }),
-        });
-
-        if (!res.ok) throw new Error('Task creation failed');
-
-        const taskRes = await res.json();
-
-        /* ✅ Instant UI response */
-        toast.success('Task created successfully');
-        closeModal();
-
-        /* -------- Reset Form -------- */
-        setFormData({
-            project_id: '',
-            task_title: '',
-            description: '',
-            start_date: null,
-            due_date: null,
-            estimated_hours: '',
-            status: 'to_do',
-            priority: 'medium',
-            labels: [],
-            assignees: [],
-            task_type: '',
-            is_milestone: false,
-            depends_on: [],
-            blocks: [],
-            visible_to_client: false,
-            client_approval_required: false,
-        });
-
-        /* -------- Notify UI -------- */
         try {
-            const created = taskRes?.data || taskRes;
-            window.dispatchEvent(
-                new CustomEvent('task:created', { detail: created })
-            );
-        } catch (e) {}
+            /* -------- Create Task -------- */
+            const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    project_id: formData.project_id,
+                    task_title: formData.task_title,
+                    description: formData.description,
+                    start_date: formData.start_date,
+                    due_date: formData.due_date,
+                    estimated_hours: formData.estimated_hours,
+                    status: formData.status,
+                    priority: formData.priority,
+                    labels: formData.labels.map(l => l.value),
+                    task_type: formData.task_type,
+                    is_milestone: formData.is_milestone,
+                    depends_on: formData.depends_on.map(d => d.value),
+                    blocks: formData.blocks.map(b => b.value),
+                    visible_to_client: formData.visible_to_client,
+                    client_approval_required: formData.client_approval_required,
+                }),
+            });
 
-    } catch (err) {
-        console.error(err);
-        toast.error(err.message || 'Error creating task');
-    } finally {
-        setLoading(false);
-    }
-};
+            if (!res.ok) throw new Error('Task creation failed');
+
+            const taskRes = await res.json();
+            const taskId = taskRes?.data?.task_id || taskRes?.task_id;
+
+            /* ✅ Instant UI response */
+            toast.success('Task created successfully');
+            closeModal();
+
+            /* -------- Assign Users (NON-BLOCKING) -------- */
+            if (formData.assignees.length > 0) {
+                fetch(`https://api-0ggv.onrender.com/api/tasks/${taskId}/assign`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        user_ids: formData.assignees.map(a => a.value),
+                    }),
+                }).catch(err => {
+                    console.error('Assign failed:', err);
+                });
+            }
+
+            /* -------- Reset Form -------- */
+            setFormData({
+                project_id: '',
+                task_title: '',
+                description: '',
+                start_date: null,
+                due_date: null,
+                estimated_hours: '',
+                status: 'to_do',
+                priority: 'medium',
+                labels: [],
+                assignees: [],
+                task_type: '',
+                is_milestone: false,
+                depends_on: [],
+                blocks: [],
+                visible_to_client: false,
+                client_approval_required: false,
+            });
+
+            /* -------- Notify UI -------- */
+            try {
+                const created = taskRes?.data || taskRes;
+                window.dispatchEvent(new CustomEvent('task:created', { detail: created }));
+            } catch (e) { }
+
+        } catch (err) {
+            console.error(err);
+            toast.error(err.message || 'Error creating task');
+        } finally {
+            setLoading(false);
+        }
+    };
+//     const handleCreateTask = async () => {
+//     if (!validateForm()) return;
+
+//     setLoading(true);
+
+//     try {
+//         /* -------- Create Task (WITH ASSIGNEES) -------- */
+//         const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 Authorization: `Bearer ${token}`,
+//             },
+//             body: JSON.stringify({
+//                 project_id: formData.project_id,
+//                 task_title: formData.task_title,
+//                 description: formData.description,
+//                 start_date: formData.start_date,
+//                 due_date: formData.due_date,
+//                 estimated_hours: formData.estimated_hours,
+//                 status: formData.status,
+//                 priority: formData.priority,
+//                 labels: formData.labels.map(l => l.value),
+//                 task_type: formData.task_type,
+//                 is_milestone: formData.is_milestone,
+//                 depends_on: formData.depends_on.map(d => d.value),
+//                 blocks: formData.blocks.map(b => b.value),
+//                 visible_to_client: formData.visible_to_client,
+//                 client_approval_required: formData.client_approval_required,
+
+//                 // ✅ NEW (IMPORTANT)
+//                 assignees: formData.assignees.map(a => a.value),
+//             }),
+//         });
+
+//         if (!res.ok) throw new Error('Task creation failed');
+
+//         const taskRes = await res.json();
+
+//         /* ✅ Instant UI response */
+//         toast.success('Task created successfully');
+//         closeModal();
+
+//         /* -------- Reset Form -------- */
+//         setFormData({
+//             project_id: '',
+//             task_title: '',
+//             description: '',
+//             start_date: null,
+//             due_date: null,
+//             estimated_hours: '',
+//             status: 'to_do',
+//             priority: 'medium',
+//             labels: [],
+//             assignees: [],
+//             task_type: '',
+//             is_milestone: false,
+//             depends_on: [],
+//             blocks: [],
+//             visible_to_client: false,
+//             client_approval_required: false,
+//         });
+
+//         /* -------- Notify UI -------- */
+//         try {
+//             const created = taskRes?.data || taskRes;
+//             window.dispatchEvent(
+//                 new CustomEvent('task:created', { detail: created })
+//             );
+//         } catch (e) {}
+
+//     } catch (err) {
+//         console.error(err);
+//         toast.error(err.message || 'Error creating task');
+//     } finally {
+//         setLoading(false);
+//     }
+// };
     const dependsOnOptions = tasks.filter(
         t => !(formData.blocks || []).some(b => b.value === t.value)
     )
