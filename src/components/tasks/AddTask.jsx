@@ -520,7 +520,9 @@ const AddTask = () => {
                                 }
                             />
                             <label className="form-check-label" htmlFor="isMilestone">
-                                Mark as Milestone
+                                Mark as Milestone<span className="text-xs text-gray-500">
+  (Marks this task as a key milestone in the project)
+</span>
                             </label>
                         </div>
 
@@ -550,8 +552,8 @@ const AddTask = () => {
 
                         <div className="mb-4">
                             <label className="form-label">Blocking Task <span className="text-xs text-gray-500">
-  (Select tasks that will be blocked until this task is completed)
-</span></label>
+                                (Select tasks that will be blocked until this task is completed)
+                            </span></label>
 
                             <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
                                 {blocksOptions.map(task => (
