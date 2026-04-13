@@ -4,14 +4,13 @@ import { FiClock } from "react-icons/fi"
 const TaskTimeLogDetails = ({ taskId, project_id, role }) => {
   const [log, setLog] = useState(null)
   const [loading, setLoading] = useState(false)
-
   // Manual entry states
   const [manualStart, setManualStart] = useState("")
   const [manualEnd, setManualEnd] = useState("")
   const [description, setDescription] = useState("")
   const [isBillable, setIsBillable] = useState(true)
   const [hourlyRate, setHourlyRate] = useState("")
-const [actionLoading, setActionLoading] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false)
 
   /* ---------------- HELPERS ---------------- */
 
@@ -107,54 +106,54 @@ const [actionLoading, setActionLoading] = useState(false)
   }
 
   const handleApprove = async () => {
-  if (!log) return
+    if (!log) return
 
-  const token = localStorage.getItem("token")
-  setActionLoading(true)
+    const token = localStorage.getItem("token")
+    setActionLoading(true)
 
-  try {
-    await fetch(
-      `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/approve`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    try {
+      await fetch(
+        `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/approve`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
 
-    fetchLog()
-  } catch (err) {
-    console.error("Failed to approve time log", err)
-  } finally {
-    setActionLoading(false)
+      fetchLog()
+    } catch (err) {
+      console.error("Failed to approve time log", err)
+    } finally {
+      setActionLoading(false)
+    }
   }
-}
 
-const handleReject = async () => {
-  if (!log) return
+  const handleReject = async () => {
+    if (!log) return
 
-  const token = localStorage.getItem("token")
-  setActionLoading(true)
+    const token = localStorage.getItem("token")
+    setActionLoading(true)
 
-  try {
-    await fetch(
-      `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/reject`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    try {
+      await fetch(
+        `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/reject`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
 
-    fetchLog()
-  } catch (err) {
-    console.error("Failed to reject time log", err)
-  } finally {
-    setActionLoading(false)
+      fetchLog()
+    } catch (err) {
+      console.error("Failed to reject time log", err)
+    } finally {
+      setActionLoading(false)
+    }
   }
-}
 
   /* ---------------- UI ---------------- */
 
@@ -201,29 +200,31 @@ const handleReject = async () => {
                       {formatDuration(log.start_time, log.end_time)}
                     </span>
                   </div>
-                   <div className="d-flex gap-2 justify-content-end">
-      {
-      // !log.is_approved && 
-      (role === "Super Admin" || role === "Admin") && <>
-        <button
-          className="btn btn-success mt-2"
-          onClick={handleApprove}
-          disabled={actionLoading || log.is_approved}
-        >
-          {log.is_approved ? "Approved" : "Approve"}
-        </button>
-      
-        {/* <button
+                  <div className="d-flex gap-2 justify-content-end">
+                    {
+                      // !log.is_approved && 
+                      (role === "Super Admin" || role === "Admin") ? <>
+                        <button
+                          className="btn btn-success mt-2"
+                          onClick={handleApprove}
+                          disabled={actionLoading || log.is_approved}
+                        >
+                          {log.is_approved ? "Approved" : "Approve"}
+                        </button>
+
+                        {/* <button
           className="btn btn-danger"
           onClick={handleReject}
           disabled={actionLoading}
         >
           Reject
         </button> */}
-        </>
-      }
-    </div>
-  
+                      </> : <div className={`btn mt-2 ${log.is_approved ? "btn-success" : "btn-warning"}`}>
+                        {log.is_approved ? "Approved" : "Not Approved"}
+                      </div>
+                    }
+                  </div>
+
                 </div>
               )}
             </div>

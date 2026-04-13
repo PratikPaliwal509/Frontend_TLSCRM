@@ -201,7 +201,7 @@ const handleCreateTask = async () => {
             const taskId = taskRes?.data?.task_id || taskRes?.task_id;
 
             /* ✅ Instant UI response */
-            toast.success('Task created successfully');
+            toast.success('Task has been created successfully');
             closeModal();
 
             /* -------- Assign Users (NON-BLOCKING) -------- */

@@ -17,6 +17,7 @@ import TaskTimeLogDetails from '../TaskTimeLogDetails';
 import AddAttachment from './TaskAttachment';
 import useVerifyRole from '@/utils/canRemoveAssognee'
 import { getUserRole } from "@/utils/verifyRole"
+import AdminTaskTimelogs from '../AdminTaskTimelogs';
 
 const detailsMoreOptions = [
     { label: "Make Unread", icon: <FiEyeOff /> },
@@ -669,7 +670,8 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                 <hr className="my-5" />
 
 
-                {(isAssignedUser || role === "Super Admin" || role === "Admin") && (<TaskTimeLogDetails taskId={id} project_id={project_id} role={role} />)}
+                {(isAssignedUser) && (<TaskTimeLogDetails taskId={id} project_id={project_id} role={role} />)}
+                {(role === "Super Admin" || role === "Admin") && (<AdminTaskTimelogs taskId={id} project_id={project_id} role={role} />)}
                 {/* <TaskTimeLogDetails taskId={id} project_id={project_id} /> */}
 
                 <hr className="my-5" />
