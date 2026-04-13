@@ -1,6 +1,7 @@
-
+"use client";
+import { settingOptions } from "@/components/setting/settingsEmailForm";
 import React, { useEffect, useState, useRef } from "react";
-import { FiBell, FiCheck, FiX } from "react-icons/fi";
+import { FiBell, FiCheck } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 
@@ -9,9 +10,35 @@ const NotificationsModal = () => {
   const token = localStorage.getItem("token");
   const socketRef = useRef(null);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  // 🔹 FETCH NOTIFICATIONS (GET)
+  // 🔔 SYSTEM NOTIFICATION FUNCTION
+  const showSystemNotification = (title, message) => {
+  if (!("Notification" in window)) return;
+
+  const appName = "Kary (Techleela CRM)"; // 🔥 your website name
+
+  if (Notification.permission === "granted") {
+    new Notification(appName, {
+      body: `${title} - ${message}`, // message inside body
+      icon: "/images/logo/techlal.png", // 🔥 your logo (IMPORTANT)
+      badge: "/images/logo/techlal.png", // optional (for Chrome Android)
+      tag: "Kary (Techleela CRM)", // prevents duplicates
+    });
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        new Notification(appName, {
+          body: `${title} - ${message}`,
+          icon: "/images/logo/techlal.png",
+          badge: "/logo192.png",
+        });
+      }
+    });
+  }
+};
+
+  // 🔹 FETCH NOTIFICATIONS
   const fetchNotifications = async () => {
     try {
       const res = await fetch("https://api-0ggv.onrender.com/api/notification", {
@@ -22,47 +49,57 @@ const NotificationsModal = () => {
       });
 
       const json = await res.json();
-    if (json.success && Array.isArray(json.data)) {
-      const readNotifications = json.data.filter(
-        (notification) => notification.is_read === false
-      );
 
-      setNotifications(readNotifications);
-    }
+      if (json.success && Array.isArray(json.data)) {
+        const unreadNotifications = json.data.filter(
+          (notification) => notification.is_read === false
+        );
+        setNotifications(unreadNotifications);
+      }
     } catch (err) {
       console.error("Failed to fetch notifications", err);
     }
   };
 
-  // fetch once on load and setup socket
+  // 🔹 SOCKET + PERMISSION SETUP
   useEffect(() => {
     fetchNotifications();
+    // Ask permission once
+    if ("Notification" in window && Notification.permission !== "granted") {
+      console.log("granted")
+      Notification.requestPermission();
+    }
 
-    // Setup socket.io connection
+    // Setup socket
     socketRef.current = io("https://api-0ggv.onrender.com", {
       auth: { token },
-      transports: ["websocket"]
+      transports: ["websocket"],
     });
 
     socketRef.current.on("connect", () => {
-      console.log("Socket connected! id:", socketRef.current.id);
+      console.log("Socket connected!", socketRef.current.id);
     });
+
     socketRef.current.on("connect_error", (err) => {
       console.error("Socket connection error:", err);
     });
+
     socketRef.current.on("disconnect", (reason) => {
       console.warn("Socket disconnected:", reason);
     });
 
-    // Listen for all events for debugging
-    socketRef.current.onAny((event, ...args) => {
-      console.log("Socket event:", event, args);
-    });
-
-    // Listen for new notifications
+    // 🔔 Listen for new notifications
     socketRef.current.on("notification", (notification) => {
-      console.log("Received notification event:", notification);
-      setNotifications(prev => [notification, ...prev]);
+      console.log("Received notification:", notification);
+
+      // Show system notification only if tab not active
+      if (document.visibilityState !== "visible") {
+        console.log("visibilityState")
+        showSystemNotification(notification.title, notification.message);
+      }
+
+      // Update UI
+      setNotifications((prev) => [notification, ...prev]);
     });
 
     return () => {
@@ -72,40 +109,36 @@ const NotificationsModal = () => {
     };
   }, []);
 
-  // 🔹 MARK ALL AS READ (OPTIONAL UI ONLY)
-const handleMarkAllAsRead = async () => {
-  try {
-    const token = localStorage.getItem("token");
+  // 🔹 MARK ALL AS READ
+  const handleMarkAllAsRead = async () => {
+    try {
+      const res = await fetch(
+        "https://api-0ggv.onrender.com/api/notification/read-all",
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const res = await fetch(
-      "https://api-0ggv.onrender.com/api/notification/read-all",
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      const json = await res.json();
+
+      if (res.ok && json.success) {
+        setNotifications([]);
+      } else {
+        console.error(json.message);
       }
-    );
-
-    const json = await res.json();
-
-    if (res.ok && json.success) {
-      // ✅ update UI immediately
-      setNotifications([]);
-    } else {
-      console.error(json.message);
+    } catch (error) {
+      console.error("Failed to mark notifications as read", error);
     }
-  } catch (error) {
-    console.error("Failed to mark notifications as read", error);
-  }
-};
+  };
 
-
-  // 🔹 REMOVE FROM UI ONLY
+  // 🔹 REMOVE NOTIFICATION (UI ONLY)
   const removeNotification = (id) => {
-    setNotifications(prev =>
-      prev.filter(n => n.id !== id)
+    setNotifications((prev) =>
+      prev.filter((n) => n.notification_id !== id)
     );
   };
 
@@ -135,16 +168,18 @@ const handleMarkAllAsRead = async () => {
           </p>
         )}
 
-        {notifications.slice(0, 3).map(notification => (
+        {notifications.slice(0, 3).map((notification) => (
           <div
             key={notification.notification_id}
-            className={`notification-item d-flex align-items-start  px-3  ${!notification.is_read ? "unread" : "read"
-              }`}
+            className={`notification-item d-flex align-items-start px-3 ${
+              !notification.is_read ? "unread" : "read"
+            }`}
           >
-            {/* Left dot indicator */}
+            {/* Dot */}
             <span
-              className={`notification-dot ${!notification.is_read ? "bg-primary" : "bg-secondary"}
-                }`}
+              className={`notification-dot ${
+                !notification.is_read ? "bg-primary" : "bg-secondary"
+              }`}
             />
 
             {/* Content */}
@@ -161,11 +196,10 @@ const handleMarkAllAsRead = async () => {
               <p className="mb-1 text-muted fs-13">
                 {notification.message}
               </p>
-              {<hr />}
+              <hr />
             </div>
           </div>
         ))}
-
 
         <div className="text-center notifications-footer">
           <Link to="/notifications" className="fs-13 fw-semibold text-dark">
