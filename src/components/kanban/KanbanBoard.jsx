@@ -88,13 +88,17 @@ const KanbanBoard = ({ tasks = [] }) => {
             toast.error('Failed to update status')
         }
     }
-
+    const handleDeleteTask = (taskId) => {
+        console.log("taskId",taskId)
+        setBoardTasks((prev) => prev.filter((t) => t.task_id !== taskId))
+        setSelectedTask(null) // optional: close details
+    }
     /* =========================
        RENDER
     ========================== */
     return (
         <>
-            <TasksDetails task={selectedTask} user_id={user_id} />
+            <TasksDetails task={selectedTask} user_id={user_id} onDeleteTask={handleDeleteTask} />
 
             <div className="row flex-nowrap overflow-x-auto g-4 h-100 ">
                 {COLUMNS.map((col) => (

@@ -18,7 +18,9 @@ import AddAttachment from './TaskAttachment';
 import useVerifyRole from '@/utils/canRemoveAssognee'
 import { getUserRole } from "@/utils/verifyRole"
 import AdminTaskTimelogs from '../AdminTaskTimelogs';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
+import { toast } from 'react-toastify'
 const detailsMoreOptions = [
     { label: "Make Unread", icon: <FiEyeOff /> },
     { label: "Filter Messages", icon: <FiSliders /> },
@@ -38,7 +40,7 @@ const detailsMoreOptions = [
 ];
 
 
-const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
+const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDeleteTask }) => {
     const [status, setStatus] = useState(task?.status || 'to_do');
     const [priority, setPriority] = useState(task?.priority || 'medium');
     const [taskType, setTaskType] = useState(task?.taskType || '');
@@ -57,6 +59,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
     const start_date = task?.start_date || null;
     const checklist = task?.checklist || [];
     const project_id = task?.project_id || '';
+    const createdBy = task?.created_by;
     // const selectedTags = taskLabelsOptions.filter(opt =>
     //     tags?.includes(opt.value)
 
@@ -76,7 +79,8 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
     const [loading, setLoading] = useState(false)
 
     const isAssignedUser = assignedUserIds.includes(user_id)
-
+const isCreatedByUser = createdBy === user_id
+console.log(isCreatedByUser)
     const fetchComments = async () => {
         setLoading(true)
         try {
@@ -407,7 +411,61 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
             topTost('Failed to remove user', 'error')
         }
     }
+    const handleDeleteTask = async () => {
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
 
+    try {
+        const res = await fetch(
+            `https://api-0ggv.onrender.com/api/tasks/${id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        // ✅ handle non-JSON safely
+        let data = null;
+        try {
+            data = await res.json();
+        } catch {
+            // ignore if no JSON
+        }
+
+        // ❌ API error handling
+        if (!res.ok) {
+            const message =
+                data?.message ||
+                data?.error ||
+                `Failed to delete task (Status: ${res.status})`;
+
+            throw new Error(message);
+        }
+
+        // ✅ success
+        toast.success(data?.message || "Task deleted successfully", "success");
+
+        // ✅ update parent UI safely
+        if (typeof onDeleteTask === "function") {
+            onDeleteTask(id);
+        }
+
+    } catch (err) {
+        console.error("Delete Task Error:", err);
+
+        // ✅ better user message
+        let errorMessage = "Something went wrong while deleting task";
+
+        if (err.name === "TypeError") {
+            errorMessage = "Network error. Please check your connection.";
+        } else if (err.message) {
+            errorMessage = err.message;
+        }
+
+        toast.error(errorMessage, "error");
+    }
+};
     return (
         <div
             className="offcanvas offcanvas-end w-50"
@@ -511,7 +569,15 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                         dropdownItems={detailsMoreOptions}
                         triggerPosition={"0,25"}
                     /> */}
-
+                    {isCreatedByUser && <button
+                        className="btn btn-danger btn-sm d-flex align-items-center"
+                        onClick={handleDeleteTask}
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#tasksDetailsOffcanvas"
+                    >
+                        <FiTrash2 className="me-1" />
+                        Delete
+                    </button>}
                 </div>
             </div>
             <div className="offcanvas-body">
@@ -669,7 +735,6 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                 </div>
                 <hr className="my-5" />
 
-
                 {(isAssignedUser) && (<TaskTimeLogDetails taskId={id} project_id={project_id} role={role} />)}
                 {(role === "Super Admin" || role === "Admin") && (<AdminTaskTimelogs taskId={id} project_id={project_id} role={role} />)}
                 {/* <TaskTimeLogDetails taskId={id} project_id={project_id} /> */}
@@ -689,16 +754,16 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange }) => {
                     </div>
                     <CheckList checklist={checklist} taskID={id} />
                 </div>
-               
+
                 <hr className="my-5" />
-                 <div className="col-12">
+                <div className="col-12">
                     <div className="form-group mb-4">
                         <label className="form-label" >Depends On:</label>
 
                         {task?.dependsOnTasks?.length > 0 ? (
                             <div className="d-flex flex-wrap gap-2">
                                 {task?.dependsOnTasks.map(t => (
-                                    <span key={t.task_id} className="badge bg-warning text-dark"  onClick={() => console.log("Dependent Task ID:", t)}>
+                                    <span key={t.task_id} className="badge bg-warning text-dark" onClick={() => console.log("Dependent Task ID:", t)}>
                                         #{t.task_id} - {t.task_title}
                                     </span>
                                 ))}

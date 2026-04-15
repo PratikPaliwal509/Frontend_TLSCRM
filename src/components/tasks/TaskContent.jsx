@@ -100,11 +100,11 @@ const TaskContent = () => {
                     visible_to_client: task?.visible_to_client,
                     client_approval_required: task?.client_approval_required,
                     client_approved: task?.client_approved,
-                    projectName: task?.project?.project_name, 
-                    createdByName: task?.createdBy?.full_name, 
+                    projectName: task?.project?.project_name,
+                    createdByName: task?.createdBy?.full_name,
                     estimated_hours: task?.estimated_hours,
                     blocksTasks: task?.blocksTasks,
-                    dependsOnTasks: task?.dependsOnTasks,   
+                    dependsOnTasks: task?.dependsOnTasks,
                 }))
                 : []
             setTasks(formattedTasks)
@@ -174,6 +174,10 @@ const TaskContent = () => {
             )
         );
     };
+    const handleDeleteTask = (taskId) => {
+        setTasks(prev => prev.filter(task => task.id !== taskId));
+        setSelectedTask(null);
+    };
     return (
         <>
             {/* <TaskSidebar
@@ -187,7 +191,7 @@ const TaskContent = () => {
 
 
             <ToastProvider />
-            <TasksDetails task={selectedTask} user_id={user_id} onStatusChange={handleTaskStatusUpdate} onPriorityChange={handleTaskPriorityUpdate} />
+            <TasksDetails onDeleteTask={handleDeleteTask} task={selectedTask} user_id={user_id} onStatusChange={handleTaskStatusUpdate} onPriorityChange={handleTaskPriorityUpdate} />
 
             <div className="content-area">
                 <PerfectScrollbar>
