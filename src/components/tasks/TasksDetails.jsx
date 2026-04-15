@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FiAlertOctagon, FiAlertTriangle, FiArchive, FiArrowLeft, FiBell, FiBellOff, FiBookmark, FiCalendar, FiEye, FiEyeOff, FiInfo, FiLink2, FiPlus, FiSlash, FiSliders, FiStar, FiTrash2 } from 'react-icons/fi'
+import { FiAlertOctagon,FiEdit, FiAlertTriangle, FiArchive, FiArrowLeft, FiBell, FiBellOff, FiBookmark, FiCalendar, FiEye, FiEyeOff, FiInfo, FiLink2, FiPlus, FiSlash, FiSliders, FiStar, FiTrash2 } from 'react-icons/fi'
 import Dropdown from '@/components/shared/Dropdown'
 import ReactQuill from 'react-quill';
 import TaskDateRange from './TaskDateRange';
@@ -62,7 +62,6 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
     const createdBy = task?.created_by;
     // const selectedTags = taskLabelsOptions.filter(opt =>
     //     tags?.includes(opt.value)
-
     // )
     const [usersList, setUsersList] = useState([])
     const [users, setUsers] = useState([])
@@ -77,10 +76,11 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
 
     const [comments, setComments] = useState([])
     const [loading, setLoading] = useState(false)
-
+    const [isEditingDesc, setIsEditingDesc] = useState(false);
+    const [taskDescription, setTaskDescription] = useState(description);
     const isAssignedUser = assignedUserIds.includes(user_id)
-const isCreatedByUser = createdBy === user_id
-console.log(isCreatedByUser)
+    const isCreatedByUser = createdBy === user_id
+    console.log(isCreatedByUser)
     const fetchComments = async () => {
         setLoading(true)
         try {
@@ -111,6 +111,7 @@ console.log(isCreatedByUser)
         setStatus(task?.status || 'to_do');
         setPriority(task?.priority || 'medium');
         setTaskType(task?.task_type || '');
+        setTaskDescription(task?.description || '');
         if (task?.tags) {
             const mappedTags = taskLabelsOptions.filter(opt =>
                 task.tags.includes(opt.value)
@@ -411,61 +412,94 @@ console.log(isCreatedByUser)
             topTost('Failed to remove user', 'error')
         }
     }
-    const handleDeleteTask = async () => {
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
+    const handleUpdateDescription = async () => {
+        if (!taskDescription.trim()) {
+            topTost("Description cannot be empty", "warning");
+            return;
+        }
 
-    try {
-        const res = await fetch(
-            `https://api-0ggv.onrender.com/api/tasks/${id}`,
-            {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-
-        // ✅ handle non-JSON safely
-        let data = null;
         try {
-            data = await res.json();
-        } catch {
-            // ignore if no JSON
+            const res = await fetch(
+                `https://api-0ggv.onrender.com/api/tasks/${id}/description`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ description: taskDescription }),
+                }
+            );
+
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                throw new Error(data?.message || "Failed to update description");
+            }
+
+            topTost("Description updated successfully", "success");
+            setIsEditingDesc(false);
+
+        } catch (err) {
+            console.error(err);
+            topTost(err.message || "Error updating description", "error");
         }
+    };
+    const handleDeleteTask = async () => {
+        if (!window.confirm("Are you sure you want to delete this task?")) return;
 
-        // ❌ API error handling
-        if (!res.ok) {
-            const message =
-                data?.message ||
-                data?.error ||
-                `Failed to delete task (Status: ${res.status})`;
+        try {
+            const res = await fetch(
+                `https://api-0ggv.onrender.com/api/tasks/${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-            throw new Error(message);
+            // ✅ handle non-JSON safely
+            let data = null;
+            try {
+                data = await res.json();
+            } catch {
+                // ignore if no JSON
+            }
+
+            // ❌ API error handling
+            if (!res.ok) {
+                const message =
+                    data?.message ||
+                    data?.error ||
+                    `Failed to delete task (Status: ${res.status})`;
+
+                throw new Error(message);
+            }
+
+            // ✅ success
+            toast.success(data?.message || "Task deleted successfully", "success");
+
+            // ✅ update parent UI safely
+            if (typeof onDeleteTask === "function") {
+                onDeleteTask(id);
+            }
+
+        } catch (err) {
+            console.error("Delete Task Error:", err);
+
+            // ✅ better user message
+            let errorMessage = "Something went wrong while deleting task";
+
+            if (err.name === "TypeError") {
+                errorMessage = "Network error. Please check your connection.";
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+
+            toast.error(errorMessage, "error");
         }
-
-        // ✅ success
-        toast.success(data?.message || "Task deleted successfully", "success");
-
-        // ✅ update parent UI safely
-        if (typeof onDeleteTask === "function") {
-            onDeleteTask(id);
-        }
-
-    } catch (err) {
-        console.error("Delete Task Error:", err);
-
-        // ✅ better user message
-        let errorMessage = "Something went wrong while deleting task";
-
-        if (err.name === "TypeError") {
-            errorMessage = "Network error. Please check your connection.";
-        } else if (err.message) {
-            errorMessage = err.message;
-        }
-
-        toast.error(errorMessage, "error");
-    }
-};
+    };
     return (
         <div
             className="offcanvas offcanvas-end w-50"
@@ -583,13 +617,41 @@ console.log(isCreatedByUser)
             <div className="offcanvas-body">
                 <div className="col-12">
                     <div className="form-group mb-4">
-                        <label className="form-label">Description:</label>
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                            <label className="form-label mb-0">Description:</label>
+
+                            {!isEditingDesc ? (
+                                <FiEdit
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => setIsEditingDesc(true)}
+                                />
+                            ) : (
+                                <div className="d-flex gap-2">
+                                    <button
+                                        className="btn btn-sm btn-success"
+                                        onClick={handleUpdateDescription}
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        className="btn btn-sm btn-secondary"
+                                        onClick={() => {
+                                            setIsEditingDesc(false);
+                                            setTaskDescription(description); // reset
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            )}
+                        </div>
 
                         <textarea
                             className="form-control"
                             rows={4}
-                            value={description}
+                            value={taskDescription}
                             onChange={(e) => setTaskDescription(e.target.value)}
+                            disabled={!isEditingDesc}
                             placeholder="Enter task description..."
                         />
                     </div>
