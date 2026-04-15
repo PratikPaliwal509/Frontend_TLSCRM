@@ -61,6 +61,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
     // const selectedTags = taskLabelsOptions.filter(opt =>
     //     tags?.includes(opt.value)
     // )
+    const [isUpdatingDesc, setIsUpdatingDesc] = useState(false);
     const [usersList, setUsersList] = useState([])
     const [users, setUsers] = useState([])
     const [assignees, setAssignees] = useState([])
@@ -410,44 +411,46 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
             topTost('Failed to remove user', 'error')
         }
     }
-   const handleUpdateDescription = async () => {
-    if (!taskDescription.trim()) {
-        topTost("Description cannot be empty", "warning");
-        return;
-    }
+    const handleUpdateDescription = async () => {
+        if (!taskDescription.trim()) {
+            topTost("Description cannot be empty", "warning");
+            return;
+        }
+        setIsUpdatingDesc(true);
+        try {
+            const res = await fetch(
+                `https://api-0ggv.onrender.com/api/tasks/${id}/description`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ description: taskDescription }),
+                }
+            );
 
-    try {
-        const res = await fetch(
-            `https://api-0ggv.onrender.com/api/tasks/${id}/description`,
-            {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ description: taskDescription }),
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                throw new Error(data?.message || "Failed to update description");
             }
-        );
 
-        const data = await res.json().catch(() => null);
+            // ✅ IMPORTANT FIX: send updated value to parent (Kanban)
+            if (onDescriptionChange) {
+                onDescriptionChange(id, taskDescription);
+            }
 
-        if (!res.ok) {
-            throw new Error(data?.message || "Failed to update description");
+             toast.success("Description updated successfully", "success");
+            setIsEditingDesc(false);
+
+        } catch (err) {
+            console.error(err);
+            toast.error(err.message || "Error updating description", "error");
+        } finally {
+            setIsUpdatingDesc(false); // 🔥 stop loading
         }
-
-        // ✅ IMPORTANT FIX: send updated value to parent (Kanban)
-        if (onDescriptionChange) {
-            onDescriptionChange(id, taskDescription);
-        }
-
-        topTost("Description updated successfully", "success");
-        setIsEditingDesc(false);
-
-    } catch (err) {
-        console.error(err);
-        topTost(err.message || "Error updating description", "error");
-    }
-};
+    };
     const handleDeleteTask = async () => {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
 
@@ -631,10 +634,18 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                             ) : (
                                 <div className="d-flex gap-2">
                                     <button
-                                        className="btn btn-sm btn-success"
+                                        className="btn btn-sm btn-success d-flex align-items-center"
                                         onClick={handleUpdateDescription}
+                                        disabled={isUpdatingDesc}
                                     >
-                                        Save
+                                        {isUpdatingDesc ? (
+                                            <>
+                                                <span className="spinner-border spinner-border-sm me-2" />
+                                                Saving...
+                                            </>
+                                        ) : (
+                                            "Save"
+                                        )}
                                     </button>
                                     <button
                                         className="btn btn-sm btn-secondary"
