@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FiAlertOctagon,FiEdit, FiAlertTriangle, FiArchive, FiArrowLeft, FiBell, FiBellOff, FiBookmark, FiCalendar, FiEye, FiEyeOff, FiInfo, FiLink2, FiPlus, FiSlash, FiSliders, FiStar, FiTrash2 } from 'react-icons/fi'
+import { FiAlertOctagon, FiEdit, FiAlertTriangle, FiArchive, FiArrowLeft, FiBell, FiBellOff, FiBookmark, FiCalendar, FiEye, FiEyeOff, FiInfo, FiLink2, FiPlus, FiSlash, FiSliders, FiStar, FiTrash2 } from 'react-icons/fi'
 import Dropdown from '@/components/shared/Dropdown'
 import ReactQuill from 'react-quill';
 import TaskDateRange from './TaskDateRange';
@@ -38,7 +38,7 @@ const detailsMoreOptions = [
 ];
 
 
-const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDeleteTask }) => {
+const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDeleteTask, onDescriptionChange }) => {
     const [status, setStatus] = useState(task?.status || 'to_do');
     const [priority, setPriority] = useState(task?.priority || 'medium');
     const [taskType, setTaskType] = useState(task?.taskType || '');
@@ -410,39 +410,44 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
             topTost('Failed to remove user', 'error')
         }
     }
-    const handleUpdateDescription = async () => {
-        if (!taskDescription.trim()) {
-            topTost("Description cannot be empty", "warning");
-            return;
-        }
+   const handleUpdateDescription = async () => {
+    if (!taskDescription.trim()) {
+        topTost("Description cannot be empty", "warning");
+        return;
+    }
 
-        try {
-            const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}/description`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ description: taskDescription }),
-                }
-            );
-
-            const data = await res.json().catch(() => null);
-
-            if (!res.ok) {
-                throw new Error(data?.message || "Failed to update description");
+    try {
+        const res = await fetch(
+            `https://api-0ggv.onrender.com/api/tasks/${id}/description`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ description: taskDescription }),
             }
+        );
 
-            topTost("Description updated successfully", "success");
-            setIsEditingDesc(false);
+        const data = await res.json().catch(() => null);
 
-        } catch (err) {
-            console.error(err);
-            topTost(err.message || "Error updating description", "error");
+        if (!res.ok) {
+            throw new Error(data?.message || "Failed to update description");
         }
-    };
+
+        // ✅ IMPORTANT FIX: send updated value to parent (Kanban)
+        if (onDescriptionChange) {
+            onDescriptionChange(id, taskDescription);
+        }
+
+        topTost("Description updated successfully", "success");
+        setIsEditingDesc(false);
+
+    } catch (err) {
+        console.error(err);
+        topTost(err.message || "Error updating description", "error");
+    }
+};
     const handleDeleteTask = async () => {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
 

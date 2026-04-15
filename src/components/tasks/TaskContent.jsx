@@ -178,6 +178,17 @@ const TaskContent = () => {
         setTasks(prev => prev.filter(task => task.id !== taskId));
         setSelectedTask(null);
     };
+    const handleDescriptionChange = (taskId, newDescription) => {
+        console.log("newDescription", taskId, newDescription)
+        setTasks(prev =>
+            prev.map(task => {
+                console.log("task.id", task.id, task.description, taskId)
+                return task.id === taskId
+                    ? { ...task, description: newDescription }
+                    : task
+            })
+        );
+    };
     return (
         <>
             {/* <TaskSidebar
@@ -191,7 +202,7 @@ const TaskContent = () => {
 
 
             <ToastProvider />
-            <TasksDetails onDeleteTask={handleDeleteTask} task={selectedTask} user_id={user_id} onStatusChange={handleTaskStatusUpdate} onPriorityChange={handleTaskPriorityUpdate} />
+            <TasksDetails onDeleteTask={handleDeleteTask} task={selectedTask} user_id={user_id} onStatusChange={handleTaskStatusUpdate} onPriorityChange={handleTaskPriorityUpdate} onDescriptionChange={handleDescriptionChange} />
 
             <div className="content-area">
                 <PerfectScrollbar>
