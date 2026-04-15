@@ -18,8 +18,6 @@ import AddAttachment from './TaskAttachment';
 import useVerifyRole from '@/utils/canRemoveAssognee'
 import { getUserRole } from "@/utils/verifyRole"
 import AdminTaskTimelogs from '../AdminTaskTimelogs';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-
 import { toast } from 'react-toastify'
 const detailsMoreOptions = [
     { label: "Make Unread", icon: <FiEyeOff /> },
