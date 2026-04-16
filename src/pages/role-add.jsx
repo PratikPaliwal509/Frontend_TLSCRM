@@ -23,39 +23,92 @@ const VIEW_SCOPES = {
 ============================ */
 export const permissionPages = [
     { key: 'dashboard', label: 'Dashboard', actions: ['view'] },
-    { key: 'users', label: 'Users', actions: ['view', 'create', 'edit', 'delete'] },
-    {
-        key: 'clients',
-        label: 'Clients',
-        actions: ['view', 'create', 'edit', 'delete', 'assign'],
-        viewScopes: VIEW_SCOPES.clients,
-    },
-    {
-        key: 'projects',
-        label: 'Projects',
-        actions: ['view', 'create', 'edit', 'delete'],
-        viewScopes: VIEW_SCOPES.projects,
-    },
+
+    { key: 'applications', label: 'Applications', actions: ['view'] },
+
     {
         key: 'tasks',
         label: 'Tasks',
         actions: ['view', 'create', 'edit', 'delete', 'assign'],
         viewScopes: VIEW_SCOPES.tasks,
     },
+
+    {
+        key: 'notes',
+        label: 'Notes',
+        actions: ['view', 'create', 'edit', 'delete'],
+    },
+
+    {
+        key: 'timelogs',
+        label: 'Timelogs',
+        actions: ['view', 'create', 'edit', 'delete'],
+    },
+
+    {
+        key: 'storage',
+        label: 'Storage',
+        actions: ['view'],
+    },
+
+    {
+        key: 'clients',
+        label: 'Clients',
+        actions: ['view', 'create', 'edit', 'delete', 'assign'],
+        viewScopes: VIEW_SCOPES.clients,
+    },
+
+    {
+        key: 'projects',
+        label: 'Projects',
+        actions: ['view', 'create', 'edit', 'delete'],
+        viewScopes: VIEW_SCOPES.projects,
+    },
+
     {
         key: 'teams',
         label: 'Teams',
         actions: ['view', 'create', 'edit', 'delete'],
         viewScopes: VIEW_SCOPES.teams,
     },
+
     {
         key: 'departments',
         label: 'Departments',
         actions: ['view', 'create', 'edit', 'delete'],
         viewScopes: VIEW_SCOPES.departments,
     },
-    { key: 'roles', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
-]
+
+    {
+        key: 'users',
+        label: 'Users',
+        actions: ['view', 'create', 'edit', 'delete'],
+    },
+
+    {
+        key: 'roles',
+        label: 'Roles',
+        actions: ['view', 'create', 'edit', 'delete'],
+    },
+
+    {
+        key: 'settings',
+        label: 'Settings',
+        actions: ['view'],
+    },
+
+    {
+        key: 'help',
+        label: 'Help Center',
+        actions: ['view'],
+    },
+
+    {
+        key: 'authentication',
+        label: 'Authentication',
+        actions: ['view'],
+    },
+];
 
 /* ============================
    COMPONENT
@@ -63,13 +116,12 @@ export const permissionPages = [
 const RolesCreate = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
-
     const [formData, setFormData] = useState({
         role_name: '',
         role_description: '',
         is_system_role: false,
         permissions: {},
-    })
+    });
 
     /* ============================
        PAGE PERMISSION CHECK
@@ -82,17 +134,56 @@ const RolesCreate = () => {
        TOGGLE ACTION
     ============================ */
     const toggleActionPermission = (page, action) => {
-        setFormData(prev => ({
-            ...prev,
-            permissions: {
-                ...prev.permissions,
-                [page]: {
-                    ...prev.permissions?.[page],
-                    [action]: !prev.permissions?.[page]?.[action],
+        setFormData(prev => {
+
+            // 🔒 BLOCK AUTHENTICATION EDIT
+            if (page === "authentication") return prev;
+
+            const currentValue = prev.permissions?.[page]?.[action];
+            const newValue = !currentValue;
+
+            // 🔥 APPLICATION DEPENDENCY
+            if (page === "applications" && action === "view") {
+
+                if (!newValue) {
+                    const { tasks, notes, timelogs, storage, ...rest } = prev.permissions;
+
+                    return {
+                        ...prev,
+                        permissions: {
+                            ...rest,
+                            applications: { view: false },
+                        },
+                    };
+                }
+
+                return {
+                    ...prev,
+                    permissions: {
+                        ...prev.permissions,
+                        applications: { view: true },
+                    },
+                };
+            }
+
+            // ✅ NORMAL TOGGLE
+            return {
+                ...prev,
+                permissions: {
+                    ...prev.permissions,
+                    [page]: {
+                        view: false,
+                        create: false,
+                        edit: false,
+                        delete: false,
+                        assign: false,
+                        ...prev.permissions?.[page],
+                        [action]: newValue,
+                    },
                 },
-            },
-        }))
-    }
+            };
+        });
+    };
 
     /* ============================
        VIEW SCOPE
@@ -114,6 +205,7 @@ const RolesCreate = () => {
        SUBMIT
     ============================ */
     const handleSubmit = async () => {
+
         if (!formData.role_name.trim()) {
             toast.error('Role Name is required')
             return
@@ -166,7 +258,7 @@ const RolesCreate = () => {
                     />
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     )
 }

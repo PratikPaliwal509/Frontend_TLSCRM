@@ -22,40 +22,92 @@ const VIEW_SCOPES = {
 ============================ */
 const permissionPages = [
   { key: 'dashboard', label: 'Dashboard', actions: ['view'] },
-  { key: 'users', label: 'Users', actions: ['view', 'create', 'edit', 'delete'] },
-  {
-    key: 'clients',
-    label: 'Clients',
-    actions: ['view', 'create', 'edit', 'delete', 'assign'],
-    viewScopes: VIEW_SCOPES.clients,
-  },
-  {
-    key: 'projects',
-    label: 'Projects',
-    actions: ['view', 'create', 'edit', 'delete'],
-    viewScopes: VIEW_SCOPES.projects,
-  },
+
+  { key: 'applications', label: 'Applications', actions: ['view'] },
+
   {
     key: 'tasks',
     label: 'Tasks',
     actions: ['view', 'create', 'edit', 'delete', 'assign'],
     viewScopes: VIEW_SCOPES.tasks,
   },
+
+  {
+    key: 'notes',
+    label: 'Notes',
+    actions: ['view', 'create', 'edit', 'delete'],
+  },
+
+  {
+    key: 'timelogs',
+    label: 'Timelogs',
+    actions: ['view', 'create', 'edit', 'delete'],
+  },
+
+  {
+    key: 'storage',
+    label: 'Storage',
+    actions: ['view'],
+  },
+
+  {
+    key: 'clients',
+    label: 'Clients',
+    actions: ['view', 'create', 'edit', 'delete', 'assign'],
+    viewScopes: VIEW_SCOPES.clients,
+  },
+
+  {
+    key: 'projects',
+    label: 'Projects',
+    actions: ['view', 'create', 'edit', 'delete'],
+    viewScopes: VIEW_SCOPES.projects,
+  },
+
   {
     key: 'teams',
     label: 'Teams',
     actions: ['view', 'create', 'edit', 'delete'],
     viewScopes: VIEW_SCOPES.teams,
   },
+
   {
     key: 'departments',
     label: 'Departments',
     actions: ['view', 'create', 'edit', 'delete'],
     viewScopes: VIEW_SCOPES.departments,
   },
-  { key: 'roles', label: 'Roles', actions: ['view', 'create', 'edit', 'delete'] },
-];
 
+  {
+    key: 'users',
+    label: 'Users',
+    actions: ['view', 'create', 'edit', 'delete'],
+  },
+
+  {
+    key: 'roles',
+    label: 'Roles',
+    actions: ['view', 'create', 'edit', 'delete'],
+  },
+
+  {
+    key: 'settings',
+    label: 'Settings',
+    actions: ['view'],
+  },
+
+  {
+    key: 'help',
+    label: 'Help Center',
+    actions: ['view'],
+  },
+
+  {
+    key: 'authentication',
+    label: 'Authentication',
+    actions: ['view'],
+  },
+];
 const RolesEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -66,7 +118,7 @@ const RolesEdit = () => {
     is_system_role: false,
     permissions: {},
   });
-
+const isApplicationEnabled = formData.permissions?.applications?.view === true;
   /* ============================ 
      PAGE PERMISSION CHECK
   ============================= */
@@ -118,19 +170,50 @@ const RolesEdit = () => {
   /* ============================ 
      TOGGLE PERMISSIONS
   ============================= */
-  const toggleActionPermission = (page, action) => {
-    setFormData(prev => ({
+const toggleActionPermission = (page, action) => {
+  setFormData(prev => {
+    const currentValue = prev.permissions?.[page]?.[action];
+    const newValue = !currentValue;
+
+    // 🔥 If applications is being toggled
+    if (page === "applications" && action === "view") {
+      return {
+        ...prev,
+        permissions: {
+          ...prev.permissions,
+          applications: { view: newValue },
+
+          // ❌ If turned OFF → CLEAR children بالكامل
+          ...(newValue
+            ? {}
+            : {
+                tasks: {},
+                notes: {},
+                timelogs: {},
+                storage: {},
+              }),
+        },
+      };
+    }
+
+    // ✅ Normal toggle
+    return {
       ...prev,
       permissions: {
         ...prev.permissions,
         [page]: {
+          view: false,
+          create: false,
+          edit: false,
+          delete: false,
+          assign: false,
           ...prev.permissions?.[page],
-          [action]: !prev.permissions?.[page]?.[action],
+          [action]: newValue,
         },
       },
-    }));
-  };
-
+    };
+  });
+};
   const handleViewScopeChange = (page, scope) => {
     setFormData(prev => ({
       ...prev,
@@ -190,6 +273,7 @@ const RolesEdit = () => {
           onChange={handleChange}
           onToggleAction={toggleActionPermission}
           onViewScopeChange={handleViewScopeChange}
+           isApplicationEnabled={isApplicationEnabled}
         />
       </div>
     </div>

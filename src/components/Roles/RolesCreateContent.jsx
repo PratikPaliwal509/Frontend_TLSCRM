@@ -7,9 +7,30 @@ const RolesCreateContent = ({
     onViewScopeChange,
     onChange,
 }) => {
+
+    // ✅ CHECK APPLICATION ENABLED
+    const isApplicationEnabled = formData.permissions?.applications?.view === true;
+
+    // ✅ DISABLE LOGIC
+    const isDisabled = (pageKey) => {
+        // 🔒 Always disable authentication
+        if (pageKey === "authentication") return true;
+
+        // ❌ Disable child modules if applications OFF
+        if (
+            ["tasks", "notes", "timelogs", "storage"].includes(pageKey) &&
+            !isApplicationEnabled
+        ) {
+            return true;
+        }
+
+        return false;
+    };
+
     return (
         <div className="card w-100">
             <div className="card-body">
+
                 {/* ROLE NAME */}
                 <div className="mb-3">
                     <label className="form-label">Role Name</label>
@@ -59,6 +80,7 @@ const RolesCreateContent = ({
                                                 !!formData.permissions?.[page.key]?.[action]
                                             }
                                             onChange={() => onToggleAction(page.key, action)}
+                                            disabled={isDisabled(page.key)}
                                         />
                                         <label className="form-check-label text-capitalize">
                                             {action}
@@ -78,6 +100,7 @@ const RolesCreateContent = ({
                                     className="form-select"
                                     value={formData.permissions?.[page.key]?.view || ''}
                                     onChange={e => onViewScopeChange(page.key, e.target.value)}
+                                    disabled={isDisabled(page.key)}
                                 >
                                     <option value="">Select scope</option>
                                     {page.viewScopes.map(scope => (
@@ -88,8 +111,17 @@ const RolesCreateContent = ({
                                 </select>
                             </div>
                         )}
+
+                        {/* OPTIONAL MESSAGE */}
+                        {!isApplicationEnabled &&
+                            ["tasks", "notes", "timelogs", "storage"].includes(page.key) && (
+                                <div className="text-muted fs-12 mt-1">
+                                    Enable Applications to use this module
+                                </div>
+                            )}
                     </div>
                 ))}
+
             </div>
         </div>
     )

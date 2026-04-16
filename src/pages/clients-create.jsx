@@ -179,7 +179,7 @@ const ClientsCreate = () => {
             })
             if (!response.ok) {
                 const errorData = await response.json()
-                toast.error("Something went wrong")
+                // toast.error("Something went wrong")
                 throw new Error(errorData?.message || 'Something went wrong')
             }
 
@@ -191,7 +191,9 @@ const ClientsCreate = () => {
             toast.success('Client created successfully');
             navigate(`/clients/view/${clientId}`) // or your listing page
         } catch (error) {
-            console.error('Create client error', error)
+            console.log(error)
+            // console.error('Create client error', error)
+            toast.error(error.message)
         } finally {
             setLoading(false)
         }

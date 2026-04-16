@@ -7,6 +7,26 @@ const RolesEditContent = ({
   onToggleAction,
   onViewScopeChange,
 }) => {
+
+  // ✅ CHECK APPLICATION ENABLED
+  const isApplicationEnabled = formData.permissions?.applications?.view === true;
+
+  // ✅ DISABLE LOGIC
+  const isDisabled = (pageKey) => {
+    // 🔒 Authentication always disabled
+    if (pageKey === "authentication") return true;
+
+    // ❌ Disable child modules if applications is OFF
+    if (
+      ["tasks", "notes", "timelogs", "storage"].includes(pageKey) &&
+      !isApplicationEnabled
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
   return (
     <div className="card w-100">
       <div className="card-body">
@@ -51,8 +71,9 @@ const RolesEditContent = ({
                     <input
                       type="checkbox"
                       className="form-check-input"
-                      checked={!!formData.permissions?.[page.key]?.[action]}
+                      checked={formData.permissions?.[page.key]?.[action] || false}
                       onChange={() => onToggleAction(page.key, action)}
+                      disabled={isDisabled(page.key)}
                     />
                     <label className="form-check-label text-capitalize">
                       {action}
@@ -72,6 +93,7 @@ const RolesEditContent = ({
                   className="form-select"
                   value={formData.permissions?.[page.key]?.view || ''}
                   onChange={e => onViewScopeChange(page.key, e.target.value)}
+                  disabled={isDisabled(page.key)}
                 >
                   <option value="">Select scope</option>
                   {page.viewScopes.map(scope => (
@@ -100,6 +122,7 @@ const RolesEditContent = ({
             System roles cannot be deleted
           </div>
         </div>
+
       </div>
     </div>
   );
