@@ -19,7 +19,6 @@ const TabCompleted = ({ formData, resetForm }) => {
       end_date &&
       new Date(end_date) < new Date(start_date)
     ) {
-      console.log('Date validation failed:', { start_date, end_date });
 
       setError('End date cannot be before start date');
       setStatus('error');

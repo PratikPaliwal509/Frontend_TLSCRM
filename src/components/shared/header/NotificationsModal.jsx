@@ -66,7 +66,6 @@ const NotificationsModal = () => {
     fetchNotifications();
     // Ask permission once
     if ("Notification" in window && Notification.permission !== "granted") {
-      console.log("granted")
       Notification.requestPermission();
     }
 
@@ -94,7 +93,6 @@ const NotificationsModal = () => {
 
       // Show system notification only if tab not active
       if (document.visibilityState !== "visible") {
-        console.log("visibilityState")
         showSystemNotification(notification.title, notification.message);
       }
 

@@ -46,7 +46,6 @@ const TaskContent = () => {
                 throw new Error(errorData.message || 'Failed to fetch tasks');
             }
             const json = await res.json()
-            console.log(JSON.stringify(json.data))
             const formattedTasks = Array.isArray(json.data)
                 ? json.data.map((task) => ({
                     id: task.task_id,
@@ -179,10 +178,8 @@ const TaskContent = () => {
         setSelectedTask(null);
     };
     const handleDescriptionChange = (taskId, newDescription) => {
-        console.log("newDescription", taskId, newDescription)
         setTasks(prev =>
             prev.map(task => {
-                console.log("task.id", task.id, task.description, taskId)
                 return task.id === taskId
                     ? { ...task, description: newDescription }
                     : task

@@ -446,8 +446,6 @@ const handleCreateTask = async () => {
                         {/* Date Range */}
                         <TaskDateRange
                             onChange={(start, end) => {
-                                console.log('Selected Start Date:', start);
-                                console.log('Selected End Date:', end);
                                 const addOneDay = (dateStr) => {
                                     if (!dateStr) return null
                                     const d = new Date(dateStr)

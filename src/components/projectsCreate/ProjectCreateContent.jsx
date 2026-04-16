@@ -120,7 +120,6 @@ const ProjectCreateContent = () => {
     //             setError(true)
     //             return
     //         }
-    //         console.log(formData.project_manager_id)
     //         if (index > 3 && formData.project_manager_id === null) {
     //             setError(true)
     //             return
@@ -176,7 +175,6 @@ const ProjectCreateContent = () => {
                 setError(true)
                 return
             }
-            console.log(formData.project_manager_id)
             if (index > 3 && formData.project_manager_id === null) {
                 setError(true)
                 return

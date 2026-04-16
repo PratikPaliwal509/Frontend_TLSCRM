@@ -118,7 +118,6 @@ const NotesContent = () => {
 
     const filteredData = selectTab === "alls" ? data : data.filter(note => note.category === selectTab)
     
-    console.log("filteredData", filteredData)
     const handleDeleteNote = (id) => setData(prev => prev.filter(note => note.id !== id))
     const handleFavourite = (id) =>
         setFavourites(prev =>

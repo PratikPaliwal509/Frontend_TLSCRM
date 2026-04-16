@@ -7,7 +7,6 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
 
     // Update state when props change (e.g., when task data loads)
     useEffect(() => {
-//         console.log('initialStartDate:', initialStartDate);
 //         const formatDate = (date) => {
 //     if (!date) return '';
 //     const d = new Date(date);
@@ -16,8 +15,6 @@ const TaskDateRange = ({ initialStartDate, initialEndDate, onChange }) => {
 //     const year = d.getFullYear();
 //     return `${day}/${month}/${year}`;
 // };
-        // console.log('initialStartDate:', initialStartDate);
-        // console.log('initialEndDate:', initialEndDate);
         setStartDate(initialStartDate || null);
         setEndDate(initialEndDate || null);
         // setStartDate(initialStartDate || null);

@@ -118,7 +118,7 @@ const Menus = () => {
 
     // ✅ DEBUG (optional)
     useEffect(() => {
-        console.log("Permissions:", permissions);
+        // console.log("Permissions:", permissions);
     }, [permissions]);
 
     if (loading) return <Loader />;

@@ -89,7 +89,6 @@ const KanbanBoard = ({ tasks = [] }) => {
         }
     }
     const handleDeleteTask = (taskId) => {
-        console.log("taskId",taskId)
         setBoardTasks((prev) => prev.filter((t) => t.task_id !== taskId))
         setSelectedTask(null) // optional: close details
     }
