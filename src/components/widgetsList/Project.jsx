@@ -67,17 +67,18 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
                     {loading && <p className="text-center py-3">Loading projects...</p>}
                     {error && <p className="text-center text-danger py-3">{error}</p>}
 
-                    {!loading && !error && currentProjects.map(({ project_id, category, description, logo_url, project_name, tasks }, index) => {
+                    {!loading && !error && currentProjects.map(({ project_id, category, description, logo_url, project_name, tasks, progress_percentage }, index) => {
 
                         // ✅ Calculate progress from tasks //Warning for progress, progress_percentage, 
-                        let progress = 0;
-                        if (tasks.length > 0) {
-                            const totalProgress = tasks.reduce(
-                                (sum, task) => sum + (task.progress_percentage || 0),
-                                0
-                            );
-                            progress = Math.round(totalProgress / tasks.length);
-                        }
+                        // let progress = 0;
+                        let progress = progress_percentage;
+                        // if (tasks.length > 0) {
+                        //     const totalProgress = tasks.reduce(
+                        //         (sum, task) => sum + (task.progress_percentage || 0),
+                        //         0
+                        //     );
+                        //     progress = Math.round(totalProgress / tasks.length);
+                        // }
 
                         // ✅ Auto color based on progress
                         let progress_color = "bg-danger";
