@@ -16,8 +16,8 @@ const App = () => {
 
   return (
     <>
-    <MaintenancePage/>
-      {/* <NavigationProvider>
+    {/* <MaintenancePage/> */}
+      <NavigationProvider>
         <SideBarToggleProvider>
           <RouterProvider router={router}>
           </RouterProvider>
@@ -26,7 +26,7 @@ const App = () => {
       <span style={{ zIndex: 10 }}>
         <ToastContainer position="top-right" autoClose={3000} className={"z-50"} />
       </span>
-      <ThemeCustomizer /> */}
+      <ThemeCustomizer />
     </>
   )
 }
