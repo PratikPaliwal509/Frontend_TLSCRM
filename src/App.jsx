@@ -11,11 +11,13 @@ import SideBarToggleProvider from './contentApi/sideBarToggleProvider';
 import ThemeCustomizer from './components/shared/ThemeCustomizer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import MaintenancePage from './pages/MaintenancePage';
 const App = () => {
 
   return (
     <>
-      <NavigationProvider>
+    <MaintenancePage/>
+      {/* <NavigationProvider>
         <SideBarToggleProvider>
           <RouterProvider router={router}>
           </RouterProvider>
@@ -24,7 +26,7 @@ const App = () => {
       <span style={{ zIndex: 10 }}>
         <ToastContainer position="top-right" autoClose={3000} className={"z-50"} />
       </span>
-      <ThemeCustomizer />
+      <ThemeCustomizer /> */}
     </>
   )
 }
