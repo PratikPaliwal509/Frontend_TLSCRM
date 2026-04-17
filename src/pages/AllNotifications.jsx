@@ -1,14 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
+import PageHeader from "@/components/shared/pageHeader/PageHeader";
+import Footer from "@/components/shared/Footer";
+import NotificationsHeader from "@/components/NotificationsHeader";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+const LIMIT = 10;
 
 const AllNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [isAnimating, setIsAnimating] = useState(false);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
   const token = localStorage.getItem("token");
   const socketRef = useRef(null);
@@ -17,12 +22,10 @@ const AllNotifications = () => {
   const fetchNotifications = async (pageNo) => {
     try {
       setLoading(true);
-
-      // ✅ CLEAR OLD DATA (IMPORTANT FIX)
-      setNotifications([]);
+      // setNotifications([]);
 
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/notification?page=${pageNo}&limit=10`,
+        `https://api-0ggv.onrender.com/api/notification?page=${pageNo}&limit=${LIMIT}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -32,13 +35,7 @@ const AllNotifications = () => {
 
       if (json.success) {
         setNotifications(json.data || []);
-
-        // ✅ Handle total pages
-        if (json.total) {
-          setTotalPages(Math.ceil(json.total / 10));
-        } else {
-          setTotalPages(json.data.length < 10 ? pageNo : pageNo + 1);
-        }
+        setTotal(json.total || 0); // 👈 IMPORTANT (update backend if missing)
       }
     } catch (err) {
       console.error(err);
@@ -47,7 +44,6 @@ const AllNotifications = () => {
     }
   };
 
-  /* ================= PAGE CHANGE ================= */
   useEffect(() => {
     fetchNotifications(page);
   }, [page]);
@@ -62,15 +58,12 @@ const AllNotifications = () => {
     });
 
     socketRef.current.on("notification", (notification) => {
-      // Only push if on first page
       if (page === 1) {
-        setNotifications(prev => [notification, ...prev]);
+        setNotifications((prev) => [notification, ...prev]);
       }
     });
 
-    return () => {
-      socketRef.current?.disconnect();
-    };
+    return () => socketRef.current?.disconnect();
   }, [page]);
 
   /* ================= DELETE ================= */
@@ -78,8 +71,8 @@ const AllNotifications = () => {
     setDeletingId(id);
 
     setTimeout(() => {
-      setNotifications(prev =>
-        prev.filter(n => n.notification_id !== id)
+      setNotifications((prev) =>
+        prev.filter((n) => n.notification_id !== id)
       );
       setDeletingId(null);
     }, 300);
@@ -92,122 +85,171 @@ const AllNotifications = () => {
 
   /* ================= MARK READ ================= */
   const handleMarkAsViewed = async (id) => {
-    try {
-      setNotifications(prev =>
-        prev.map(n =>
-          n.notification_id === id ? { ...n, is_read: true } : n
-        )
-      );
+    setNotifications((prev) =>
+      prev.map((n) =>
+        n.notification_id === id ? { ...n, is_read: true } : n
+      )
+    );
 
-      await fetch(
-        `https://api-0ggv.onrender.com/api/notification/${id}/read`,
-        {
-          method: "PATCH",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    await fetch(
+      `https://api-0ggv.onrender.com/api/notification/${id}/read`,
+      {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
   };
+  const handlePageChange = (newPage) => {
+    if (newPage === page || newPage < 1 || newPage > totalPages) return;
 
-  /* ================= PAGE CHANGE ================= */
-  const handlePageChange = (pageNo) => {
-    if (pageNo < 1 || pageNo > totalPages) return;
-    setPage(pageNo);
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      setPage(newPage);
+      setIsAnimating(false);
+    }, 250); // match CSS animation
   };
+  /* ================= PAGINATION ================= */
+  const totalPages = Math.ceil(total / LIMIT);
+
+  const start = (page - 1) * LIMIT + 1;
+  const end = Math.min(page * LIMIT, total);
 
   return (
-    <div className="container py-4">
-      <h4 className="fw-bold mb-4">All Notifications</h4>
+    <>
+      <PageHeader>
+        <NotificationsHeader />
+      </PageHeader>
 
-      {/* ✅ FULL PAGE LOADER */}
-      {loading ? (
-        <div className="d-flex justify-content-center align-items-center py-5">
-          <div className="spinner-border text-primary" />
-        </div>
-      ) : (
-        <>
-          {notifications.length === 0 ? (
-            <p className="text-muted">No notifications available.</p>
-          ) : (
-            notifications.map(notification => (
+      <div className="main-content">
+        <div className="row">
+          <div className="col-12">
+
+            <div className="card">
               <div
-                key={notification.notification_id}
-                className={`border rounded p-3 mb-2 d-flex justify-content-between
-                ${!notification.is_read ? "bg-light" : ""}
-                ${deletingId === notification.notification_id ? "opacity-50" : ""}
-              `}
+                className={`w-100 d-flex justify-content-center align-items-center flex-column 
+                ${isAnimating ? "table-fade-out" : "table-fade-in"}`}
               >
-                <Link
-                  to={notification.action_url}
-                  onClick={() =>
-                    handleMarkAsViewed(notification.notification_id)
-                  }
-                >
-                  <div>
-                    <p className="mb-1 fw-semibold">{notification.title}</p>
-                    <small className="text-muted">{notification.message}</small>
+
+                {/* LOADER */}
+                {loading ? (
+                  <div className="text-center py-5">
+                    <div className="spinner-border text-primary" />
                   </div>
-                </Link>
+                ) : notifications.length === 0 ? (
+                  <p className="text-muted">No notifications found</p>
+                ) : (
+                  <>
+                    {/* LIST */}
+                    {notifications.map((notification) => (
+                      <div
+                        key={notification.notification_id}
+                        className={`d-flex w-50 justify-content-between align-items-start border-bottom py-3 px-3
+                        ${!notification.is_read ? "bg-light" : ""}
+                      `}
+                      >
+                        <Link
+                          to={notification.action_url}
+                          className="text-decoration-none text-dark flex-grow-1"
+                          onClick={() =>
+                            handleMarkAsViewed(notification.notification_id)
+                          }
+                        >
+                          <p className="mb-1 fw-semibold">
+                            {notification.title}
+                          </p>
+                          <small className="text-muted">
+                            {notification.message}
+                          </small>
+                          <div className="fs-12 text-muted mt-1">
+                            {new Date(
+                              notification.created_at
+                            ).toLocaleString()}
+                          </div>
+                        </Link>
 
-                <button
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() =>
-                    removeNotification(notification.notification_id)
-                  }
-                >
-                  {deletingId === notification.notification_id
-                    ? "Deleting…"
-                    : "Delete"}
-                </button>
+                        <button
+                          className="btn btn-sm btn-light border"
+                          onClick={() =>
+                            removeNotification(notification.notification_id)
+                          }
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </>
+                )}
+
               </div>
-            ))
-          )}
-        </>
-      )}
 
-      {/* ✅ PAGINATION */}
-      {!loading && totalPages > 1 && (
-        <div className="d-flex justify-content-end mt-4">
-          <ul className="pagination mb-0">
+              {/* ✅ TABLE STYLE PAGINATION */}
+              {!loading && total > 0 && (
+                <div className="card-footer d-flex justify-content-between align-items-center">
 
-            <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => handlePageChange(page - 1)}
-              >
-                Previous
-              </button>
-            </li>
+                  {/* LEFT TEXT */}
+                  <div className="text-muted">
+                    Showing {start} to {end} of {total} entries
+                  </div>
 
-            {[...Array(totalPages)].map((_, i) => (
-              <li
-                key={i}
-                className={`page-item ${page === i + 1 ? "active" : ""}`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => handlePageChange(i + 1)}
-                >
-                  {i + 1}
-                </button>
-              </li>
-            ))}
+                  {/* RIGHT PAGINATION */}
+                 <ul className="pagination mb-0">
 
-            <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => handlePageChange(page + 1)}
-              >
-                Next
-              </button>
-            </li>
+  {/* ⬅️ LEFT ARROW */}
+  <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+    <button
+      className="page-link d-flex align-items-center justify-content-center"
+      onClick={() => handlePageChange(page - 1)}
+      style={{ width: "36px", height: "36px" }}
+    >
+      <FiChevronLeft size={16} />
+    </button>
+  </li>
 
-          </ul>
+  {/* PAGE NUMBERS */}
+  {[...Array(totalPages)].map((_, i) => {
+    const isActive = page === i + 1;
+    return (
+      <li key={i} className={`page-item ${isActive ? "active" : ""}`}>
+        <button
+          className="page-link"
+          onClick={() => handlePageChange(i + 1)}
+          style={{
+            color: isActive ? "#fff" : "#3454d1",
+            backgroundColor: isActive ? "#3454d1" : "transparent",
+            borderColor: "#3454d1",
+            minWidth: "36px",
+            height: "36px",
+          }}
+        >
+          {i + 1}
+        </button>
+      </li>
+    );
+  })}
+
+  {/* ➡️ RIGHT ARROW */}
+  <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+    <button
+      className="page-link d-flex align-items-center justify-content-center"
+      onClick={() => handlePageChange(page + 1)}
+      style={{ width: "36px", height: "36px" }}
+    >
+      <FiChevronRight size={16} />
+    </button>
+  </li>
+
+</ul>
+                </div>
+              )}
+
+            </div>
+          </div>
         </div>
-      )}
-    </div>
+      </div>
+
+      <Footer />
+    </>
   );
 };
 

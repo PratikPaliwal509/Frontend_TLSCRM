@@ -161,9 +161,9 @@
 }
 
 .page-number.active {
-  background: #4f46e5;
+  background: #3454d1;
   color: #fff;
-  border-color: #4f46e5;
+  border-color: #3454d1;
 }
 
 .page-btn:disabled {
@@ -182,4 +182,40 @@
 .table-fade-in {
   opacity: 1;
   // transform: translateY(0);
+}
+
+
+//Notification
+.notification-wrapper {
+  max-width: 700px;
+  margin: auto;
+}
+
+.notification-item {
+  background: #ffffff;
+  border: 1px solid #f1f1f1;
+  transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.notification-unread {
+  background: #eef2ff; /* light blue like design */
+}
+
+.notification-avatar img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.notification-content p {
+  font-size: 14px;
+}
+
+.notification-content small {
+  font-size: 12px;
 }
