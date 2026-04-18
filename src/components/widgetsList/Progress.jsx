@@ -27,7 +27,7 @@ const Progress = ({ footerShow, title, btnFooter }) => {
         setError(null);
 
         try {
-            const res = await fetch("https://api-0ggv.onrender.com/api/teams/", {
+            const res = await fetch("https://api-0ggv.onrender.com/api/teams/progress", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
@@ -71,13 +71,27 @@ const Progress = ({ footerShow, title, btnFooter }) => {
                         let progress = 0;
 
                         if (tasks.length > 0) {
-                            const total = tasks.reduce(
-                                (sum, task) => sum + (task.progress_percentage || 0),
-                                0
-                            );
-                            progress = Math.round(total / tasks.length);
-                        }
+                            const totalTasks = tasks.length;
 
+                            const totalProgress = tasks.reduce((sum, task) => {
+                                // ensure safe value
+                                const p = Number(task.progress_percentage) || 0;
+                                return sum + p;
+                            }, 0);
+
+                            // base average progress
+                            const avgProgress = totalProgress / totalTasks;
+
+                            // optional boost for completed tasks
+                            const completedTasks = tasks.filter(
+                                t => t.status === "completed"
+                            ).length;
+
+                            const completionBoost = (completedTasks / totalTasks) * 100;
+
+                            // final blended score (balanced view)
+                            progress = Math.round((avgProgress * 0.7) + (completionBoost * 0.3));
+                        }
                         // ✅ Auto color based on progress
                         let color = "#dc3545"; // red
 
