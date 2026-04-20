@@ -14,7 +14,7 @@ const CheckList = ({ checklist = [], taskID }) => {
   /* Persist checklist to backend */
   const persistChecklist = async (updatedData, rollbackData) => {
     try {
-      await fetch(`https://api-0ggv.onrender.com/api/tasks/${taskID}/checklist`, {
+      await fetch(`http://localhost:5000/api/tasks/${taskID}/checklist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

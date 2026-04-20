@@ -59,8 +59,8 @@ const AddTask = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                // const res = await fetch('https://api-0ggv.onrender.com/api/projects/managed', {
-                const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
+                // const res = await fetch('http://localhost:5000/api/projects/managed', {
+                const res = await fetch('http://localhost:5000/api/projects', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -76,7 +76,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+                const res = await fetch('http://localhost:5000/api/tasks', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -101,7 +101,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -170,7 +170,7 @@ const handleCreateTask = async () => {
 
         try {
             /* -------- Create Task -------- */
-            const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+            const res = await fetch('http://localhost:5000/api/tasks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ const handleCreateTask = async () => {
 
             /* -------- Assign Users (NON-BLOCKING) -------- */
             if (formData.assignees.length > 0) {
-                fetch(`https://api-0ggv.onrender.com/api/tasks/${taskId}/assign`, {
+                fetch(`http://localhost:5000/api/tasks/${taskId}/assign`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -260,7 +260,7 @@ const handleCreateTask = async () => {
 
 //     try {
 //         /* -------- Create Task (WITH ASSIGNEES) -------- */
-//         const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+//         const res = await fetch('http://localhost:5000/api/tasks', {
 //             method: 'POST',
 //             headers: {
 //                 'Content-Type': 'application/json',

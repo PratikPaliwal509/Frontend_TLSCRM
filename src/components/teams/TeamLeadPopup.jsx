@@ -24,7 +24,7 @@ const AddTeam = () => {
       try {
         const token = localStorage.getItem('token')
         const res = await fetch(
-          'https://api-0ggv.onrender.com/api/users/users/by-agency',
+          'http://localhost:5000/api/users/users/by-agency',
           { headers: { Authorization: `Bearer ${token}` } }
         )
         const data = await res.json()
@@ -42,7 +42,7 @@ const AddTeam = () => {
       try {
         const token = localStorage.getItem('token')
         const res = await fetch(
-          'https://api-0ggv.onrender.com/api/departments',
+          'http://localhost:5000/api/departments',
           { headers: { Authorization: `Bearer ${token}` } }
         )
         const data = await res.json()
@@ -75,7 +75,7 @@ const AddTeam = () => {
           : null,
       }
 
-      const res = await fetch('https://api-0ggv.onrender.com/api/teams', {
+      const res = await fetch('http://localhost:5000/api/teams', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

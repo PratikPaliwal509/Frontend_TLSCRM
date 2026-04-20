@@ -28,7 +28,7 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
         setError(null);
 
         try {
-            const res = await fetch("https://api-0ggv.onrender.com/api/projects", {
+            const res = await fetch("http://localhost:5000/api/projects", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",

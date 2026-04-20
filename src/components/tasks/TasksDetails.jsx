@@ -38,7 +38,8 @@ const detailsMoreOptions = [
 ];
 
 
-const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDeleteTask, onDescriptionChange }) => {
+const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDeleteTask, onDescriptionChange,project_name }) => {
+    console.log(task, project_name)
     const [status, setStatus] = useState(task?.status || 'to_do');
     const [priority, setPriority] = useState(task?.priority || 'medium');
     const [taskType, setTaskType] = useState(task?.taskType || '');
@@ -50,8 +51,8 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
     const inputRef = useRef(null);
     const id = task?.id;
     const tags = task?.tags || [];
-    const title = task?.title || '';
-    const projectName = task?.projectName || '';
+    const title = task?.title || task?.task_title || '';
+    const projectName = task?.projectName || task?.project?.project_name || project_name||'';
     const description = task?.description || '';
     const user_img = task?.user_img || 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAmgMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAABQYHBAEC/8QANRAAAgIBAgIHBQcFAQAAAAAAAAECAwQFEQYxEiFBQlFhsSKBkaHBExQjUnFy0TIzYoLhJf/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABYRAQEBAAAAAAAAAAAAAAAAAAARAf/aAAwDAQACEQMRAD8A1IAGmQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAAAAAAAAAARU+K9enVKWBhWdGW341kea37q+pRKanxHg6fJ19KV9yezhVs9n5vsIiXGk+l7OBHo+dr39Cp+4FSr1g8XYN8lDJrsxpPq6T64/HmvgWCEozgpwkpRkt1KL3TRkpM8O65Zplyquk5Ykn7UX3P8AJfUK0IHiakk4tOL6012npAABAAAAAAAAAAAAAAcmq5iwNOvytt3CPsp9sn1L5szCUpTk5zbcpPdt9rL1xvNx0eMVyldFP4NlELhoACoD9AAL1wXnPJ02WNN7yxmkv2vl9UWEpHAs2tSvguUqd37mv5LuRQAEAAAAAAAAAAAAABA8aV9PReku5bFv5r6ooRqOpYizsC/Flt+JBpb9j5r5pGYWQlXOULIuM4ycZJ9jRcTXyACgAALNwJXvnZNnZGpL4v8A4XUgeDcJ4ulu6cdp5L6fX+Xu/V+8niKAAgAAAAAAAAAAAAABWuJeHnmzeZgpfeO/Xy6fmvMsoKMnuqsosdd1c65ruzjsz4NWvxqMmPRyKK7Y+E4pnG9C0ltt6fQn5Lb5CkZqut7Lm+wsegcNXZNkL9QrdWOutQl1Ss8OrsRb8bAw8Z742JTW/wA0IJP4nSKR4kkkkkkuxHoBAAAAAAAAAAAAAAACK1zW6NJr2e1mTJbwqT+b8EUSORfTjVO3ItjVWucpvZFczuMMetuODQ7n+ebcY/Dn6FVz9QydQu+1yrXN9i5Rj+iOUQqayOKdWufsWwpj4QrXq9zmeu6s3v8Af7vcyOBUS9PEurVPd5X2iXdshFp/LclcLjKSajnYqa/PS+X+r/kqYBWoYGpYmoQcsW6M9uceTX6o6zJ6bbKLI2U2Srsj1xlF7NFz4f4ljluOLqHRhfyhYuqM/J+D9SRasoHIAAAQAAAAAAAfry8QI7XNUhpWFK1pStl7NUPGX8IznIvtyb53X2Oyyct5Sfad3EOovUtSssi/wYexUvJdvvI00gAAAAAAAAAALxwnrbzK/uWVNvIrW8JPvxXj5osZlGPfZjX130y6NlclKL8GjT9Py4Z2FTlV9UbI77b8n2r4k1cdAAIAAAAAARfEmW8PR8icXtOa+zjt59XpuShVePLdqMOld6cpP3JJepRTgAVAAAAAAAAAAAC48C5bdWThyl/S1ZBeT6n89n7ynE1wfa69dqj2WQlB/Df6BcaCADIAAAAABTuPf7+F+yfqgC4KqACoAAAAAAAAAAASnDD/APfwv3v0YAXGj9gAMgAAP//Z';
     const start_date = task?.start_date || null;
@@ -84,7 +85,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setLoading(true)
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasksComments/${id}/comments`,
+                `http://localhost:5000/api/tasksComments/${id}/comments`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -136,7 +137,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
 
         const normalized = task.assignments.map(a => ({
             user_id: a.user.user_id,
-            full_name: a.user.full_name,
+            full_name: a.user?.full_name,
             avatar: a.user.avatar || 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAmgMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAABQYHBAEC/8QANRAAAgIBAgIHBQcFAQAAAAAAAAECAwQFEQYxEiFBQlFhsSKBkaHBExQjUnFy0TIzYoLhJf/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABYRAQEBAAAAAAAAAAAAAAAAAAARAf/aAAwDAQACEQMRAD8A1IAGmQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAAAAAAAAAARU+K9enVKWBhWdGW341kea37q+pRKanxHg6fJ19KV9yezhVs9n5vsIiXGk+l7OBHo+dr39Cp+4FSr1g8XYN8lDJrsxpPq6T64/HmvgWCEozgpwkpRkt1KL3TRkpM8O65Zplyquk5Ykn7UX3P8AJfUK0IHiakk4tOL6012npAABAAAAAAAAAAAAAAcmq5iwNOvytt3CPsp9sn1L5szCUpTk5zbcpPdt9rL1xvNx0eMVyldFP4NlELhoACoD9AAL1wXnPJ02WNN7yxmkv2vl9UWEpHAs2tSvguUqd37mv5LuRQAEAAAAAAAAAAAAABA8aV9PReku5bFv5r6ooRqOpYizsC/Flt+JBpb9j5r5pGYWQlXOULIuM4ycZJ9jRcTXyACgAALNwJXvnZNnZGpL4v8A4XUgeDcJ4ulu6cdp5L6fX+Xu/V+8niKAAgAAAAAAAAAAAAABWuJeHnmzeZgpfeO/Xy6fmvMsoKMnuqsosdd1c65ruzjsz4NWvxqMmPRyKK7Y+E4pnG9C0ltt6fQn5Lb5CkZqut7Lm+wsegcNXZNkL9QrdWOutQl1Ss8OrsRb8bAw8Z742JTW/wA0IJP4nSKR4kkkkkkuxHoBAAAAAAAAAAAAAAACK1zW6NJr2e1mTJbwqT+b8EUSORfTjVO3ItjVWucpvZFczuMMetuODQ7n+ebcY/Dn6FVz9QydQu+1yrXN9i5Rj+iOUQqayOKdWufsWwpj4QrXq9zmeu6s3v8Af7vcyOBUS9PEurVPd5X2iXdshFp/LclcLjKSajnYqa/PS+X+r/kqYBWoYGpYmoQcsW6M9uceTX6o6zJ6bbKLI2U2Srsj1xlF7NFz4f4ljluOLqHRhfyhYuqM/J+D9SRasoHIAAAQAAAAAAAfry8QI7XNUhpWFK1pStl7NUPGX8IznIvtyb53X2Oyyct5Sfad3EOovUtSssi/wYexUvJdvvI00gAAAAAAAAAALxwnrbzK/uWVNvIrW8JPvxXj5osZlGPfZjX130y6NlclKL8GjT9Py4Z2FTlV9UbI77b8n2r4k1cdAAIAAAAAARfEmW8PR8icXtOa+zjt59XpuShVePLdqMOld6cpP3JJepRTgAVAAAAAAAAAAAC48C5bdWThyl/S1ZBeT6n89n7ynE1wfa69dqj2WQlB/Df6BcaCADIAAAAABTuPf7+F+yfqgC4KqACoAAAAAAAAAAASnDD/APfwv3v0YAXGj9gAMgAAP//Z',
             assigned_by: a.assigned_by,
             is_active: a.is_active,
@@ -159,7 +160,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
             try {
                 setLoadingUsers(true)
 
-                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
@@ -173,7 +174,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                 setUsersList(list)
                 const mappedUsers = list.map((user) => ({
                     value: user.user_id,
-                    label: user.full_name,
+                    label: user?.full_name,
                     img: user.avatar,
                 }))
 
@@ -227,7 +228,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         try {
             setAssigningUserId(userId)
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${taskId}/assign`,
+                `http://localhost:5000/api/tasks/${taskId}/assign`,
                 {
                     method: 'POST',
                     headers: {
@@ -268,7 +269,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         try {
 
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}/status`,
+                `http://localhost:5000/api/tasks/${id}/status`,
                 {
                     method: "PATCH",
                     headers: {
@@ -295,7 +296,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setPriority(newPriority);
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}/priority`,
+                `http://localhost:5000/api/tasks/${id}/priority`,
                 {
                     method: "PATCH",
                     headers: {
@@ -320,7 +321,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setTaskType(selectedOption); // Optimistically update UI
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}/type`,
+                `http://localhost:5000/api/tasks/${id}/type`,
                 {
                     method: "PATCH",
                     headers: {
@@ -349,7 +350,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         const tags = selectedOptions ? selectedOptions.map(opt => opt.value) : [];
 
         try {
-            const response = await fetch(`https://api-0ggv.onrender.com/api/tasks/${id}/tags`, {
+            const response = await fetch(`http://localhost:5000/api/tasks/${id}/tags`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -384,7 +385,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
 
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}/assignments/${userId}/remove`,
+                `http://localhost:5000/api/tasks/${id}/assignments/${userId}/remove`,
                 {
                     method: 'PATCH',
                     headers: {
@@ -419,7 +420,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setIsUpdatingDesc(true);
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}/description`,
+                `http://localhost:5000/api/tasks/${id}/description`,
                 {
                     method: "PATCH",
                     headers: {
@@ -441,7 +442,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                 onDescriptionChange(id, taskDescription);
             }
 
-             toast.success("Description updated successfully", "success");
+            toast.success("Description updated successfully", "success");
             setIsEditingDesc(false);
 
         } catch (err) {
@@ -456,7 +457,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
 
         try {
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${id}`,
+                `http://localhost:5000/api/tasks/${id}`,
                 {
                     method: "DELETE",
                     headers: {
@@ -754,9 +755,9 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                                         <img
                                             src={user.avatar}
                                             className="avatar avatar-xs rounded-circle"
-                                            alt={user.full_name}
+                                            alt={user?.full_name}
                                         />
-                                        {user.full_name}
+                                        {user?.full_name}
                                         {user.is_active === false && (
                                             <small className="ms-1 text-muted">(Inactive)</small>
                                         )}
@@ -793,11 +794,11 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                         <label className="form-label">Create By:</label>
                         <select
                             className="form-control"
-                            value={task?.createdByName}
+                            value={task?.createdByName || task?.createdBy?.full_name}
                             onChange={(e) => onSelectOption(e.target.value)}
                         >
-                            <option key={task?.createdByName} value={task?.createdByName}>
-                                {task?.createdByName}
+                            <option key={task?.createdByName || task?.createdBy?.full_name} value={task?.createdByName || task?.createdBy?.full_name}>
+                                {task?.createdByName || task?.createdBy?.full_name}
                             </option>
                         </select>
 
@@ -840,7 +841,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                             <div className="d-flex flex-wrap gap-2">
                                 {task?.dependsOnTasks.map(t => (
                                     <span key={t.task_id} className="badge bg-warning text-dark" onClick={() => console.log("Dependent Task ID:", t)}>
-                                        #{t.task_id} - {t.task_title}
+                                        #{t.task_id} - {t?.task_title}
                                     </span>
                                 ))}
                             </div>
@@ -858,7 +859,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                             <div className="d-flex flex-wrap gap-2">
                                 {task?.blocksTasks.map(t => (
                                     <span key={t.task_id} className="badge bg-danger" onClick={() => console.log("Blocked Task ID:", t)}>
-                                        #{t.task_id} - {t.task_title}
+                                        #{t.task_id} - {t?.task_title}
                                     </span>
                                 ))}
                             </div>

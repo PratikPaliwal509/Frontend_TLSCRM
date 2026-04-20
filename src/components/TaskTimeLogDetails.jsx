@@ -38,8 +38,8 @@ const TaskTimeLogDetails = ({ taskId, project_id, role }) => {
 
     try {
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/tasks/timelogs/active/${taskId}`,
-        // `https://api-0ggv.onrender.com/api/tasks/timelogs/${taskId}/time-logs`,
+        `http://localhost:5000/api/tasks/timelogs/active/${taskId}`,
+        // `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -73,7 +73,7 @@ const TaskTimeLogDetails = ({ taskId, project_id, role }) => {
 
     try {
       await fetch(
-        `https://api-0ggv.onrender.com/api/tasks/timelogs/${taskId}/timelogs`,
+        `http://localhost:5000/api/tasks/timelogs/${taskId}/timelogs`,
         {
           method: "POST",
           headers: {
@@ -113,7 +113,7 @@ const TaskTimeLogDetails = ({ taskId, project_id, role }) => {
 
     try {
       await fetch(
-        `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/approve`,
+        `http://localhost:5000/api/tasks/timelogs/${log.log_id}/approve`,
         {
           method: "POST",
           headers: {
@@ -138,7 +138,7 @@ const TaskTimeLogDetails = ({ taskId, project_id, role }) => {
 
     try {
       await fetch(
-        `https://api-0ggv.onrender.com/api/tasks/timelogs/${log.log_id}/reject`,
+        `http://localhost:5000/api/tasks/timelogs/${log.log_id}/reject`,
         {
           method: "POST",
           headers: {

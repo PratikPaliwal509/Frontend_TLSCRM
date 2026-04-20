@@ -33,7 +33,7 @@ const ProjectsView = () => {
       try {
         const token = localStorage.getItem('token')
 
-        const res = await fetch(`https://api-0ggv.onrender.com/api/projects/${id}`, {
+        const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -88,7 +88,7 @@ const ProjectsView = () => {
             <GanttTimeline projectId={project.project_id} />
           </div>
           <div className="tab-pane fade" id="tasksTab" role="tabpanel" style={{height:"56vh" }}>
-            <KanbanBoard tasks={project?.tasks}
+            <KanbanBoard tasks={project?.tasks} project_name={project?.project_name}
             />
           </div>
           <div className="tab-pane fade" id="clientTab" role="tabpanel">

@@ -30,8 +30,8 @@ const DepartmentsView = () => {
                 const token = localStorage.getItem('token')
 
                 const res = await fetch(
-                    // `https://api-0ggv.onrender.com/api/departments/only-one/1`,
-                    `https://api-0ggv.onrender.com/api/departments/only-one/${id}`,
+                    // `http://localhost:5000/api/departments/only-one/1`,
+                    `http://localhost:5000/api/departments/only-one/${id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

@@ -33,7 +33,7 @@ const TasksOverviewChart = ({ filters }) => {
             filters.selectedFilters.join(',')
           )
 
-        const url = `https://api-0ggv.onrender.com/api/tasks/overview?${queryParams.toString()}`
+        const url = `http://localhost:5000/api/tasks/overview?${queryParams.toString()}`
 
         const res = await fetch(url, {
           headers: {
