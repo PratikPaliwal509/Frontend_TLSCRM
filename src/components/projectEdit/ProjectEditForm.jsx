@@ -34,7 +34,7 @@ const ProjectEditForm = forwardRef((props, ref) => {
     const fetchProject = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/projects/${id}`,
+          `https://api-0ggv.onrender.com/api/projects/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -96,7 +96,7 @@ const ProjectEditForm = forwardRef((props, ref) => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/projects/${id}`,
+        `https://api-0ggv.onrender.com/api/projects/${id}`,
         {
           method: 'PUT',
           headers: {

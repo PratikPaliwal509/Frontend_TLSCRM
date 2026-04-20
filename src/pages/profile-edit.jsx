@@ -16,7 +16,7 @@ const ProfileEdit = () => {
     const fetchUser = async () => {
         const token = localStorage.getItem("token");
       try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
+        const res = await fetch("https://api-0ggv.onrender.com/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
@@ -94,7 +94,7 @@ const handleSave = async (e) => {
       avatar_url: form.avatar_url, // ✅ Cloudinary URL
     };
 
-    const res = await fetch("http://localhost:5000/api/users/mee", {
+    const res = await fetch("https://api-0ggv.onrender.com/api/users/mee", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

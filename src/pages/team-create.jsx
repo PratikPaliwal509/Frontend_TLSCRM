@@ -36,7 +36,7 @@ const TeamCreate = () => {
         setUsersLoading(true)
         const token = localStorage.getItem('token')
         const res = await fetch(
-          'http://localhost:5000/api/users/users/without-team',
+          'https://api-0ggv.onrender.com/api/users/users/without-team',
           { headers: { Authorization: `Bearer ${token}` } }
         )
         const data = await res.json()
@@ -58,7 +58,7 @@ const TeamCreate = () => {
         setDepartmentsLoading(true)
         const token = localStorage.getItem('token')
         const res = await fetch(
-          'http://localhost:5000/api/departments',
+          'https://api-0ggv.onrender.com/api/departments',
           { headers: { Authorization: `Bearer ${token}` } }
         )
         const data = await res.json()
@@ -113,7 +113,7 @@ const TeamCreate = () => {
       }
 
       // 1️⃣ Create team
-      const res = await fetch('http://localhost:5000/api/teams', {
+      const res = await fetch('https://api-0ggv.onrender.com/api/teams', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ const TeamCreate = () => {
 
       // 2️⃣ Add members
       if (selectedMembers.length) {
-        const membersRes = await fetch(`http://localhost:5000/api/teams/${teamId}/members`, {
+        const membersRes = await fetch(`https://api-0ggv.onrender.com/api/teams/${teamId}/members`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ export const canUser = async (moduleKey, action) => {
 
     // 🔹 Fetch role using role_id
     const response = await fetch(
-      `http://localhost:5000/api/roles/${user.role_id}`,
+      `https://api-0ggv.onrender.com/api/roles/${user.role_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

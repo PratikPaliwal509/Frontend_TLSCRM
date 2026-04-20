@@ -40,12 +40,12 @@ const UserEditPage = () => {
     const fetchData = async () => {
       try {
         // Fetch user data
-        const userRes = await fetch(`http://localhost:5000/api/users/${id}`)
+        const userRes = await fetch(`https://api-0ggv.onrender.com/api/users/${id}`)
         if (!userRes.ok) throw new Error('Failed to fetch user')
         const userData = await userRes.json()
 
         // Fetch departments
-        const deptRes = await fetch('http://localhost:5000/api/departments/', {
+        const deptRes = await fetch('https://api-0ggv.onrender.com/api/departments/', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ const UserEditPage = () => {
         const deptData = await deptRes.json()
 
         // Fetch teams
-        const teamRes = await fetch('http://localhost:5000/api/teams', {
+        const teamRes = await fetch('https://api-0ggv.onrender.com/api/teams', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const UserEditPage = () => {
         })
         if (!teamRes.ok) throw new Error('Failed to fetch teams')
         const teamData = await teamRes.json()
-        const rolesRes = await fetch('http://localhost:5000/api/roles', {
+        const rolesRes = await fetch('https://api-0ggv.onrender.com/api/roles', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const UserEditPage = () => {
   const handleUpdate = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`http://localhost:5000/api/users/users/${id}`, {
+      const res = await fetch(`https://api-0ggv.onrender.com/api/users/users/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -85,7 +85,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setLoading(true)
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasksComments/${id}/comments`,
+                `https://api-0ggv.onrender.com/api/tasksComments/${id}/comments`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
             try {
                 setLoadingUsers(true)
 
-                const res = await fetch('http://localhost:5000/api/users/user', {
+                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
@@ -228,7 +228,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         try {
             setAssigningUserId(userId)
             const res = await fetch(
-                `http://localhost:5000/api/tasks/${taskId}/assign`,
+                `https://api-0ggv.onrender.com/api/tasks/${taskId}/assign`,
                 {
                     method: 'POST',
                     headers: {
@@ -269,7 +269,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         try {
 
             const res = await fetch(
-                `http://localhost:5000/api/tasks/${id}/status`,
+                `https://api-0ggv.onrender.com/api/tasks/${id}/status`,
                 {
                     method: "PATCH",
                     headers: {
@@ -296,7 +296,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setPriority(newPriority);
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasks/${id}/priority`,
+                `https://api-0ggv.onrender.com/api/tasks/${id}/priority`,
                 {
                     method: "PATCH",
                     headers: {
@@ -321,7 +321,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setTaskType(selectedOption); // Optimistically update UI
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasks/${id}/type`,
+                `https://api-0ggv.onrender.com/api/tasks/${id}/type`,
                 {
                     method: "PATCH",
                     headers: {
@@ -350,7 +350,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         const tags = selectedOptions ? selectedOptions.map(opt => opt.value) : [];
 
         try {
-            const response = await fetch(`http://localhost:5000/api/tasks/${id}/tags`, {
+            const response = await fetch(`https://api-0ggv.onrender.com/api/tasks/${id}/tags`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -385,7 +385,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
 
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasks/${id}/assignments/${userId}/remove`,
+                `https://api-0ggv.onrender.com/api/tasks/${id}/assignments/${userId}/remove`,
                 {
                     method: 'PATCH',
                     headers: {
@@ -420,7 +420,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
         setIsUpdatingDesc(true);
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasks/${id}/description`,
+                `https://api-0ggv.onrender.com/api/tasks/${id}/description`,
                 {
                     method: "PATCH",
                     headers: {
@@ -457,7 +457,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
 
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasks/${id}`,
+                `https://api-0ggv.onrender.com/api/tasks/${id}`,
                 {
                     method: "DELETE",
                     headers: {
