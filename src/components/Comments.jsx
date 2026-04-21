@@ -5,7 +5,7 @@ import CommentCard from './tasks/CommetCard'
 const COMMENTS_PER_LOAD = 5
 const REPLIES_PER_LOAD = 2
 
-const Comments = ({ comments, loading, setComments, portal_user_id }) => {
+const Comments = ({ comments, loading, setComments, portal_user_id,usersList }) => {
   const [visibleComments, setVisibleComments] = useState(COMMENTS_PER_LOAD)
   const [visibleReplies, setVisibleReplies] = useState({})
   const [expandedReplies, setExpandedReplies] = useState({})
@@ -51,7 +51,7 @@ const Comments = ({ comments, loading, setComments, portal_user_id }) => {
       <Fragment key={comment.comment_id}>
         {/* Main Comment */}
         <div style={{ marginLeft: level * 20 }}>
-          <CommentCard {...comment} setComments={setComments} portal_user_id={portal_user_id} />
+          <CommentCard {...comment} setComments={setComments} portal_user_id={portal_user_id}  usersList={usersList}/>
         </div>
 
         {/* Replies */}
@@ -65,7 +65,7 @@ const Comments = ({ comments, loading, setComments, portal_user_id }) => {
 
               return (
                 <div key={reply.comment_id} className="mb-1">
-                  <CommentCard {...reply} setComments={setComments} portal_user_id={portal_user_id}/>
+                  <CommentCard {...reply} setComments={setComments} portal_user_id={portal_user_id}  usersList={usersList}/>
 
                   {/* Show nested replies */}
                   {hasNestedReplies && !isExpanded && (

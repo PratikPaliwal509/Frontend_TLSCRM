@@ -895,7 +895,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                             <FiInfo />
                         </a>
                     </div>
-                    <Comments comments={comments} loading={loading} setComments={setComments} portal_user_id={user_id} />
+                    <Comments comments={comments} loading={loading} setComments={setComments} portal_user_id={user_id} usersList={usersList}/>
                     {/* <Comments taskID={id} /> */}
                     <AddComment
                         usersList={usersList}

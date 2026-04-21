@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
-
+import { toast } from 'react-toastify'
 const CheckList = ({ checklist = [], taskID }) => {
   const [data, setData] = useState([])
   const [inputValue, setInputValue] = useState("")
   const token = localStorage.getItem("token")
-
+  const [isAdding, setIsAdding] = useState(false);
   /* Sync checklist from backend */
   useEffect(() => {
     setData(checklist)
@@ -14,61 +14,111 @@ const CheckList = ({ checklist = [], taskID }) => {
   /* Persist checklist to backend */
   const persistChecklist = async (updatedData, rollbackData) => {
     try {
-      await fetch(`https://api-0ggv.onrender.com/api/tasks/${taskID}/checklist`, {
+      const response = await fetch(`https://api-0ggv.onrender.com/api/tasks/${taskID}/checklist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ checklist: updatedData })
-      })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to update checklist");
+      }
+
+      return true; // success
+
     } catch (err) {
-      console.error('Checklist update failed', err)
-      setData(rollbackData)
+      console.error('Checklist update failed', err);
+
+      // rollback UI
+      setData(rollbackData);
+
+      toast.error(err.message || "Checklist update failed");
+
+      return false;
     }
-  }
+  };
 
   /* Toggle checklist */
-  const handleCheckList = (id) => {
-    const prevData = data
+  const handleCheckList = async (id) => {
+    const prevData = data;
 
     const updatedData = data.map(item =>
       item.id === id
         ? { ...item, checked: !item.checked }
         : item
-    )
+    );
 
-    setData(updatedData)
-    persistChecklist(updatedData, prevData)
-  }
+    setData(updatedData);
+
+    const success = await persistChecklist(updatedData, prevData);
+
+    if (success) {
+      toast.success("Checklist updated");
+    }
+  };
 
   /* Delete checklist item */
-  const handleDeleteItem = (id) => {
-    const prevData = data
-    const updatedData = data.filter(item => item.id !== id)
+  const handleDeleteItem = async (id) => {
+    const prevData = data;
+    const updatedData = data.filter(item => item.id !== id);
 
-    setData(updatedData)
-    persistChecklist(updatedData, prevData)
-  }
+    setData(updatedData);
+
+    const success = await persistChecklist(updatedData, prevData);
+
+    if (success) {
+      toast.success("Checklist item deleted!");
+    }
+  };
 
   /* Add new checklist item */
-  const handleValueSubmit = () => {
-    if (!inputValue.trim()) return
+  const handleValueSubmit = async () => {
+    try {
+      if (!inputValue.trim()) {
+        toast.warning("Please enter a checklist item");
+        return;
+      }
+      if (isAdding) return; // extra safety
 
-    const prevData = data
+      setIsAdding(true);
 
-    const newItem = {
-      id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-      title: inputValue,
-      checked: false
+      const prevData = data;
+
+      const newItem = {
+        id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        title: inputValue.trim(),
+        checked: false
+      };
+
+      const updatedData = [...data, newItem];
+
+      // Optimistic UI update
+      setData(updatedData);
+
+      // 🔥 Await API
+      await persistChecklist(updatedData, prevData);
+
+      toast.success("Checklist item added successfully");
+      setInputValue("");
+
+    } catch (error) {
+      console.error("Checklist add error:", error);
+
+      // ❌ rollback UI
+      setData(data);
+
+      toast.error(
+        error?.message || "Failed to add checklist. Please try again"
+      );
+    } finally {
+      setIsAdding(false);
     }
-
-    const updatedData = [...data, newItem]
-
-    setData(updatedData)
-    persistChecklist(updatedData, prevData)
-    setInputValue("")
-  }
+  };
 
   return (
     <>
@@ -101,15 +151,22 @@ const CheckList = ({ checklist = [], taskID }) => {
           placeholder="Title..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          disabled={isAdding}
+          style={{
+            backgroundColor: isAdding ? "#f5f5f5" : "",
+            cursor: isAdding ? "not-allowed" : "text",
+            opacity: isAdding ? 0.8 : 1
+          }}
         />
 
         <button
           type="button"
           className="input-group-text addCheckList"
           onClick={handleValueSubmit}
+          disabled={isAdding}
         >
           <FiPlus size={16} className="me-2" />
-          Add Checklist
+          {isAdding ? "Adding..." : "Add Checklist"}
         </button>
       </div>
     </>

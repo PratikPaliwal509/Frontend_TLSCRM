@@ -8,6 +8,7 @@ import {
 import Dropdown from '../shared/Dropdown'
 import Comments from '../Comments'
 import { toast } from 'react-toastify'
+import { userList } from '@/utils/fackData/userList'
 
 const CommentCard = ({
     comment_id,
@@ -18,7 +19,10 @@ const CommentCard = ({
     replies = [],
     task_id,
     setComments,
-    portal_user_id
+    portal_user_id,
+    usersList,
+    mentioned_users,
+    parent_comment_id
 }) => {
     const [isEditing, setIsEditing] = useState(false)
     const [editText, setEditText] = useState(comment_text)
@@ -44,7 +48,8 @@ const CommentCard = ({
     const [showReplyBox, setShowReplyBox] = useState(false)
     const [replyText, setReplyText] = useState('')
     const [loading, setLoading] = useState(false)
-
+    const [filteredUsers, setFilteredUsers] = useState([])
+    const [mentionedUsers, setMentionedUsers] = useState([])
     // Mention system
     const [showMentions, setShowMentions] = useState(false)
     const [mentionQuery, setMentionQuery] = useState('')
@@ -58,10 +63,10 @@ const CommentCard = ({
     /* =========================
        USERS FOR @MENTION
     ========================== */
-    const mentionUsers = useMemo(() => {
-        if (!replyingToUser) return []
-        return [replyingToUser]
-    }, [replyingToUser])
+    // const mentionUsers = useMemo(() => {
+    //     if (!replyingToUser) return []
+    //     return [replyingToUser]
+    // }, [replyingToUser])
 
     const stripMentionsFromText = (text) => {
         return text.replace(/@\w+/g, '').replace(/\s+/g, ' ').trim()
@@ -90,7 +95,52 @@ const CommentCard = ({
             mention_user_ids,
         }
     }
+    const renderCommentWithMentions = (text, usersList = [], mentionedUserIds = []) => {
+        console.log("text, usersList, mentionedUserIds", text, usersList, mentionedUserIds)
+        if (!text) return null
 
+        // ✅ get only mentioned users
+        const mentionedUsersData = usersList.filter(u =>
+            mentionedUserIds.includes(u.user_id)
+        )
+
+        // 🔥 create regex dynamically for all mentioned names
+        const escapedNames = mentionedUsersData.map(u =>
+            u.full_name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // escape regex
+        )
+
+        if (escapedNames.length === 0) return text
+
+        const regex = new RegExp(`@(${escapedNames.join('|')})`, 'gi')
+
+        const parts = text.split(regex)
+        console.log("parts", parts)
+        return parts.map((part, index) => {
+            const matchedUser = mentionedUsersData.find(
+                u => u.full_name.toLowerCase() === part.toLowerCase()
+            )
+
+            if (matchedUser) {
+                return (
+                    <span
+                        key={index}
+                        className="text-primary fw-semibold"
+                    >
+                        @{matchedUser.full_name}
+                    </span>
+                    // <Link
+                    // to={`https://frontend-tlscrm.vercel.app//user/view/${matchedUser.user_id}`}
+                    //     key={index}
+                    //     className="text-primary fw-semibold"
+                    // >
+                    //     @{matchedUser.full_name}
+                    // </Link>
+                )
+            }
+
+            return part
+        })
+    }
     /* =========================
        SUBMIT REPLY
     ========================== */
@@ -99,10 +149,8 @@ const CommentCard = ({
 
         setLoading(true)
         try {
-            const { mentioned_usernames, mention_user_ids } =
-                extractMentionsWithIds(replyText, mentionUsers)
+            const mention_user_ids = mentionedUsers
 
-            const cleanText = stripMentionsFromText(replyText)
             const res = await fetch(
                 `https://api-0ggv.onrender.com/api/tasksComments/${task_id}/comments/${comment_id}/replies`,
                 {
@@ -111,14 +159,10 @@ const CommentCard = ({
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
                     },
-
                     body: JSON.stringify({
-                        comment_text: cleanText,           // ✅ NO @username
-                        // mentions: mentioned_usernames,     // ✅ usernames
-                        mentioned_users: mention_user_ids,                  // ✅ IDs
+                        comment_text: replyText,   // ✅ send as it is
+                        mentioned_users: mention_user_ids,
                     }),
-
-
                 }
             )
 
@@ -138,13 +182,15 @@ const CommentCard = ({
             setShowReplyBox(false)
             setShowMentions(false)
             setReplyingToUser(null)
+            setMentionedUsers([]) // ✅ reset
+
         } catch (err) {
             console.error(err)
+            toast.error("Failed to send reply ❌")
         } finally {
             setLoading(false)
         }
     }
-
     // const renderCommentText = (text, mentionedUsers = []) => {
     //     return (
     //         <>
@@ -275,7 +321,29 @@ const CommentCard = ({
                                 className="form-control"
                                 rows={3}
                                 value={editText}
-                                onChange={e => setEditText(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value
+                                    const cursor = e.target.selectionStart
+
+                                    setReplyText(value)
+                                    setCursorPosition(cursor)
+
+                                    const textBeforeCursor = value.slice(0, cursor)
+                                    const match = textBeforeCursor.match(/@(\w*)$/)
+
+                                    if (match) {
+                                        const search = match[1].toLowerCase()
+
+                                        const filtered = usersList.filter((u) =>
+                                            u.full_name.toLowerCase().includes(search)
+                                        )
+
+                                        setFilteredUsers(filtered)
+                                        setShowMentions(true)
+                                    } else {
+                                        setShowMentions(false)
+                                    }
+                                }}
                             />
 
                             <div className="mt-2 d-flex">
@@ -295,7 +363,11 @@ const CommentCard = ({
                         </div>
                     ) : (
                         <p className="fs-12 text-dark p-3 bg-gray-200 rounded-3 mb-0">
-                            {comment_text}
+                            {renderCommentWithMentions(
+                                comment_text,
+                                usersList,
+                                mentioned_users || [] // or comment.mentioned_users
+                            )}
                         </p>
                     )}
 
@@ -322,7 +394,6 @@ const CommentCard = ({
 
                             if (!showReplyBox && user) {
                                 const username = user.full_name.replace(/\s+/g, '')
-                                setReplyText(`@${username} `)
                                 setReplyingToUser(user)
                                 setShowMentions(false)
                             }
@@ -355,11 +426,22 @@ const CommentCard = ({
                                 setReplyText(value)
                                 setCursorPosition(cursor)
 
-                                const beforeCursor = value.slice(0, cursor)
-                                const match = beforeCursor.match(/@(\w*)$/)
+                                const textBeforeCursor = value.slice(0, cursor)
 
-                                if (match && replyingToUser) {
-                                    setMentionQuery(match[1])
+                                // ✅ Match @ OR @text
+                                const match = textBeforeCursor.match(/@([a-zA-Z0-9_]*)$/)
+
+                                if (match) {
+                                    const search = match[1].toLowerCase()
+
+                                    // ✅ If only '@' show all users
+                                    const filtered = search
+                                        ? usersList.filter((u) =>
+                                            u.full_name.toLowerCase().includes(search)
+                                        )
+                                        : usersList
+
+                                    setFilteredUsers(filtered)
                                     setShowMentions(true)
                                 } else {
                                     setShowMentions(false)
@@ -369,10 +451,10 @@ const CommentCard = ({
 
 
                         {/* Mention dropdown */}
-                        {showMentions && (
+                        {showMentions && filteredUsers.length > 0 && (
                             <ul className="list-group position-absolute w-100 shadow z-3">
-                                {mentionUsers.map(u => (
-                                    <li 
+                                {filteredUsers.map(u => (
+                                    <li
                                         key={u.user_id}
                                         className="list-group-item list-group-item-action"
                                         onClick={() => {
@@ -380,11 +462,16 @@ const CommentCard = ({
                                             const after = replyText.slice(cursorPosition)
 
                                             const newText = before.replace(
-                                                /@\w*$/,
-                                                `@${u.full_name.replace(/\s+/g, '')} `
+                                                /@([a-zA-Z0-9_]*)$/,
+                                                `@${u.full_name} `   // ✅ keep spaces
+                                            )
+                                            setReplyText(newText + after)
+
+                                            // store mentioned user id
+                                            setMentionedUsers(prev =>
+                                                prev.includes(u.user_id) ? prev : [...prev, u.user_id]
                                             )
 
-                                            setReplyText(newText + after)
                                             setShowMentions(false)
                                         }}
                                     >
