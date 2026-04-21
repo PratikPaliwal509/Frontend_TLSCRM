@@ -193,53 +193,53 @@ const AllNotifications = () => {
                   </div>
 
                   {/* RIGHT PAGINATION */}
-                 <ul className="pagination mb-0">
+                  <ul className="pagination mb-0">
 
-  {/* ⬅️ LEFT ARROW */}
-  <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-    <button
-      className="page-link d-flex align-items-center justify-content-center"
-      onClick={() => handlePageChange(page - 1)}
-      style={{ width: "36px", height: "36px" }}
-    >
-      <FiChevronLeft size={16} />
-    </button>
-  </li>
+                    {/* PREVIOUS */}
+                    <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                        style={{
+                          color: "#283c50",
+                          // borderColor: "#3454d1"
+                        }}
+                      >
+                        Previous
+                      </button>
+                    </li>
 
-  {/* PAGE NUMBERS */}
-  {[...Array(totalPages)].map((_, i) => {
-    const isActive = page === i + 1;
-    return (
-      <li key={i} className={`page-item ${isActive ? "active" : ""}`}>
-        <button
-          className="page-link"
-          onClick={() => handlePageChange(i + 1)}
-          style={{
-            color: isActive ? "#fff" : "#3454d1",
-            backgroundColor: isActive ? "#3454d1" : "transparent",
-            borderColor: "#3454d1",
-            minWidth: "36px",
-            height: "36px",
-          }}
-        >
-          {i + 1}
-        </button>
-      </li>
-    );
-  })}
+                    {/* CURRENT PAGE */}
+                    <li className="page-item active">
+                      <span
+                        className="page-link"
+                        style={{
+                          backgroundColor: "#3454d1",
+                          borderColor: "#3454d1",
+                          color: "#fff"
+                        }}
+                      >
+                        {page}
+                      </span>
+                    </li>
 
-  {/* ➡️ RIGHT ARROW */}
-  <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-    <button
-      className="page-link d-flex align-items-center justify-content-center"
-      onClick={() => handlePageChange(page + 1)}
-      style={{ width: "36px", height: "36px" }}
-    >
-      <FiChevronRight size={16} />
-    </button>
-  </li>
+                    {/* NEXT */}
+                    <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === totalPages}
+                        style={{
+                          color: "#283c50",
+                          // borderColor: "#3454d1"
+                        }}
+                      >
+                        Next
+                      </button>
+                    </li>
 
-</ul>
+                  </ul>
                 </div>
               )}
 
