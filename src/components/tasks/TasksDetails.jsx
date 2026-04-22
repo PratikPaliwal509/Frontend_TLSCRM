@@ -763,7 +763,7 @@ const TasksDetails = ({ task, user_id, onStatusChange, onPriorityChange, onDelet
                                         )}
 
                                         <span>{canRemoveAssignee({
-                                            taskCreatedBy: task.created_by,
+                                            taskCreatedBy: task?.created_by,
                                             assignedBy: user?.assigned_by,
                                         }) && user.is_active && (
                                                 <button

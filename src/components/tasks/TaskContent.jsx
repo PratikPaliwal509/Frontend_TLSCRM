@@ -175,7 +175,7 @@ const TaskContent = () => {
     };
     const handleDeleteTask = (taskId) => {
         setTasks(prev => prev.filter(task => task.id !== taskId));
-        setSelectedTask(null);
+       setSelectedTask(null);
     };
     const handleDescriptionChange = (taskId, newDescription) => {
         setTasks(prev =>
