@@ -23,7 +23,8 @@ const NotificationsModal = () => {
       body: `${title} - ${message}`, // message inside body
       icon: "/images/logo/techlal.png", // 🔥 your logo (IMPORTANT)
       badge: "/images/logo/techlal.png", // optional (for Chrome Android)
-      tag: "Kary (Techleela CRM)", // prevents duplicates
+      tag: `Kary (Techleela CRM)-Notification-${Date.now()}`,
+      // tag: "Kary (Techleela CRM)", // prevents duplicates
     });
   } else if (Notification.permission !== "denied") {
     Notification.requestPermission().then((permission) => {
@@ -89,7 +90,7 @@ const NotificationsModal = () => {
 
     // 🔔 Listen for new notifications
     socketRef.current.on("notification", (notification) => {
-      console.log("Received notification:", notification);
+      console.log("Received notification:", notification, document.visibilityState);
 
       // Show system notification only if tab not active
       if (document.visibilityState !== "visible") {
