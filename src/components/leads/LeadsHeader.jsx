@@ -14,15 +14,23 @@ const filterAction = [
     { label: "Active", icon: <FiUserCheck /> },
     { label: "Inactive", icon: <FiUserMinus /> },
 ];
-export const fileType = [
-    { label: "PDF", icon: <BsFiletypePdf /> },
-    { label: "CSV", icon: <BsFiletypeCsv /> },
-    { label: "XML", icon: <BsFiletypeXml /> },
-    { label: "Text", icon: <BsFiletypeTsx /> },
-    { label: "Excel", icon: <BsFiletypeExe /> },
-    { label: "Print", icon: <BsPrinter /> },
+// export const fileType = [
+//     { label: "PDF", icon: <BsFiletypePdf /> },
+//     { label: "CSV", icon: <BsFiletypeCsv /> },
+//     { label: "XML", icon: <BsFiletypeXml /> },
+//     { label: "Text", icon: <BsFiletypeTsx /> },
+//     { label: "Excel", icon: <BsFiletypeExe /> },
+//     { label: "Print", icon: <BsPrinter /> },
+// ];
+export const fileType = (handleExport) => [
+  { label: "PDF", icon: <BsFiletypePdf />, onClick: () => handleExport("pdf") },
+  { label: "CSV", icon: <BsFiletypeCsv />, onClick: () => handleExport("csv") },
+  { label: "XML", icon: <BsFiletypeXml />, onClick: () => handleExport("xml") },
+  { label: "Text", icon: <BsFiletypeTsx />, onClick: () => handleExport("txt") },
+  { label: "Excel", icon: <BsFiletypeExe />, onClick: () => handleExport("excel") },
+  { type: "divider" },
+  { label: "Print", icon: <BsPrinter />, onClick: () => handleExport("print") },
 ];
-
 const LeadsHeader = () => {
     return (
         <>

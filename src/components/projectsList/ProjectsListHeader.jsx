@@ -2,20 +2,22 @@ import React from 'react'
 import { FiBarChart, FiFilter, FiPaperclip, FiPlus } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import Dropdown from '@/components/shared/Dropdown'
-import { fileType } from '../leads/LeadsHeader'
+// import { fileType } from '../leads/LeadsHeader'
 import ProjectsStatistics from '../widgetsStatistics/ProjectsStatistics'
 
-const options = [
-  { label: "Alls", color: "bg-primary" },
-  { label: "On Hold", color: "bg-indigo" },
-  { label: "Pending", color: "bg-warning" },
-  { label: "Finished", color: "bg-success" },
-  { label: "Declined", color: "bg-danger" },
-  { label: "In Progress", color: "bg-teal" },
-  { label: "Not Started", color: "bg-success" },
-  { label: "My Projects", color: "bg-warning" }
+
+const ProjectsListHeader = ({setStatusFilter, fileType  }) => {
+ 
+  const options = [
+  { label: "Alls", color: "bg-primary", onClick: () => setStatusFilter("all") },
+  { label: "On Hold", color: "bg-indigo", onClick: () => setStatusFilter("on_hold") },
+  { label: "Pending", color: "bg-warning", onClick: () => setStatusFilter("pending") },
+  { label: "Finished", color: "bg-success", onClick: () => setStatusFilter("finished") },
+  { label: "Declined", color: "bg-danger", onClick: () => setStatusFilter("declined") },
+  { label: "In Progress", color: "bg-teal", onClick: () => setStatusFilter("in_progress") },
+  { label: "Not Started", color: "bg-success", onClick: () => setStatusFilter("not_started") },
+  { label: "My Projects", color: "bg-warning", onClick: () => setStatusFilter("my_projects") }
 ];
-const ProjectsListHeader = () => {
   return (
     <>
       <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">

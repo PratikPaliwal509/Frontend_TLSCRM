@@ -182,9 +182,9 @@ const formatDate = (date) =>
 
 /* ---------------- MAIN TABLE ---------------- */
 
-const ProjectTable = () => {
+const ProjectTable = ({ statusFilter, projects, setProjects  }) => {
     const navigate = useNavigate()
-    const [projects, setProjects] = useState([])
+    // const [projects, setProjects] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -211,7 +211,13 @@ const ProjectTable = () => {
 
         fetchProjects()
     }, [])
+ const filteredProjects = useMemo(() => {
+        if (statusFilter === "all") return projects;
 
+        return projects.filter(
+            (p) => p.status === statusFilter
+        );
+    }, [projects, statusFilter]);
     const handleStatusChange = (id, newStatus) => {
         setProjects((prev) =>
             prev.map((p) =>
@@ -220,11 +226,11 @@ const ProjectTable = () => {
         )
     }
 
-    if (loading) return <div><Loader/></div>
+    if (loading) return <div><Loader /></div>
 
     if (!projects.length)
         return <div>No projects found</div>
-
+   
     return (
         <div className="table-responsive">
             <table
@@ -248,7 +254,7 @@ const ProjectTable = () => {
                 </thead>
 
                 <tbody>
-                    {projects.map((project) => (
+                    {filteredProjects.map((project) => (
                         <tr key={project.project_id}>
                             <td style={{ maxWidth: 300 }}>
                                 <div>
