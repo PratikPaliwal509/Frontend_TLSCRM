@@ -61,10 +61,10 @@ const TableCell = ({ value, onChange, disabled }) => {
 // export default TableCell
 
 /* ---------- Main Component ---------- */
-const ClientssTable = () => {
+const ClientssTable = ({ setClients, clients }) => {
   const [updatingStatusId, setUpdatingStatusId] = useState(null)
 
-  const [clients, setClients] = useState([])
+  // const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
@@ -115,15 +115,15 @@ const ClientssTable = () => {
     fetchClients()
   }, [])
   const handleStatusUpdate = async (clientId, newStatus, currentStatus) => {
-     const confirmUpdate = window.confirm(
-    `Are you sure you want to change status from "${currentStatus}" to "${newStatus}"?`
-  )
+    const confirmUpdate = window.confirm(
+      `Are you sure you want to change status from "${currentStatus}" to "${newStatus}"?`
+    )
 
-  if (!confirmUpdate) return
+    if (!confirmUpdate) return
     try {
       setUpdatingStatusId(clientId)
       const token = localStorage.getItem("token")
-const status = newStatus
+      const status = newStatus
       const res = await fetch(
         `https://api-0ggv.onrender.com/api/clients/${clientId}/status`,
         {
@@ -132,7 +132,7 @@ const status = newStatus
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ status  }),
+          body: JSON.stringify({ status }),
         }
       )
 
@@ -146,7 +146,7 @@ const status = newStatus
               ...client,
               status: {
                 ...client.status,
-                status: newStatus ,
+                status: newStatus,
               },
             }
             : client
@@ -230,22 +230,22 @@ const status = newStatus
     {
       accessorKey: 'email',
       header: () => 'Email',
-       size: 200,
+      size: 200,
 
       cell: (info) => <div style={{
-      display: "block",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      width: "200px", 
-      // textOverflow: "ellipsis"
-    }}><a href={`mailto:${info.getValue()}`}>{  info.getValue().length > 20
-      ? info.getValue().substring(0, 20) + "..."
-      : info.getValue() }</a></div>
+        display: "block",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        width: "200px",
+        // textOverflow: "ellipsis"
+      }}><a href={`mailto:${info.getValue()}`}>{info.getValue().length > 20
+        ? info.getValue().substring(0, 20) + "..."
+        : info.getValue()}</a></div>
     },
     {
       accessorKey: 'phone',
       header: () => 'Phone',
-      cell: (info) => <a href={`tel:${info.getValue()}`}>{info.getValue()?info.getValue():"-----"}</a>
+      cell: (info) => <a href={`tel:${info.getValue()}`}>{info.getValue() ? info.getValue() : "-----"}</a>
     },
     {
       accessorKey: 'date',

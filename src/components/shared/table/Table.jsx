@@ -20,9 +20,11 @@ const Table = ({ data = [], columns = [], isLoading = false, emptyMessage = "No 
         data,
         columns,
         state: {
+            sorting,
             globalFilter,
             pagination
         },
+         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),

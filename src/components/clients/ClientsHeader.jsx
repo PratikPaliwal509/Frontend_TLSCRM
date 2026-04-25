@@ -1,29 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FiBarChart, FiBriefcase, FiDollarSign, FiEye, FiFilter, FiFlag, FiPaperclip, FiPlus, FiUserCheck, FiUserMinus, FiUsers } from 'react-icons/fi'
 import { BsFiletypeCsv, BsFiletypeExe, BsFiletypePdf, BsFiletypeTsx, BsFiletypeXml, BsPrinter } from 'react-icons/bs';
 import Dropdown from '@/components/shared/Dropdown';
 import { Link } from 'react-router-dom';
 import LeadsStatisticsTwo from "../widgetsStatistics/LeadsStatisticsTwo"
 
-const filterAction = [
-    { label: "All", icon: <FiEye /> },
-    { label: "Group", icon: <FiUsers /> },
-    { label: "Country", icon: <FiFlag /> },
-    { label: "Invoice", icon: <FiDollarSign /> },
-    { label: "Project", icon: <FiBriefcase /> },
-    { label: "Active", icon: <FiUserCheck /> },
-    { label: "Inactive", icon: <FiUserMinus /> },
-];
-export const fileType = [
-    { label: "PDF", icon: <BsFiletypePdf /> },
-    { label: "CSV", icon: <BsFiletypeCsv /> },
-    { label: "XML", icon: <BsFiletypeXml /> },
-    { label: "Text", icon: <BsFiletypeTsx /> },
-    { label: "Excel", icon: <BsFiletypeExe /> },
-    { label: "Print", icon: <BsPrinter /> },
-];
+// const filterAction = [
+//     { label: "All", icon: <FiEye /> },
+//     // { label: "Group", icon: <FiUsers /> },
+//     // { label: "Country", icon: <FiFlag /> },
+//     // { label: "Invoice", icon: <FiDollarSign /> },
+//     // { label: "Project", icon: <FiBriefcase /> },
+//     { label: "Active", icon: <FiUserCheck /> },
+//     { label: "Inactive", icon: <FiUserMinus /> },
+// ];
 
-const ClientsHeader = () => {
+// export const fileType = [
+//     { label: "PDF", icon: <BsFiletypePdf /> },
+//     { label: "CSV", icon: <BsFiletypeCsv /> },
+//     { label: "XML", icon: <BsFiletypeXml /> },
+//     { label: "Text", icon: <BsFiletypeTsx /> },
+//     { label: "Excel", icon: <BsFiletypeExe /> },
+//     { label: "Print", icon: <BsPrinter /> },
+// ];
+
+const ClientsHeader = ({ onExport,onFilter }) => {
+    const fileType = [
+        { label: "PDF", icon: <BsFiletypePdf />, action: () => onExport("pdf") },
+        { label: "CSV", icon: <BsFiletypeCsv />, action: () => onExport("csv") },
+        { label: "XML", icon: <BsFiletypeXml />, action: () => onExport("xml") },
+        { label: "Text", icon: <BsFiletypeTsx />, action: () => onExport("txt") },
+        { label: "Excel", icon: <BsFiletypeExe />, action: () => onExport("excel") },
+        { label: "Print", icon: <BsPrinter />, action: () => onExport("print") },
+    ];
+    const filterAction = [
+    { label: "All", icon: <FiEye />, onClick: () => onFilter("all") },
+    { label: "Active", icon: <FiUserCheck />, onClick: () => onFilter("active") },
+    { label: "Inactive", icon: <FiUserMinus />, onClick: () => onFilter("inactive") },
+];
     return (
         <>
             <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">

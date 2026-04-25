@@ -26,17 +26,23 @@ const Dropdown = ({
 }) => {
 
     const handleItemClick = (item) => {
-        // 1️⃣ Item specific onClick (preferred)
-        if (typeof item.onClick === 'function') {
-            item.onClick()
-            return
-        }
-
-        // 2️⃣ Fallback to old handler (backward compatibility)
-        if (typeof onClick === 'function') {
-            onClick(item.label, id)
-        }
+    // ✅ Support new "action"
+    if (typeof item.action === 'function') {
+        item.action()
+        return
     }
+
+    // ✅ Existing support
+    if (typeof item.onClick === 'function') {
+        item.onClick()
+        return
+    }
+
+    // fallback
+    if (typeof onClick === 'function') {
+        onClick(item.label, id)
+    }
+}
 
     return (
         <div className={`filter-dropdown ${dropdownParentStyle}`}>
