@@ -103,6 +103,7 @@ import TimesheetPage from "../pages/timesheetPage";
 import TeamTimesheetPage from "../pages/teamTimesheetPage";
 import UserHierarchy from "../pages/UserHierchy";
 import Logout from "../pages/logout";
+import AIChat from "@/components/AIChat";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -111,6 +112,10 @@ export const router = createBrowserRouter([
             {
                 path: "/",
                 element: <Home />
+            },
+            {
+                path: "/ai-chat",
+                element: <AIChat />
             },
             {
                 path: "profile",

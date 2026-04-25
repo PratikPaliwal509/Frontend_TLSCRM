@@ -12,6 +12,7 @@ import ThemeCustomizer from './components/shared/ThemeCustomizer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MaintenancePage from './pages/MaintenancePage';
+// import AIChat from './components/AIChat';
 const App = () => {
 
   return (
@@ -26,6 +27,7 @@ const App = () => {
       <span style={{ zIndex: 10 }}>
         <ToastContainer position="top-right" autoClose={3000} className={"z-50"} />
       </span>
+      {/* <AIChat/> */}
       <ThemeCustomizer />
     </>
   )
