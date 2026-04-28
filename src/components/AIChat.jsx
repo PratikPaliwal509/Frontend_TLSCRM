@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
 const AIChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-
+const chatEndRef = useRef(null);
+useEffect(() => {
+  chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+}, [messages]);
   const sendMessage = async () => {
     if (!input.trim()) return;
 
@@ -22,7 +25,7 @@ const AIChat = () => {
       const token = localStorage.getItem("token"); // ✅ GET TOKEN
 
       const res = await axios.post(
-        "http://localhost:5000/api/ai",
+        "https://api-0ggv.onrender.com/api/ai",
         { message: input },
         {
           headers: {
@@ -101,6 +104,7 @@ const formatResponse = (data) => {
                 borderRadius: 10,
                 background: msg.role === "user" ? "#007bff" : "#eee",
                 color: msg.role === "user" ? "#fff" : "#000",
+                whiteSpace: "pre-line" 
               }}
             >
               {msg.content}
@@ -109,6 +113,7 @@ const formatResponse = (data) => {
         ))}
 
         {loading && <p>AI is thinking...</p>}
+         <div ref={chatEndRef} />
       </div>
 
       <div style={{ display: "flex" }}>
