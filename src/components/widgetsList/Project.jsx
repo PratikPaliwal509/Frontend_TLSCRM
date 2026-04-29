@@ -90,7 +90,7 @@ const Project = ({ cardYSpaceClass, borderShow, title }) => {
                         } else if (progress > 0) {
                             progress_color = "bg-info";
                         }
-// Warning
+                        // Warning
                         return (
                             <Fragment key={project_id}>
                                 {borderShow && index !== 0 && <hr className="border-dashed my-3" />}
