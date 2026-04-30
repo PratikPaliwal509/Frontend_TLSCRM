@@ -1,354 +1,216 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import {
-    FiEye,
-    FiEdit3,
-} from 'react-icons/fi'
+import Table from '@/components/shared/table/Table'
+import { FiEye, FiEdit3 } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Loader from '../loader'
 
-/* ---------------- STATUS OPTIONS ---------------- */
-
-const STATUS_OPTIONS = [
-    { label: 'Planning', value: 'planning' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'On Hold', value: 'on_hold' },
-    { label: 'Completed', value: 'finished' },
-]
-
-const getStatusOption = (value) => {
-    return (
-        STATUS_OPTIONS.find((s) => s.value === value) || {
-            label: '—',
-            value: '',
-        }
-    )
+const TableCell = ({ value, onChange, disabled }) => {
+  return (
+    <select
+      value={value.status}
+      onChange={(e) => onChange(e.target.value)}
+      className="form-select"
+      disabled={disabled}
+    >
+      <option value="planning">Planning</option>
+      <option value="in_progress">In Progress</option>
+      <option value="on_hold">On Hold</option>
+      <option value="finished">Completed</option>
+    </select>
+  )
 }
 
-/* ---------------- CUSTOM SELECT DROPDOWN ---------------- */
+const ProjectTable = ({ statusFilter, projects, setProjects }) => {
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(true)
+  const [updatingStatusId, setUpdatingStatusId] = useState(null)
 
-const CustomSelect = ({ options, selected, onChange }) => {
-    const [open, setOpen] = useState(false)
+  /* -------- FETCH -------- */
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
 
-    return (
-        <div style={{ position: 'relative', minWidth: 140 }}>
+        const result = await res.json()
+
+        if (result.success) {
+          const mapped = result.data.map(p => ({
+            id: p.project_id,
+
+            project: {
+              name: p.project_name,
+              description: p.description,
+            },
+
+            client: {
+              name: p.client_id ? `Client #${p.client_id}` : "Not Assigned",
+              img: null,
+            },
+
+            start: p.start_date
+              ? new Date(p.start_date).toLocaleDateString()
+              : "—",
+
+            end: p.end_date
+              ? new Date(p.end_date).toLocaleDateString()
+              : "—",
+
+            status: {
+              status: p.status,
+            },
+          }))
+
+          setProjects(mapped)
+        }
+      } catch {
+        toast.error("Failed to fetch projects")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProjects()
+  }, [])
+
+  /* -------- FILTER -------- */
+  const filteredProjects = useMemo(() => {
+    if (statusFilter === "all") return projects
+
+    return projects.filter(p => p.status?.status === statusFilter)
+  }, [projects, statusFilter])
+
+  /* -------- STATUS UPDATE -------- */
+  const handleStatusUpdate = async (id, newStatus, currentStatus) => {
+    if (!window.confirm(`Change status from "${currentStatus}" to "${newStatus}"?`)) return
+
+    try {
+      setUpdatingStatusId(id)
+
+      const res = await fetch(
+        `https://api-0ggv.onrender.com/api/projects/${id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      )
+
+      if (!res.ok) throw new Error()
+
+      toast.success("Status updated")
+
+      setProjects(prev =>
+        prev.map(p =>
+          p.id === id
+            ? { ...p, status: { status: newStatus } }
+            : p
+        )
+      )
+    } catch {
+      toast.error("Failed to update")
+    } finally {
+      setUpdatingStatusId(null)
+    }
+  }
+
+  /* -------- COLUMNS -------- */
+  const columns = [
+    {
+      accessorKey: 'project',
+      header: 'Project',
+      cell: (info) => {
+        const p = info.getValue()
+        const id = info.row.original.id
+
+        return (
+          <div>
             <div
-                onClick={() => setOpen(!open)}
-                style={{
-                    border: '1px solid #ddd',
-                    padding: '6px 10px',
-                    borderRadius: 6,
-                    cursor: 'pointer',
-                    background: '#fff',
-                }}
+              className="fw-semibold cursor-pointer"
+              onClick={() => navigate(`/projects/view/${id}`)}
             >
-                {selected?.label}
+              {p.name}
             </div>
 
-            {open && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: '110%',
-                        left: 0,
-                        right: 0,
-                        border: '1px solid #ddd',
-                        background: '#fff',
-                        borderRadius: 6,
-                        zIndex: 1000,
-                    }}
-                >
-                    {options.map((opt) => (
-                        <div
-                            key={opt.value}
-                            onClick={() => {
-                                onChange(opt)
-                                setOpen(false)
-                            }}
-                            style={{
-                                padding: '8px 10px',
-                                cursor: 'pointer',
-                                borderBottom: '1px solid #f1f1f1',
-                            }}
-                        >
-                            {opt.label}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    )
-}
-
-/* ---------------- STATUS CELL ---------------- */
-
-const StatusCell = ({ project, onStatusChange }) => {
-    const [selected, setSelected] = useState(
-        getStatusOption(project.status)
-    )
-
-    useEffect(() => {
-        setSelected(getStatusOption(project.status))
-    }, [project.status])
-
-    const handleChange = (option) => {
-        const toastId = toast(
-            <div>
-                <div>
-                    Update status to <strong>{option.label}</strong>?
-                </div>
-
-                <div className="mt-2 d-flex gap-2">
-                    <button
-                        className="btn btn-sm btn-success"
-                        onClick={async () => {
-                            toast.update(toastId, {
-                                isLoading: true,
-                                render: 'Updating...',
-                            })
-
-                            try {
-                                const res = await fetch(
-                                    `https://api-0ggv.onrender.com/api/projects/${project.project_id}/status`,
-                                    {
-                                        method: 'PATCH',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem(
-                                                'token'
-                                            )}`,
-                                        },
-                                        body: JSON.stringify({ status: option.value }),
-                                    }
-                                )
-
-                                const data = await res.json()
-
-                                if (data.success) {
-                                    setSelected(option)
-                                    onStatusChange(project.project_id, option.value)
-
-                                    toast.update(toastId, {
-                                        render: 'Status updated successfully',
-                                        type: 'success',
-                                        isLoading: false,
-                                        autoClose: 2000,
-                                    })
-                                } else {
-                                    throw new Error()
-                                }
-                            } catch (err) {
-                                toast.update(toastId, {
-                                    render: 'Failed to update status',
-                                    type: 'error',
-                                    isLoading: false,
-                                    autoClose: 3000,
-                                })
-                            }
-                        }}
-                    >
-                        Yes
-                    </button>
-
-                    <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => toast.dismiss(toastId)}
-                    >
-                        No
-                    </button>
-                </div>
-            </div>,
-            {
-                autoClose: false,
-                closeOnClick: false,
-                closeButton: false,
-            }
+            <div className="text-muted small">
+              {p.description || "No description"}
+            </div>
+          </div>
         )
-    }
+      }
+    },
 
-    return (
-        <CustomSelect
-            options={STATUS_OPTIONS}
-            selected={selected}
-            onChange={handleChange}
-        />
-    )
-}
+    {
+      accessorKey: 'client',
+      header: 'Client',
+      cell: (info) => {
+        const c = info.getValue()
 
-/* ---------------- UTIL ---------------- */
-
-const formatDate = (date) =>
-    date ? new Date(date).toLocaleDateString() : '—'
-
-/* ---------------- MAIN TABLE ---------------- */
-
-const ProjectTable = ({ statusFilter, projects, setProjects  }) => {
-    const navigate = useNavigate()
-    // const [projects, setProjects] = useState([])
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const res = await fetch(
-                    'https://api-0ggv.onrender.com/api/projects',
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem(
-                                'token'
-                            )}`,
-                        },
-                    }
-                )
-                const json = await res.json()
-                setProjects(json?.data || [])
-            } catch (err) {
-                toast.error('Failed to load projects')
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchProjects()
-    }, [])
- const filteredProjects = useMemo(() => {
-        if (statusFilter === "all") return projects;
-
-        return projects.filter(
-            (p) => p.status === statusFilter
-        );
-    }, [projects, statusFilter]);
-    const handleStatusChange = (id, newStatus) => {
-        setProjects((prev) =>
-            prev.map((p) =>
-                p.project_id === id ? { ...p, status: newStatus } : p
-            )
+        return (
+          <div className="hstack gap-2">
+            <div className="avatar-text avatar-md">
+              {c?.name?.charAt(0)}
+            </div>
+            {c?.name}
+          </div>
         )
+      }
+    },
+
+    { accessorKey: 'start', header: 'Start Date' },
+    { accessorKey: 'end', header: 'End Date' },
+
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: (info) => {
+        const row = info.row.original
+        const isLoading = updatingStatusId === row.id
+
+        return isLoading ? (
+          <div className="spinner-border spinner-border-sm" />
+        ) : (
+          <TableCell
+            value={row.status}
+            onChange={(value) =>
+              handleStatusUpdate(row.id, value, row.status.status)
+            }
+          />
+        )
+      }
+    },
+    {
+      accessorKey: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const id = row.original.id
+
+        return (
+          <div className="hstack gap-2 justify-content-center">
+            <FiEye
+              className="cursor-pointer"
+              onClick={() => navigate(`/projects/view/${id}`)}
+            />
+            <FiEdit3
+              className="cursor-pointer"
+              onClick={() => navigate(`/projects/edit/${id}`)}
+            />
+          </div>
+        )
+      }
     }
+  ]
 
-    if (loading) return <div><Loader /></div>
+  if (loading) return <Loader />
 
-    if (!projects.length)
-        return <div>No projects found</div>
-   
-    return (
-        <div className="table-responsive">
-            <table
-                className="table"
-                style={{
-                    borderCollapse: 'collapse',
-                    width: '100%',
-                }}
-            >
-                <thead>
-                    <tr>
-                        <th style={{ width: '30%' }}>Project</th>
-                        <th>Client</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th style={{ width: '5%' }}>Status</th>
-                        <th style={{ textAlign: 'right' }}>
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {filteredProjects.map((project) => (
-                        <tr key={project.project_id}>
-                            <td style={{ maxWidth: 300 }}>
-                                <div>
-                                    {/* Project Name */}
-                                    <div
-                                        style={{
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            whiteSpace: 'nowrap',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                        }}
-                                        onClick={() =>
-                                            navigate(`/projects/view/${project.project_id}`)
-                                        }
-                                        title={project.project_name}
-                                    >
-                                        {project.project_name}
-                                    </div>
-
-                                    {/* Description */}
-                                    <div
-                                        style={{
-                                            fontSize: 12,
-                                            color: '#777',
-                                            marginTop: 4,
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                        }}
-                                        title={project.description}
-                                    >
-                                        {project.description || 'No description'}
-                                    </div>
-                                </div>
-                            </td>
-
-
-                            <td>
-                                {project.client_id
-                                    ? `Client #${project.client_id}`
-                                    : 'Not Assigned'}
-                            </td>
-
-                            <td>
-                                {formatDate(project.start_date)}
-                            </td>
-
-                            <td>
-                                {formatDate(project.end_date)}
-                            </td>
-
-                            <td>
-                                <StatusCell
-                                    project={project}
-                                    onStatusChange={
-                                        handleStatusChange
-                                    }
-                                />
-                            </td>
-
-                            <td style={{ textAlign: 'right' }}>
-                                <span
-                                    style={{
-                                        cursor: 'pointer',
-                                        marginRight: 10,
-                                    }}
-                                    onClick={() =>
-                                        navigate(
-                                            `/projects/view/${project.project_id}`
-                                        )
-                                    }
-                                >
-                                    <FiEye />
-                                </span>
-
-                                <span
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() =>
-                                        navigate(
-                                            `/projects/edit/${project.project_id}`
-                                        )
-                                    }
-                                >
-                                    <FiEdit3 />
-                                </span>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    )
+  return <Table data={filteredProjects} columns={columns} />
 }
 
 export default ProjectTable

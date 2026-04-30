@@ -8,176 +8,177 @@ import { verifyPagePermission } from '@/utils/verifyPagePermission'
 import Footer from '@/components/shared/Footer'
 import { fileType } from '../components/leads/LeadsHeader'
 
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 const ProjectsList = () => {
-    const navigate = useNavigate();
-    const [statusFilter, setStatusFilter] = useState("all");
-    const [projects, setProjects] = useState([]);
-    useEffect(() => {
-        const checkPermission = async () => {
-            await verifyPagePermission('projects', 'view', navigate);
-        };
+  const navigate = useNavigate()
 
-        checkPermission();
-    }, []);
-    const exportCSV = (projects) => {
-  const rows = [
-    ["Project", "Client", "Start", "End", "Status"],
-    ...projects.map(p => [
-      p.project_name,
-      p.client_id,
-      p.start_date,
-      p.end_date,
-      p.status
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [projects, setProjects] = useState([])
+
+  useEffect(() => {
+    verifyPagePermission('projects', 'view', navigate)
+  }, [])
+
+  /* ---------------- EXPORT FUNCTIONS ---------------- */
+
+  const exportCSV = (data) => {
+    const rows = [
+      ["Project", "Client", "Start", "End", "Status"],
+      ...data.map(p => [
+        p.project.name,
+        p.client.name,
+        p.start,
+        p.end,
+        p.status.status
+      ])
+    ]
+
+    const csv = rows.map(r => r.join(",")).join("\n")
+    const blob = new Blob([csv], { type: "text/csv" })
+
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = "projects.csv"
+    a.click()
+  }
+
+  const exportPDF = (data) => {
+    const doc = new jsPDF()
+
+    const tableRows = data.map(p => [
+      p.project.name,
+      p.client.name,
+      p.start,
+      p.end,
+      p.status.status
     ])
-  ];
 
-  const csv = rows.map(r => r.join(",")).join("\n");
+    autoTable(doc, {
+      head: [["Project", "Client", "Start", "End", "Status"]],
+      body: tableRows,
+    })
 
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
+    doc.save("projects.pdf")
+  }
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "projects.csv";
-  a.click();
-};
-const exportPDF = (projects) => {
-  const doc = new jsPDF();
+  const exportExcel = (data) => {
+    const sheetData = data.map(p => ({
+      Project: p.project.name,
+      Client: p.client.name,
+      Start: p.start,
+      End: p.end,
+      Status: p.status.status,
+    }))
 
-  const tableColumn = ["Project", "Client", "Start", "End", "Status"];
+    const ws = XLSX.utils.json_to_sheet(sheetData)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, "Projects")
 
-  const tableRows = projects.map((p) => [
-    p.project_name,
-    p.client_id || "—",
-    p.start_date ? new Date(p.start_date).toLocaleDateString() : "—",
-    p.end_date ? new Date(p.end_date).toLocaleDateString() : "—",
-    p.status,
-  ]);
+    XLSX.writeFile(wb, "projects.xlsx")
+  }
 
-  autoTable(doc, {
-    head: [tableColumn],
-    body: tableRows,
-  });
+  const exportXML = (data) => {
+    let xml = "<projects>"
 
-  doc.save("projects.pdf");
-};
-const exportExcel = (projects) => {
-  const data = projects.map((p) => ({
-    Project: p.project_name,
-    Client: p.client_id || "—",
-    Start: p.start_date
-      ? new Date(p.start_date).toLocaleDateString()
-      : "—",
-    End: p.end_date
-      ? new Date(p.end_date).toLocaleDateString()
-      : "—",
-    Status: p.status,
-  }));
+    data.forEach(p => {
+      xml += `
+        <project>
+          <name>${p.project.name}</name>
+          <client>${p.client.name}</client>
+          <start>${p.start}</start>
+          <end>${p.end}</end>
+          <status>${p.status.status}</status>
+        </project>`
+    })
 
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
+    xml += "</projects>"
 
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Projects");
+    const blob = new Blob([xml], { type: "application/xml" })
 
-  XLSX.writeFile(workbook, "projects.xlsx");
-};
-const exportXML = (projects) => {
-  const xml = `
-<projects>
-${projects
-  .map(
-    (p) => `
-  <project>
-    <name>${p.project_name}</name>
-    <client>${p.client_id || ""}</client>
-    <start>${p.start_date || ""}</start>
-    <end>${p.end_date || ""}</end>
-    <status>${p.status}</status>
-  </project>`
-  )
-  .join("")}
-</projects>`;
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = "projects.xml"
+    a.click()
+  }
 
-  const blob = new Blob([xml], { type: "application/xml" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "projects.xml";
-  a.click();
-};
-const exportText = (projects) => {
-  const text = projects
-    .map(
-      (p, i) => `
+  const exportTXT = (data) => {
+    const text = data.map((p, i) => `
 Project ${i + 1}
----------------------
-Name   : ${p.project_name}
-Client : ${p.client_id || "—"}
-Start  : ${p.start_date || "—"}
-End    : ${p.end_date || "—"}
-Status : ${p.status}
-`
-    )
-    .join("\n");
+------------------
+Name   : ${p.project.name}
+Client : ${p.client.name}
+Start  : ${p.start}
+End    : ${p.end}
+Status : ${p.status.status}
+`).join("\n")
 
-  const blob = new Blob([text], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
+    const blob = new Blob([text], { type: "text/plain" })
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "projects.txt";
-  a.click();
-};
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = "projects.txt"
+    a.click()
+  }
+const getFilteredProjects = () => {
+  if (statusFilter === "all") return projects
+
+  return projects.filter(p => p.status?.status === statusFilter)
+}
  const handleExport = (type) => {
-  console.log("Export:", type);
+  const filteredData = getFilteredProjects()
+
+  if (!filteredData.length) return
 
   switch (type) {
     case "csv":
-      exportCSV(projects);
-      break;
-    case "excel":
-      exportExcel(projects);
-      break;
+      exportCSV(filteredData)
+      break
     case "pdf":
-      exportPDF(projects);
-      break;
-         case "xml":
-      exportXML(projects); // ✅
-      break;
-
+      exportPDF(filteredData)
+      break
+    case "excel":
+      exportExcel(filteredData)
+      break
+    case "xml":
+      exportXML(filteredData)
+      break
     case "txt":
-      exportText(projects); // ✅
-      break;
+      exportTXT(filteredData)
+      break
     case "print":
-      window.print();
-      break;
+      window.print()
+      break
     default:
-      break;
+      break
   }
-};
+}
+  return (
+    <>
+      <PageHeader>
+        <ProjectsListHeader
+          setStatusFilter={setStatusFilter}
+          // handleExport={handleExport}
+          projects={projects}
+         fileType={fileType(handleExport)} />
+      </PageHeader>
 
+      <div className="main-content">
+        <ToastProvider />
+        <div className="row">
+          <ProjectTable
+            statusFilter={statusFilter}
+            projects={projects}
+            setProjects={setProjects}
+          />
+        </div>
+      </div>
 
-    return (
-        <>
-            <PageHeader>
-                <ProjectsListHeader setStatusFilter={setStatusFilter}
-                    statusFilter={statusFilter}
-                    fileType={fileType(handleExport)} />
-            </PageHeader>
-            <div className='main-content '>
-                <ToastProvider />
-                <div className='row ' style={{ height: "61vh" }}>
-                    <ProjectTable statusFilter={statusFilter} projects={projects} setProjects={setProjects} />
-                </div>
-            </div>
-            <Footer />
-        </>
-    )
+      <Footer />
+    </>
+  )
 }
 
 export default ProjectsList
