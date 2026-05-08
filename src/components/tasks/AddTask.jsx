@@ -16,7 +16,7 @@ const AddTask = () => {
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
     const [tasks, setTasks] = useState([])
-
+    const [projectLoading, setProjectLoading] = useState(true)
     // const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
         project_id: '',
@@ -63,14 +63,18 @@ const AddTask = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                // const res = await fetch('https://api-0ggv.onrender.com/api/projects/managed', {
-                const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
+
+                setProjectLoading(true)
+                // const res = await fetch('http://localhost:5000/api/projects/managed', {
+                const res = await fetch('http://localhost:5000/api/projects/projects-members', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
                 setProjects(data?.data || data || [])
             } catch (err) {
                 console.error('Fetch projects error', err)
+            } finally {
+                setProjectLoading(false)
             }
         }
 
@@ -80,7 +84,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+                const res = await fetch('http://localhost:5000/api/tasks', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -105,7 +109,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -184,7 +188,7 @@ const AddTask = () => {
                 };
             }
             /* -------- Create Task -------- */
-            const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+            const res = await fetch('http://localhost:5000/api/tasks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -230,7 +234,7 @@ const AddTask = () => {
 
             /* -------- Assign Users (NON-BLOCKING) -------- */
             if (formData.assignees.length > 0) {
-                fetch(`https://api-0ggv.onrender.com/api/tasks/${taskId}/assign`, {
+                fetch(`http://localhost:5000/api/tasks/${taskId}/assign`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -337,25 +341,41 @@ const AddTask = () => {
 
                         {/* Project */}
                         <div className="mb-4">
-                            <label className="form-label">Project<span className="text-danger">*</span> </label>
-                            <select
-                                className="form-control"
-                                value={formData.project_id || 0}
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        project_id: Number(e.target.value),
-                                    })
-                                }
-                            >
-                                <option value={0}>Select Project</option>
-                                {projects.map((p) => (
-                                    <option key={p.project_id} value={p.project_id}>
-                                        {p.project_name}
-                                    </option>
-                                ))}
-                            </select>
+                            <label className="form-label">
+                                Project<span className="text-danger">* </span>
+                                <span className="text-xs text-gray-500">
+                                    If the project is not visible to you, please ask your admin to add you as a project member.
+                                </span>
+                            </label>
 
+                            {projectLoading ? (
+                                <div className="border rounded p-3 text-center text-muted bg-light">
+                                    Loading projects...
+                                </div>
+                            ) : projects.length > 0 ? (
+                                <select
+                                    className="form-control"
+                                    value={formData.project_id || 0}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            project_id: Number(e.target.value),
+                                        })
+                                    }
+                                >
+                                    <option value={0}>Select Project</option>
+
+                                    {projects.map((p) => (
+                                        <option key={p.project_id} value={p.project_id}>
+                                            {p.project_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <div className="border rounded p-3 text-center text-muted bg-light">
+                                    No projects available
+                                </div>
+                            )}
                         </div>
 
                         {/* Task Name */}
@@ -455,7 +475,7 @@ const AddTask = () => {
                                 onChange={(v) => setFormData({ ...formData, labels: v })}
                             />
                         </div>
-                       
+
                         {/* Assignees */}
                         {/* <div className="mb-4">
                             <label className="form-label">Assignees</label>
@@ -512,7 +532,7 @@ const AddTask = () => {
                                 ))}
                             </div>
                         </div>
-                         <div className="mb-4">
+                        <div className="mb-4">
                             <label className="form-label">Task Type</label>
                             <select
                                 className="form-control"
@@ -529,7 +549,7 @@ const AddTask = () => {
                                 ))}
                             </select>
                         </div>
-                         <div className="form-check mb-3">
+                        <div className="form-check mb-3">
                             <input
                                 className="form-check-input"
                                 type="checkbox"
@@ -585,77 +605,77 @@ const AddTask = () => {
                                 )}
                             </>
                         )}
-{!formData.is_recurring &&<>
-                       
+                        {!formData.is_recurring && <>
 
-                        <div className="form-check mb-4">
-                            <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id="isMilestone"
-                                checked={formData.is_milestone}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, is_milestone: e.target.checked })
-                                }
-                            />
-                            <label className="form-check-label" htmlFor="isMilestone">
-                                Mark as Milestone<span className="text-xs text-gray-500">
-                                    (Marks this task as a key milestone in the project)
-                                </span>
-                            </label>
-                        </div>
 
-                        <div className="mb-4">
-                            <label className="form-label">Depends On <span className="text-xs text-gray-500 mt-1">(Select tasks that must be completed before this task starts)</span></label>
-
-                            <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
-                                {dependsOnOptions.map(task => (
-                                    <div key={task.value} className="form-check">
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            id={`depends-${task.value}`}
-                                            checked={formData.depends_on.some(d => d.value === task.value)}
-                                            onChange={() => toggleDependsOn(task)}
-                                        />
-                                        <label
-                                            className="form-check-label"
-                                            htmlFor={`depends-${task.value}`}
-                                        >
-                                            {task.label}
-                                        </label>
-                                    </div>
-                                ))}
+                            <div className="form-check mb-4">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="isMilestone"
+                                    checked={formData.is_milestone}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, is_milestone: e.target.checked })
+                                    }
+                                />
+                                <label className="form-check-label" htmlFor="isMilestone">
+                                    Mark as Milestone<span className="text-xs text-gray-500">
+                                        (Marks this task as a key milestone in the project)
+                                    </span>
+                                </label>
                             </div>
-                        </div>
 
-                        <div className="mb-4">
-                            <label className="form-label">Blocking Task <span className="text-xs text-gray-500">
-                                (Select tasks that will be blocked until this task is completed)
-                            </span></label>
+                            <div className="mb-4">
+                                <label className="form-label">Depends On <span className="text-xs text-gray-500 mt-1">(Select tasks that must be completed before this task starts)</span></label>
 
-                            <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
-                                {blocksOptions.map(task => (
-                                    <div key={task.value} className="form-check">
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            id={`blocks-${task.value}`}
-                                            checked={formData.blocks.some(b => b.value === task.value)}
-                                            onChange={() => toggleBlocks(task)}
-                                        />
-                                        <label
-                                            className="form-check-label"
-                                            htmlFor={`blocks-${task.value}`}
-                                        >
-                                            {task.label}
-                                        </label>
-                                    </div>
-                                ))}
+                                <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
+                                    {dependsOnOptions.map(task => (
+                                        <div key={task.value} className="form-check">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id={`depends-${task.value}`}
+                                                checked={formData.depends_on.some(d => d.value === task.value)}
+                                                onChange={() => toggleDependsOn(task)}
+                                            />
+                                            <label
+                                                className="form-check-label"
+                                                htmlFor={`depends-${task.value}`}
+                                            >
+                                                {task.label}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+
+                            <div className="mb-4">
+                                <label className="form-label">Blocking Task <span className="text-xs text-gray-500">
+                                    (Select tasks that will be blocked until this task is completed)
+                                </span></label>
+
+                                <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
+                                    {blocksOptions.map(task => (
+                                        <div key={task.value} className="form-check">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id={`blocks-${task.value}`}
+                                                checked={formData.blocks.some(b => b.value === task.value)}
+                                                onChange={() => toggleBlocks(task)}
+                                            />
+                                            <label
+                                                className="form-check-label"
+                                                htmlFor={`blocks-${task.value}`}
+                                            >
+                                                {task.label}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </>
-}
+                        }
                         <div className="form-check mb-3">
                             <input
                                 className="form-check-input"

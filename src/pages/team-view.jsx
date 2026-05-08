@@ -30,7 +30,7 @@ const TeamsView = () => {
         const token = localStorage.getItem('token')
 
         const res = await fetch(
-          `https://api-0ggv.onrender.com/api/teams/${id}`,
+          `http://localhost:5000/api/teams/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

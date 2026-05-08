@@ -34,7 +34,7 @@ const UsersListTable = ({ users, setUsers }) => {
             try {
                 const token = localStorage.getItem('token')
 
-                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
 
@@ -89,7 +89,7 @@ const UsersListTable = ({ users, setUsers }) => {
         const token = localStorage.getItem('token')
 
         const res = await fetch(
-            `https://api-0ggv.onrender.com/api/users/${userId}/status`,
+            `http://localhost:5000/api/users/${userId}/status`,
             {
                 method: "PATCH",
                 headers: {
