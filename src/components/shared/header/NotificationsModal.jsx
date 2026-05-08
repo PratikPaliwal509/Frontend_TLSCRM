@@ -42,7 +42,7 @@ const NotificationsModal = () => {
   // 🔹 FETCH NOTIFICATIONS
   const fetchNotifications = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/notification", {
+      const res = await fetch("https://api-0ggv.onrender.com/api/notification", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ const NotificationsModal = () => {
     }
 
     // Setup socket
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io("https://api-0ggv.onrender.com", {
       auth: { token },
       transports: ["websocket"],
     });
@@ -112,7 +112,7 @@ const NotificationsModal = () => {
   const handleMarkAllAsRead = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/notification/read-all",
+        "https://api-0ggv.onrender.com/api/notification/read-all",
         {
           method: "PATCH",
           headers: {

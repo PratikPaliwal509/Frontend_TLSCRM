@@ -74,7 +74,7 @@ const ClientssTable = ({ setClients, clients }) => {
       try {
         const token = localStorage.getItem("token")
 
-        const res = await fetch("http://localhost:5000/api/clients", {
+        const res = await fetch("https://api-0ggv.onrender.com/api/clients", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -125,7 +125,7 @@ const ClientssTable = ({ setClients, clients }) => {
       const token = localStorage.getItem("token")
       const status = newStatus
       const res = await fetch(
-        `http://localhost:5000/api/clients/${clientId}/status`,
+        `https://api-0ggv.onrender.com/api/clients/${clientId}/status`,
         {
           method: "PATCH",
           headers: {
@@ -165,7 +165,7 @@ const ClientssTable = ({ setClients, clients }) => {
   //   try {
   //     const token = localStorage.getItem("token")
 
-  //     await fetch(`http://localhost:5000/api/clients/${clientId}`, {
+  //     await fetch(`https://api-0ggv.onrender.com/api/clients/${clientId}`, {
   //       method: "DELETE",
   //       headers: {
   //         Authorization: `Bearer ${token}`,

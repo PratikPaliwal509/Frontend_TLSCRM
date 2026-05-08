@@ -25,7 +25,7 @@ const AllNotifications = () => {
       // setNotifications([]);
 
       const res = await fetch(
-        `http://localhost:5000/api/notification?page=${pageNo}&limit=${LIMIT}`,
+        `https://api-0ggv.onrender.com/api/notification?page=${pageNo}&limit=${LIMIT}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -52,7 +52,7 @@ const AllNotifications = () => {
   useEffect(() => {
     if (!token) return;
 
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io("https://api-0ggv.onrender.com", {
       auth: { token },
       transports: ["websocket"],
     });
@@ -77,7 +77,7 @@ const AllNotifications = () => {
       setDeletingId(null);
     }, 300);
 
-    await fetch(`http://localhost:5000/api/notification/${id}`, {
+    await fetch(`https://api-0ggv.onrender.com/api/notification/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -92,7 +92,7 @@ const AllNotifications = () => {
     );
 
     await fetch(
-      `http://localhost:5000/api/notification/${id}/read`,
+      `https://api-0ggv.onrender.com/api/notification/${id}/read`,
       {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },

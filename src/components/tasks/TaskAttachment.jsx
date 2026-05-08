@@ -10,7 +10,7 @@ const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
     const fetchAttachments = async () => {
       if (taskId) {
         try {
-          const res = await fetch(`http://localhost:5000/api/taskAttachments/${taskId}/attachments`, {
+          const res = await fetch(`https://api-0ggv.onrender.com/api/taskAttachments/${taskId}/attachments`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -59,7 +59,7 @@ const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
 
       // Send to backend
       const backendRes = await fetch(
-        `http://localhost:5000/api/taskAttachments/${taskId}/attachments`,
+        `https://api-0ggv.onrender.com/api/taskAttachments/${taskId}/attachments`,
         {
           method: "POST",
           headers: {
@@ -100,7 +100,7 @@ const AddTimeLogAttachment = ({ taskCreatedBy, taskId }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/taskAttachments/attachments/${attachmentId}`,
+        `https://api-0ggv.onrender.com/api/taskAttachments/attachments/${attachmentId}`,
         {
           method: 'DELETE',
           headers: {

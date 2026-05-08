@@ -152,7 +152,7 @@ const CommentCard = ({
             const mention_user_ids = mentionedUsers
 
             const res = await fetch(
-                `http://localhost:5000/api/tasksComments/${task_id}/comments/${comment_id}/replies`,
+                `https://api-0ggv.onrender.com/api/tasksComments/${task_id}/comments/${comment_id}/replies`,
                 {
                     method: 'POST',
                     headers: {
@@ -215,7 +215,7 @@ const CommentCard = ({
 
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasksComments/comments/${comment_id}`,
+                `https://api-0ggv.onrender.com/api/tasksComments/comments/${comment_id}`,
                 {
                     method: 'PUT',
                     headers: {
@@ -257,7 +257,7 @@ const CommentCard = ({
 
         try {
             const res = await fetch(
-                `http://localhost:5000/api/tasksComments/comments/${comment_id}`,
+                `https://api-0ggv.onrender.com/api/tasksComments/comments/${comment_id}`,
                 {
                     method: 'DELETE',
                     headers: {

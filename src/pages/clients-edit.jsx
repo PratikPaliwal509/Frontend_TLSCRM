@@ -42,7 +42,7 @@ const ClientEdit = () => {
             try {
                 const token = localStorage.getItem('token')
 
-                const response = await fetch('http://localhost:5000/api/users/client-portal-users', {
+                const response = await fetch('https://api-0ggv.onrender.com/api/users/client-portal-users', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -64,7 +64,7 @@ const ClientEdit = () => {
         const fetchAgencies = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:5000/api/agencies', {
+                const response = await fetch('https://api-0ggv.onrender.com/api/agencies', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const ClientEdit = () => {
         const fetchClient = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:5000/api/clients/client/${id}`, {
+                const response = await fetch(`https://api-0ggv.onrender.com/api/clients/client/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ const ClientEdit = () => {
             setLoading(true);
             const token = localStorage.getItem('token');
 
-            const response = await fetch(`http://localhost:5000/api/clients/${id}`, {
+            const response = await fetch(`https://api-0ggv.onrender.com/api/clients/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
