@@ -60,7 +60,7 @@ const AddTask = () => {
         const fetchProjects = async () => {
             try {
                 // const res = await fetch('https://api-0ggv.onrender.com/api/projects/managed', {
-                const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
+                const res = await fetch('https://api-0ggv.onrender.com/api/projects/projects-members', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
