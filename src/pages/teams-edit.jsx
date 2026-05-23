@@ -37,8 +37,8 @@ const TeamEdit = () => {
     const fetchUsers = async () => {
       const token = localStorage.getItem('token')
       const res = await fetch(
-        // 'https://api-0ggv.onrender.com/api/users/users/by-agency',
-        'https://api-0ggv.onrender.com/api/users/users/without-team',
+        // 'http://localhost:5000/api/users/users/by-agency',
+        'http://localhost:5000/api/users/users/without-team',
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const data = await res.json()
@@ -52,7 +52,7 @@ const TeamEdit = () => {
     const fetchDepartments = async () => {
       const token = localStorage.getItem('token')
       const res = await fetch(
-        'https://api-0ggv.onrender.com/api/departments',
+        'http://localhost:5000/api/departments',
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const data = await res.json()
@@ -66,7 +66,7 @@ const TeamEdit = () => {
     const fetchTeam = async () => {
       const token = localStorage.getItem('token')
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/teams/${teamId}`,
+        `http://localhost:5000/api/teams/${teamId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const data = await res.json()
@@ -116,7 +116,7 @@ const TeamEdit = () => {
       }
 
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/teams/${teamId}`,
+        `http://localhost:5000/api/teams/${teamId}`,
         {
           method: 'PUT',
           headers: {
@@ -149,7 +149,7 @@ const TeamEdit = () => {
       const token = localStorage.getItem('token')
 
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/teams/${teamId}/members`,
+        `http://localhost:5000/api/teams/${teamId}/members`,
         {
           method: 'POST',
           headers: {
@@ -169,7 +169,7 @@ const TeamEdit = () => {
       toast.success(data?.message || 'Members added successfully')
       // Reload team members
       const teamRes = await fetch(
-        `https://api-0ggv.onrender.com/api/teams/${teamId}`,
+        `http://localhost:5000/api/teams/${teamId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const teamData = await teamRes.json()

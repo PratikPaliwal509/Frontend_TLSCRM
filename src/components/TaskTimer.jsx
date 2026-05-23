@@ -44,8 +44,8 @@ const TaskTimer = ({ taskId, project_id }) => {
     const fetchActiveLog = async () => {
       try {
         const res = await fetch(
-          `https://api-0ggv.onrender.com/api/tasks/timelogs/active/${taskId}`,
-          // `https://api-0ggv.onrender.com/api/tasks/timelogs/${taskId}/time-logs`,
+          `http://localhost:5000/api/tasks/timelogs/active/${taskId}`,
+          // `http://localhost:5000/api/tasks/timelogs/${taskId}/time-logs`,
           {
             method: "GET",
             headers: {
@@ -96,7 +96,7 @@ const TaskTimer = ({ taskId, project_id }) => {
 
   const handleStart = async () => {
     const token = localStorage.getItem("token")
-    const res = await fetch("https://api-0ggv.onrender.com/api/tasks/timelogs/start", {
+    const res = await fetch("http://localhost:5000/api/tasks/timelogs/start", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +113,7 @@ const TaskTimer = ({ taskId, project_id }) => {
   const handleStop = async () => {
     const token = localStorage.getItem("token")
 
-    await fetch("https://api-0ggv.onrender.com/api/tasks/timelogs/stop", {
+    await fetch("http://localhost:5000/api/tasks/timelogs/stop", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

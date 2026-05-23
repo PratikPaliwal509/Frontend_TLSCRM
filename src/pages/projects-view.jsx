@@ -33,7 +33,7 @@ const ProjectsView = () => {
       try {
         const token = localStorage.getItem('token')
 
-        const res = await fetch(`https://api-0ggv.onrender.com/api/projects/${id}`, {
+        const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

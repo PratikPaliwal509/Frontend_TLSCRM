@@ -63,7 +63,7 @@ const KanbanBoard = ({ tasks = [], project_name }) => {
         try {
             const token = localStorage.getItem('token')
             const res = await fetch(
-                `https://api-0ggv.onrender.com/api/tasks/${taskId}/status`,
+                `http://localhost:5000/api/tasks/${taskId}/status`,
                 {
                     method: 'PATCH',
                     headers: {

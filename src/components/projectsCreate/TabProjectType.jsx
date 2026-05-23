@@ -11,7 +11,7 @@ const TabProjectType = ({ formData, setFormData, error }) => {
   // 🔹 Fetch agencies (only once)
   useEffect(() => {
     setLoadingAgencies(true)
-    fetch('https://api-0ggv.onrender.com/api/agencies', {
+    fetch('http://localhost:5000/api/agencies', {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const TabProjectType = ({ formData, setFormData, error }) => {
     }
  setLoadingClients(true)
     fetch(
-      `https://api-0ggv.onrender.com/api/clients/clientsAll?agency_id=${formData.agency_id}`,
+      `http://localhost:5000/api/clients/clientsAll?agency_id=${formData.agency_id}`,
       {
         headers: {
           'Content-Type': 'application/json',

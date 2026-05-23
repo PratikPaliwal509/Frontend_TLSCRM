@@ -27,7 +27,7 @@ const UsersView = () => {
             try {
                 const token = localStorage.getItem('token')
 
-                const res = await fetch(`https://api-0ggv.onrender.com/api/users/${id}`, {
+                const res = await fetch(`http://localhost:5000/api/users/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

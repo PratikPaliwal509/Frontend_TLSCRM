@@ -22,7 +22,7 @@ const useVerifyRole = () => {
 
             try {
                 const res = await fetch(
-                    `https://api-0ggv.onrender.com/api/users/${decoded.user_id}`,
+                    `http://localhost:5000/api/users/${decoded.user_id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

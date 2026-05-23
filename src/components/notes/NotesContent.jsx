@@ -29,8 +29,8 @@ const NotesContent = () => {
             const token = localStorage.getItem("token")
             const url =
                 noteType === "clients"
-                    ? "https://api-0ggv.onrender.com/api/clients/notes"
-                    : "https://api-0ggv.onrender.com/api/projects/notes"
+                    ? "http://localhost:5000/api/clients/notes"
+                    : "http://localhost:5000/api/projects/notes"
 
             const res = await fetch(url, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -63,7 +63,7 @@ const NotesContent = () => {
             const token = localStorage.getItem("token")
 
             const res = await fetch(
-                "https://api-0ggv.onrender.com/api/clients/without-notes",
+                "http://localhost:5000/api/clients/without-notes",
                 {
                     method: "GET",
                     headers: {
@@ -92,7 +92,7 @@ const NotesContent = () => {
             const token = localStorage.getItem("token")
 
             const res = await fetch(
-                "https://api-0ggv.onrender.com/api/projects/without-notes",
+                "http://localhost:5000/api/projects/without-notes",
                 {
                     method: "GET",
                     headers: {
