@@ -11,7 +11,8 @@ import MessageEditor from "./MessageEditor";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import ChatMessage from "./ChatMessage";
 import ChatsUsers from "./ChatsUsers";
-
+import NewChatUsers from "./NewChatUsers";
+import axios from "axios";
 const ChatContent = () => {
     const [sidebarOpen, setSidebarOpen] =
         useState(false);
@@ -23,12 +24,17 @@ const ChatContent = () => {
 
     const [replyMessage, setReplyMessage] =
         useState(null);
-
+    const [activeSidebar, setActiveSidebar] = useState("chats");
+    // "chats" | "newChat" | null
     const user = localStorage.getItem("user");
     const currentUserId = user ? JSON.parse(user).user_id : null;
     const socketRef = useRef(null);
     const [chats, setChats] = useState([]);
     const token = localStorage.getItem("token");
+
+    const [creatingChat, setCreatingChat] =
+        useState(false);
+
 
     /* =========================================
         SOCKET CONNECT
@@ -288,19 +294,428 @@ const ChatContent = () => {
             console.log(err);
         }
     };
+    // ======================================
+    // CREATE OR OPEN DIRECT CHAT
+    // ======================================
+    const handleCreateChat = async (
+        selectedUser
+    ) => {
+        console.log(selectedUser)
+        // STOP MULTIPLE CLICKS
+        if (creatingChat) return;
 
+        try {
+
+            setCreatingChat(true);
+
+            // ======================================
+            // CHECK EXISTING CHAT
+            // ======================================
+
+            const existingChat = chats.find(
+                (chat) => {
+
+                    if (
+                        chat.chat_type !== "direct"
+                    ) {
+                        return false;
+                    }
+
+                    return chat.participants?.some(
+                        (participant) =>
+                            participant.user_id ===
+                            selectedUser.user_id
+                    );
+                }
+            );
+
+            // ======================================
+            // OPEN EXISTING CHAT
+            // ======================================
+
+            if (existingChat) {
+
+                handleSelectChat(
+                    existingChat
+                );
+
+                setActiveSidebar(
+                    "chats"
+                );
+
+                return;
+            }
+
+            // ======================================
+            // OPTIMISTIC TEMP CHAT
+            // ======================================
+
+            const tempChat = {
+                chat_id:
+                    "temp_" + Date.now(),
+
+                chat_type: "direct",
+
+                participants: [
+                    {
+                        user_id:
+                            currentUserId,
+                    },
+                    {
+                        user_id:
+                            selectedUser.user_id,
+                        user: selectedUser,
+                    },
+                ],
+
+                messages: [],
+            };
+
+            // INSTANT OPEN
+            setSelectedChat(tempChat);
+
+            // INSTANT SIDEBAR UPDATE
+            setChats((prev) => [
+                tempChat,
+                ...prev,
+            ]);
+
+            setActiveSidebar(
+                "chats"
+            );
+
+            // ======================================
+            // CREATE REAL CHAT API
+            // ======================================
+
+            const response =
+                await axios.post(
+                    "http://localhost:5000/api/chats",
+                    {
+                        agency_id: 1,
+                        chat_type: "direct",
+                        chat_name: null,
+                        created_by:
+                            currentUserId,
+                        receiver_id:
+                            selectedUser.user_id,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type":
+                                "application/json",
+                        },
+                    }
+                );
+
+            const realChat =
+                response.data.data;
+            // ======================================
+            // ADD PARTICIPANTS
+            // ======================================
+
+            // current user
+            await axios.post(
+                "http://localhost:5000/api/chat-participants",
+                {
+                    chat_id: realChat.chat_id,
+                    user_id: currentUserId,
+                    role: "member",
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            // selected user
+            await axios.post(
+                "http://localhost:5000/api/chat-participants",
+                {
+                    chat_id: realChat.chat_id,
+                    user_id: selectedUser.user_id,
+                    role: "member",
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            // ======================================
+            // PREPARE FINAL CHAT WITH USER DETAILS
+            // ======================================
+
+            const finalChat = {
+                ...realChat,
+
+                participants: [
+                    {
+                        user_id: currentUserId,
+                    },
+                    {
+                        user_id: selectedUser.user_id,
+                        user: selectedUser,
+                    },
+                ],
+
+                messages: [],
+            };
+
+            // ======================================
+            // REPLACE TEMP CHAT
+            // ======================================
+
+            setChats((prev) =>
+                prev.map((chat) =>
+                    chat.chat_id === tempChat.chat_id
+                        ? finalChat
+                        : chat
+                )
+            );
+
+            // ======================================
+            // OPEN REAL CHAT
+            // ======================================
+
+            setSelectedChat(finalChat);
+
+            // JOIN SOCKET ROOM
+            if (socketRef.current) {
+
+                socketRef.current.emit(
+                    "chat:join",
+                    realChat.chat_id
+                );
+            }
+
+            // FETCH MESSAGES
+            fetchMessages(
+                finalChat.chat_id
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Create/Open chat error:",
+                error.response?.data ||
+                error.message
+            );
+
+        } finally {
+
+            setCreatingChat(false);
+        }
+    };
+
+
+    // ======================================
+    // CREATE GROUP CHAT
+    // ======================================
+    const handleCreateGroup = async (
+        groupName,
+        selectedUsers = []
+    ) => {
+
+        // ======================================
+        // TEMP GROUP (INSTANT UI)
+        // ======================================
+
+        const tempGroup = {
+            chat_id: "temp_" + Date.now(),
+
+            chat_type: "group",
+
+            chat_name: groupName,
+
+            participants: [
+                {
+                    user_id: currentUserId,
+                },
+
+                ...selectedUsers.map((user) => ({
+                    user_id: user.user_id,
+                    user,
+                })),
+            ],
+
+            messages: [],
+        };
+
+        // ======================================
+        // OPEN IMMEDIATELY
+        // ======================================
+
+        setChats((prev) => [
+            tempGroup,
+            ...prev,
+        ]);
+
+        setSelectedChat(tempGroup);
+
+        setMessages([]);
+
+        setActiveSidebar("chats");
+
+        try {
+
+            // ======================================
+            // CREATE REAL GROUP
+            // ======================================
+
+            const createResponse =
+                await axios.post(
+                    "http://localhost:5000/api/chats",
+                    {
+                        agency_id: 1,
+                        chat_type: "group",
+                        chat_name: groupName,
+                        created_by: currentUserId,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type":
+                                "application/json",
+                        },
+                    }
+                );
+
+            const newGroup =
+                createResponse.data.data;
+
+            // ======================================
+            // ADD CURRENT USER
+            // ======================================
+
+            await axios.post(
+                "http://localhost:5000/api/chat-participants",
+                {
+                    chat_id: newGroup.chat_id,
+                    user_id: currentUserId,
+                    role: "admin",
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type":
+                            "application/json",
+                    },
+                }
+            );
+
+            // ======================================
+            // ADD MEMBERS
+            // ======================================
+
+            await Promise.all(
+
+                selectedUsers.map((user) =>
+                    axios.post(
+                        "http://localhost:5000/api/chat-participants",
+                        {
+                            chat_id:
+                                newGroup.chat_id,
+                            user_id:
+                                user.user_id,
+                            role: "member",
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                "Content-Type":
+                                    "application/json",
+                            },
+                        }
+                    )
+                )
+            );
+
+            // ======================================
+            // FINAL GROUP
+            // ======================================
+
+            const finalGroup = {
+                ...newGroup,
+
+                participants:
+                    tempGroup.participants,
+
+                messages: [],
+            };
+
+            // ======================================
+            // REPLACE TEMP GROUP
+            // ======================================
+
+            setChats((prev) =>
+                prev.map((chat) =>
+                    chat.chat_id ===
+                        tempGroup.chat_id
+                        ? finalGroup
+                        : chat
+                )
+            );
+
+            // ======================================
+            // UPDATE SELECTED CHAT
+            // ======================================
+
+            setSelectedChat(finalGroup);
+
+            // ======================================
+            // JOIN SOCKET
+            // ======================================
+
+            if (socketRef.current) {
+
+                socketRef.current.emit(
+                    "chat:join",
+                    finalGroup.chat_id
+                );
+            }
+
+            console.log(
+                "Group created:",
+                finalGroup
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Create group error:",
+                error.response?.data ||
+                error.message
+            );
+        }
+    };
     return (
         <>
             {/* =====================================
             LEFT SIDEBAR
       ===================================== */}
-            <ChatsUsers
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-                selectedChat={selectedChat}
-                handleSelectChat={handleSelectChat}
-                chats={chats}
-            />
+            {activeSidebar === "chats" && (
+                <ChatsUsers
+                    sidebarOpen={true}
+                    setSidebarOpen={() => setActiveSidebar("newChat")}
+                    handleSelectChat={handleSelectChat}
+                    selectedChat={selectedChat}
+                    chats={chats}
+                />
+            )}
+
+            {activeSidebar === "newChat" && (
+                <NewChatUsers
+                    sidebarOpen={true}
+                    setSidebarOpen={() => setActiveSidebar("chats")}
+                    handleCreateChat={handleCreateChat}
+                    handleCreateGroup={handleCreateGroup}
+                />
+            )}
             {/* =====================================
             RIGHT CHAT AREA
       ===================================== */}
@@ -320,7 +735,7 @@ const ChatContent = () => {
 
                     {/* MESSAGES */}
 
-                    <div className="content-area-body p-4">
+                    <div className="content-area-body p-4 min-vh-100">
                         {messages.map(
                             (message, index) => {
                                 const previousMessage =

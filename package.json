@@ -18,7 +18,7 @@
     "@popperjs/core": "^2.11.8",
     "@tanstack/react-table": "^8.20.5",
     "apexcharts": "^5.3.6",
-    "axios": "^1.13.2",
+    "axios": "^1.16.1",
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.3",
