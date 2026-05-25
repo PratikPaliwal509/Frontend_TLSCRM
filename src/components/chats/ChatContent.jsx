@@ -12,33 +12,51 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import ChatMessage from "./ChatMessage";
 import ChatsUsers from "./ChatsUsers";
 import NewChatUsers from "./NewChatUsers";
+
 import axios from "axios";
+
 const ChatContent = () => {
+
     const [sidebarOpen, setSidebarOpen] =
         useState(false);
 
     const [selectedChat, setSelectedChat] =
         useState(null);
 
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] =
+        useState([]);
 
     const [replyMessage, setReplyMessage] =
         useState(null);
-    const [activeSidebar, setActiveSidebar] = useState("chats");
-    // "chats" | "newChat" | null
-    const user = localStorage.getItem("user");
-    const currentUserId = user ? JSON.parse(user).user_id : null;
-    const socketRef = useRef(null);
-    const [chats, setChats] = useState([]);
-    const token = localStorage.getItem("token");
+
+    const [activeSidebar, setActiveSidebar] =
+        useState("chats");
+
+    const [chats, setChats] =
+        useState([]);
 
     const [creatingChat, setCreatingChat] =
         useState(false);
+const [typingUsers, setTypingUsers] =
+    useState({});
+    const user =
+        localStorage.getItem("user");
 
+    const currentUserId =
+        user
+            ? JSON.parse(user).user_id
+            : null;
+
+    const token =
+        localStorage.getItem("token");
+
+    const socketRef =
+        useRef(null);
 
     /* =========================================
         SOCKET CONNECT
     ========================================= */
+
     useEffect(() => {
 
         if (!token) return;
@@ -53,130 +71,175 @@ const ChatContent = () => {
             }
         );
 
-        const socket = socketRef.current;
-
-        socket.on("connect", () => {
-
-            console.log(
-                "Socket connected:",
-                socket.id
-            );
-
-            if (selectedChat) {
-
-                socket.emit(
-                    "chat:join",
-                    selectedChat.chat_id
-                );
-            }
-        });
-
-        /* =====================================
-            REALTIME MESSAGE
-        ===================================== */
+        const socket =
+            socketRef.current;
 
         socket.on(
-            "chat:new-message",
-            (message) => {
+            "connect",
+            () => {
 
                 console.log(
-                    "Realtime Message:",
-                    message
+                    "Socket connected:",
+                    socket.id
                 );
 
-                /* =========================
-                    UPDATE MESSAGE LIST
-                ========================= */
+                if (selectedChat) {
 
-                if (
-                    selectedChat &&
-                    message.chat_id ===
-                    selectedChat.chat_id
-                ) {
-
-                    setMessages((prev) => {
-
-                        const exists =
-                            prev.some(
-                                (m) =>
-                                    m.message_id ===
-                                    message.message_id
-                            );
-
-                        if (exists) {
-                            return prev;
-                        }
-
-                        return [
-                            ...prev,
-                            message,
-                        ];
-                    });
-                }
-
-                /* =========================
-                    UPDATE CHAT SIDEBAR
-                ========================= */
-
-                setChats((prevChats) => {
-
-                    const updatedChats =
-                        prevChats.map((chat) => {
-
-                            if (
-                                chat.chat_id ===
-                                message.chat_id
-                            ) {
-
-                                return {
-                                    ...chat,
-                                    messages: [
-                                        ...(chat.messages || [])
-                                            .filter(
-                                                (m) =>
-                                                    m.message_id !==
-                                                    message.message_id
-                                            ),
-                                        message,
-                                    ],
-                                };
-                            }
-
-                            return chat;
-                        });
-
-                    // latest message on top
-                    updatedChats.sort(
-                        (a, b) => {
-
-                            const aLast =
-                                a.messages?.[
-                                    a.messages.length - 1
-                                ]?.created_at || 0;
-
-                            const bLast =
-                                b.messages?.[
-                                    b.messages.length - 1
-                                ]?.created_at || 0;
-
-                            return (
-                                new Date(bLast) -
-                                new Date(aLast)
-                            );
-                        }
+                    socket.emit(
+                        "chat:join",
+                        selectedChat.chat_id
                     );
-
-                    return [...updatedChats];
-                });
+                }
             }
         );
 
+        /* =====================================
+            NEW MESSAGE
+        ===================================== */
+
+     socket.on("chat:new-message", (message) => {
+
+    if (
+        selectedChat &&
+        message.chat_id === selectedChat.chat_id
+    ) {
+        setMessages((prev) => {
+
+            // ✅ find a pending temp from same sender with same text
+            const tempIndex = prev.findIndex(
+                (m) =>
+                    m.message_id?.toString().startsWith("temp_") &&
+                    m.sender_id === message.sender_id &&
+                    m.message_text === message.message_text
+            );
+
+            if (tempIndex !== -1) {
+                const updated = [...prev];
+                updated[tempIndex] = { ...message, status: "sent" };
+                return updated;
+            }
+
+            const exists = prev.some(
+                (m) => m.message_id === message.message_id
+            );
+            if (exists) return prev;
+
+            return [...prev, message];
+        });
+    }
+
+    // sidebar update same as above...
+});
+
+        /* =====================================
+            MESSAGE READ
+        ===================================== */
+
+        socket.on(
+            "message:read",
+            ({
+                message_id,
+                user_id,
+            }) => {
+
+                setMessages((prev) =>
+                    prev.map((msg) => {
+
+                        if (
+                            msg.message_id ===
+                            message_id
+                        ) {
+
+                            return {
+                                ...msg,
+
+                                reads: [
+                                    ...(msg.reads || []),
+
+                                    {
+                                        user_id,
+                                    },
+                                ],
+                            };
+                        }
+
+                        return msg;
+                    })
+                );
+            }
+        );
+
+         /* =====================================
+    USER TYPING
+===================================== */
+
+socket.on(
+    "chat:typing",
+    ({
+        chat_id,
+        user_id,
+        user_name,
+    }) => {
+
+        if (
+            selectedChat?.chat_id !==
+            chat_id
+        ) {
+            return;
+        }
+
+        setTypingUsers((prev) => ({
+            ...prev,
+
+            [user_id]: {
+                name: user_name,
+                typing: true,
+            },
+        }));
+    }
+);
+
+/* =====================================
+    USER STOP TYPING
+===================================== */
+
+socket.on(
+    "chat:stop-typing",
+    ({
+        chat_id,
+        user_id,
+    }) => {
+
+        if (
+            selectedChat?.chat_id !==
+            chat_id
+        ) {
+            return;
+        }
+
+        setTypingUsers((prev) => {
+
+            const updated = {
+                ...prev,
+            };
+
+            delete updated[user_id];
+
+            return updated;
+        });
+    }
+);
         return () => {
 
             socket.disconnect();
         };
 
     }, [token, selectedChat]);
+
+    /* =========================================
+        FETCH CHATS
+    ========================================= */
+
     useEffect(() => {
 
         if (currentUserId) {
@@ -185,9 +248,7 @@ const ChatContent = () => {
         }
 
     }, [currentUserId]);
-    /* =========================================
-        FETCH CHAT MESSAGES
-    ========================================= */
+
     const fetchChats = async () => {
 
         try {
@@ -199,35 +260,119 @@ const ChatContent = () => {
             const data =
                 await res.json();
 
-            setChats(data.data || []);
-
-        } catch (err) {
-
-            console.log(err);
-        }
-    };
-    const fetchMessages = async (chatId) => {
-        try {
-            const res = await fetch(
-                `http://localhost:5000/api/chat-messages/chat/${chatId}`
+            setChats(
+                data.data || []
             );
 
-            const data = await res.json();
-
-            setMessages(data.data || []);
         } catch (err) {
+
             console.log(err);
         }
     };
 
     /* =========================================
+        FETCH MESSAGES
+    ========================================= */
+
+    const fetchMessages = async (
+        chatId
+    ) => {
+
+        try {
+
+            const res = await fetch(
+                `http://localhost:5000/api/chat-messages/chat/${chatId}`
+            );
+
+            const data =
+                await res.json();
+
+            setMessages(
+                data.data || []
+            );
+
+        } catch (err) {
+
+            console.log(err);
+        }
+    };
+
+    /* =========================================
+        AUTO MARK READ
+    ========================================= */
+
+    useEffect(() => {
+
+        if (
+            !selectedChat ||
+            !messages.length
+        ) {
+            return;
+        }
+
+        messages.forEach(
+            async (message) => {
+
+                // don't mark own msg
+                if (
+                    message.sender_id ===
+                    currentUserId
+                ) {
+                    return;
+                }
+
+                // already read
+                const alreadyRead =
+                    message.reads?.some(
+                        (r) =>
+                            r.user_id ===
+                            currentUserId
+                    );
+
+                if (alreadyRead) {
+                    return;
+                }
+
+                try {
+                    console.log(message.message_id, "marking as read");
+                    await axios.post(
+                        `http://localhost:5000/api/chat-messages/${message.message_id}/read`,
+                        {},
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+
+                } catch (err) {
+
+                    console.log(err);
+                }
+            }
+        );
+
+    }, [
+        messages,
+        selectedChat,
+        currentUserId,
+        token,
+    ]);
+
+    /* =========================================
         SELECT CHAT
     ========================================= */
 
-    const handleSelectChat = (chat) => {
+    const handleSelectChat = (
+        chat
+    ) => {
 
         // leave old room
-        if (selectedChat && socketRef.current) {
+        if (
+            selectedChat &&
+            socketRef.current
+        ) {
+
             socketRef.current.emit(
                 "chat:leave",
                 selectedChat.chat_id
@@ -238,295 +383,238 @@ const ChatContent = () => {
 
         // join new room
         if (socketRef.current) {
+
             socketRef.current.emit(
                 "chat:join",
                 chat.chat_id
             );
         }
 
-        fetchMessages(chat.chat_id);
+        fetchMessages(
+            chat.chat_id
+        );
     };
+
+    /* =========================================
+        MESSAGE STATUS
+    ========================================= */
+
+const getMessageStatus = (message) => {
+  if (message.sender_id !== currentUserId) return null;
+
+  // ✅ Blue double tick — someone read it
+  if (message.reads && message.reads.length > 0) return "read";
+
+  // ✅ Clock — optimistic temp message still in flight
+  if (message.status === "sending") return "sending";
+
+  // ✅ Single tick — API confirmed, not yet delivered
+  if (message.status === "sent") return "sent";
+
+  // ✅ Double tick — delivered (default for confirmed messages)
+  return "delivered";
+};
 
     /* =========================================
         SEND MESSAGE
     ========================================= */
 
-    const handleMessageSent = async (
-        payload
-    ) => {
-        try {
-            const res = await fetch(
-                "http://localhost:5000/api/chat-messages",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                        chat_id:
-                            payload.chat_id,
-                        sender_id:
-                            currentUserId,
-                        message_type: "text",
-                        message_text:
-                            payload.message,
-                        reply_to_message_id:
-                            payload.reply_to_message_id,
-                    }),
-                }
-            );
+const handleMessageSent = async (payload) => {
 
-            const data = await res.json();
+    // =====================================
+    // TEMP MESSAGE (INSTANT UI)
+    // =====================================
 
-            if (data.success) {
-                // OPTIONAL:
-                // realtime socket already adds message
-                // but keeping this for instant UI
-                console.log("message sent");
-                // setMessages((prev) => [
-                //     ...prev,
-                //     data.data,
-                // ]);
-            }
-        } catch (err) {
-            console.log(err);
-        }
+    const tempMessage = {
+        message_id: "temp_" + Date.now(),
+
+        chat_id: payload.chat_id,
+
+        sender_id: currentUserId,
+
+        message_text: payload.message,
+
+        message_type: "text",
+
+        created_at: new Date().toISOString(),
+
+        sender: {
+            full_name: "You",
+        },
+
+        // sending | sent | delivered | read
+        status: "sending",
+
+        reads: [],
     };
-    // ======================================
-    // CREATE OR OPEN DIRECT CHAT
-    // ======================================
-    const handleCreateChat = async (
-        selectedUser
-    ) => {
-        console.log(selectedUser)
-        // STOP MULTIPLE CLICKS
-        if (creatingChat) return;
 
-        try {
+    // =====================================
+    // SHOW MESSAGE IMMEDIATELY
+    // =====================================
 
-            setCreatingChat(true);
+    setMessages((prev) => [
+        ...prev,
+        tempMessage,
+    ]);
 
-            // ======================================
-            // CHECK EXISTING CHAT
-            // ======================================
+    // =====================================
+    // UPDATE CHAT SIDEBAR IMMEDIATELY
+    // =====================================
 
-            const existingChat = chats.find(
-                (chat) => {
+    setChats((prevChats) =>
+        prevChats.map((chat) => {
 
-                    if (
-                        chat.chat_type !== "direct"
-                    ) {
-                        return false;
-                    }
+            if (
+                chat.chat_id ===
+                payload.chat_id
+            ) {
 
-                    return chat.participants?.some(
-                        (participant) =>
-                            participant.user_id ===
-                            selectedUser.user_id
-                    );
-                }
-            );
+                return {
+                    ...chat,
 
-            // ======================================
-            // OPEN EXISTING CHAT
-            // ======================================
-
-            if (existingChat) {
-
-                handleSelectChat(
-                    existingChat
-                );
-
-                setActiveSidebar(
-                    "chats"
-                );
-
-                return;
+                    messages: [
+                        ...(chat.messages || []),
+                        tempMessage,
+                    ],
+                };
             }
 
-            // ======================================
-            // OPTIMISTIC TEMP CHAT
-            // ======================================
+            return chat;
+        })
+    );
 
-            const tempChat = {
-                chat_id:
-                    "temp_" + Date.now(),
+    try {
 
-                chat_type: "direct",
+        // =====================================
+        // SEND REAL MESSAGE
+        // =====================================
 
-                participants: [
-                    {
-                        user_id:
-                            currentUserId,
-                    },
-                    {
-                        user_id:
-                            selectedUser.user_id,
-                        user: selectedUser,
-                    },
-                ],
+        const res = await fetch(
+            "http://localhost:5000/api/chat-messages",
+            {
+                method: "POST",
 
-                messages: [],
-            };
+                headers: {
+                    "Content-Type":
+                        "application/json",
 
-            // INSTANT OPEN
-            setSelectedChat(tempChat);
-
-            // INSTANT SIDEBAR UPDATE
-            setChats((prev) => [
-                tempChat,
-                ...prev,
-            ]);
-
-            setActiveSidebar(
-                "chats"
-            );
-
-            // ======================================
-            // CREATE REAL CHAT API
-            // ======================================
-
-            const response =
-                await axios.post(
-                    "http://localhost:5000/api/chats",
-                    {
-                        agency_id: 1,
-                        chat_type: "direct",
-                        chat_name: null,
-                        created_by:
-                            currentUserId,
-                        receiver_id:
-                            selectedUser.user_id,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type":
-                                "application/json",
-                        },
-                    }
-                );
-
-            const realChat =
-                response.data.data;
-            // ======================================
-            // ADD PARTICIPANTS
-            // ======================================
-
-            // current user
-            await axios.post(
-                "http://localhost:5000/api/chat-participants",
-                {
-                    chat_id: realChat.chat_id,
-                    user_id: currentUserId,
-                    role: "member",
+                    Authorization:
+                        `Bearer ${token}`,
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
 
-            // selected user
-            await axios.post(
-                "http://localhost:5000/api/chat-participants",
-                {
-                    chat_id: realChat.chat_id,
-                    user_id: selectedUser.user_id,
-                    role: "member",
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            // ======================================
-            // PREPARE FINAL CHAT WITH USER DETAILS
-            // ======================================
+                body: JSON.stringify({
+                    chat_id:
+                        payload.chat_id,
 
-            const finalChat = {
-                ...realChat,
+                    sender_id:
+                        currentUserId,
 
-                participants: [
-                    {
-                        user_id: currentUserId,
-                    },
-                    {
-                        user_id: selectedUser.user_id,
-                        user: selectedUser,
-                    },
-                ],
+                    message_type:
+                        "text",
 
-                messages: [],
-            };
+                    message_text:
+                        payload.message,
 
-            // ======================================
-            // REPLACE TEMP CHAT
-            // ======================================
+                    reply_to_message_id:
+                        payload.reply_to_message_id,
+                }),
+            }
+        );
 
-            setChats((prev) =>
-                prev.map((chat) =>
-                    chat.chat_id === tempChat.chat_id
-                        ? finalChat
-                        : chat
+        const data =
+            await res.json();
+
+        if (data.success) {
+
+            // =====================================
+            // REPLACE TEMP MESSAGE
+            // =====================================
+
+            setMessages((prev) =>
+                prev.map((msg) =>
+
+                    msg.message_id ===
+                        tempMessage.message_id
+                        ? {
+                            ...data.data,
+
+                            // SINGLE TICK
+                            status: "sent",
+                        }
+                        : msg
                 )
             );
 
-            // ======================================
-            // OPEN REAL CHAT
-            // ======================================
+            // =====================================
+            // UPDATE SIDEBAR MESSAGE
+            // =====================================
 
-            setSelectedChat(finalChat);
+            setChats((prevChats) =>
+                prevChats.map((chat) => {
 
-            // JOIN SOCKET ROOM
-            if (socketRef.current) {
+                    if (
+                        chat.chat_id ===
+                        payload.chat_id
+                    ) {
 
-                socketRef.current.emit(
-                    "chat:join",
-                    realChat.chat_id
-                );
-            }
+                        return {
+                            ...chat,
 
-            // FETCH MESSAGES
-            fetchMessages(
-                finalChat.chat_id
+                            messages:
+                                (chat.messages || []).map(
+                                    (msg) =>
+
+                                        msg.message_id ===
+                                            tempMessage.message_id
+                                            ? {
+                                                ...data.data,
+
+                                                status:
+                                                    "sent",
+                                            }
+                                            : msg
+                                ),
+                        };
+                    }
+
+                    return chat;
+                })
             );
-
-        } catch (error) {
-
-            console.error(
-                "Create/Open chat error:",
-                error.response?.data ||
-                error.message
-            );
-
-        } finally {
-
-            setCreatingChat(false);
         }
-    };
 
+    } catch (err) {
 
-    // ======================================
-    // CREATE GROUP CHAT
-    // ======================================
+        console.log(err);
+
+        // OPTIONAL FAILED STATUS
+
+        setMessages((prev) =>
+            prev.map((msg) =>
+
+                msg.message_id ===
+                    tempMessage.message_id
+                    ? {
+                        ...msg,
+                        status: "failed",
+                    }
+                    : msg
+            )
+        );
+    }
+};
+    /* =========================================
+        CREATE GROUP
+    ========================================= */
+
     const handleCreateGroup = async (
         groupName,
         selectedUsers = []
     ) => {
 
-        // ======================================
-        // TEMP GROUP (INSTANT UI)
-        // ======================================
-
+        // temp group
         const tempGroup = {
-            chat_id: "temp_" + Date.now(),
+            chat_id:
+                "temp_" + Date.now(),
 
             chat_type: "group",
 
@@ -534,51 +622,61 @@ const ChatContent = () => {
 
             participants: [
                 {
-                    user_id: currentUserId,
+                    user_id:
+                        currentUserId,
                 },
 
-                ...selectedUsers.map((user) => ({
-                    user_id: user.user_id,
-                    user,
-                })),
+                ...selectedUsers.map(
+                    (user) => ({
+                        user_id:
+                            user.user_id,
+                        user,
+                    })
+                ),
             ],
 
             messages: [],
         };
 
-        // ======================================
-        // OPEN IMMEDIATELY
-        // ======================================
-
+        // instant open
         setChats((prev) => [
             tempGroup,
             ...prev,
         ]);
 
-        setSelectedChat(tempGroup);
+        setSelectedChat(
+            tempGroup
+        );
 
         setMessages([]);
 
-        setActiveSidebar("chats");
+        setActiveSidebar(
+            "chats"
+        );
 
         try {
 
-            // ======================================
-            // CREATE REAL GROUP
-            // ======================================
-
+            // create group
             const createResponse =
                 await axios.post(
                     "http://localhost:5000/api/chats",
                     {
                         agency_id: 1,
-                        chat_type: "group",
-                        chat_name: groupName,
-                        created_by: currentUserId,
+
+                        chat_type:
+                            "group",
+
+                        chat_name:
+                            groupName,
+
+                        created_by:
+                            currentUserId,
                     },
                     {
                         headers: {
-                            Authorization: `Bearer ${token}`,
+                            Authorization:
+                                `Bearer ${token}`,
+
                             "Content-Type":
                                 "application/json",
                         },
@@ -588,57 +686,59 @@ const ChatContent = () => {
             const newGroup =
                 createResponse.data.data;
 
-            // ======================================
-            // ADD CURRENT USER
-            // ======================================
-
+            // add self
             await axios.post(
                 "http://localhost:5000/api/chat-participants",
                 {
-                    chat_id: newGroup.chat_id,
-                    user_id: currentUserId,
+                    chat_id:
+                        newGroup.chat_id,
+
+                    user_id:
+                        currentUserId,
+
                     role: "admin",
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization:
+                            `Bearer ${token}`,
+
                         "Content-Type":
                             "application/json",
                     },
                 }
             );
 
-            // ======================================
-            // ADD MEMBERS
-            // ======================================
-
+            // add members
             await Promise.all(
 
-                selectedUsers.map((user) =>
-                    axios.post(
-                        "http://localhost:5000/api/chat-participants",
-                        {
-                            chat_id:
-                                newGroup.chat_id,
-                            user_id:
-                                user.user_id,
-                            role: "member",
-                        },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                                "Content-Type":
-                                    "application/json",
+                selectedUsers.map(
+                    (user) =>
+                        axios.post(
+                            "http://localhost:5000/api/chat-participants",
+                            {
+                                chat_id:
+                                    newGroup.chat_id,
+
+                                user_id:
+                                    user.user_id,
+
+                                role: "member",
                             },
-                        }
-                    )
+                            {
+                                headers: {
+                                    Authorization:
+                                        `Bearer ${token}`,
+
+                                    "Content-Type":
+                                        "application/json",
+                                },
+                            }
+                        )
                 )
             );
 
-            // ======================================
-            // FINAL GROUP
-            // ======================================
-
+            // final group
             const finalGroup = {
                 ...newGroup,
 
@@ -648,10 +748,7 @@ const ChatContent = () => {
                 messages: [],
             };
 
-            // ======================================
-            // REPLACE TEMP GROUP
-            // ======================================
-
+            // replace temp
             setChats((prev) =>
                 prev.map((chat) =>
                     chat.chat_id ===
@@ -661,28 +758,21 @@ const ChatContent = () => {
                 )
             );
 
-            // ======================================
-            // UPDATE SELECTED CHAT
-            // ======================================
+            // update selected
+            setSelectedChat(
+                finalGroup
+            );
 
-            setSelectedChat(finalGroup);
-
-            // ======================================
-            // JOIN SOCKET
-            // ======================================
-
-            if (socketRef.current) {
+            // join socket
+            if (
+                socketRef.current
+            ) {
 
                 socketRef.current.emit(
                     "chat:join",
                     finalGroup.chat_id
                 );
             }
-
-            console.log(
-                "Group created:",
-                finalGroup
-            );
 
         } catch (error) {
 
@@ -693,36 +783,96 @@ const ChatContent = () => {
             );
         }
     };
+const typingTimeoutRef =
+    useRef(null);
+
+const handleTyping = () => {
+
+    if (
+        !socketRef.current ||
+        !selectedChat?.chat_id
+    ) {
+        return;
+    }
+
+    socketRef.current.emit(
+        "chat:typing",
+        {
+            chat_id:
+                selectedChat.chat_id,
+
+            user_id:
+                currentUserId,
+
+            user_name:
+                JSON.parse(user)
+                    ?.full_name,
+        }
+    );
+
+    clearTimeout(
+        typingTimeoutRef.current
+    );
+
+    typingTimeoutRef.current =
+        setTimeout(() => {
+
+            socketRef.current.emit(
+                "chat:stop-typing",
+                {
+                    chat_id:
+                        selectedChat.chat_id,
+
+                    user_id:
+                        currentUserId,
+                }
+            );
+
+        }, 1000);
+};
     return (
         <>
-            {/* =====================================
-            LEFT SIDEBAR
-      ===================================== */}
-            {activeSidebar === "chats" && (
-                <ChatsUsers
-                    sidebarOpen={true}
-                    setSidebarOpen={() => setActiveSidebar("newChat")}
-                    handleSelectChat={handleSelectChat}
-                    selectedChat={selectedChat}
-                    chats={chats}
-                />
-            )}
+            {/* SIDEBAR */}
 
-            {activeSidebar === "newChat" && (
-                <NewChatUsers
-                    sidebarOpen={true}
-                    setSidebarOpen={() => setActiveSidebar("chats")}
-                    handleCreateChat={handleCreateChat}
-                    handleCreateGroup={handleCreateGroup}
-                />
-            )}
-            {/* =====================================
-            RIGHT CHAT AREA
-      ===================================== */}
+            {activeSidebar ===
+                "chats" && (
+                    <ChatsUsers
+                        sidebarOpen={true}
+                        setSidebarOpen={() =>
+                            setActiveSidebar(
+                                "newChat"
+                            )
+                        }
+                        handleSelectChat={
+                            handleSelectChat
+                        }
+                        selectedChat={
+                            selectedChat
+                        }
+                        chats={chats}
+                    />
+                )}
+
+            {activeSidebar ===
+                "newChat" && (
+                    <NewChatUsers
+                        sidebarOpen={true}
+                        setSidebarOpen={() =>
+                            setActiveSidebar(
+                                "chats"
+                            )
+                        }
+                        handleCreateGroup={
+                            handleCreateGroup
+                        }
+                    />
+                )}
+
+            {/* CHAT AREA */}
 
             <div className="content-area">
+
                 <PerfectScrollbar>
-                    {/* HEADER */}
 
                     <ChartsHeader
                         setSidebarOpen={
@@ -736,13 +886,21 @@ const ChatContent = () => {
                     {/* MESSAGES */}
 
                     <div className="content-area-body p-4 min-vh-100">
+
                         {messages.map(
-                            (message, index) => {
+                            (
+                                message,
+                                index
+                            ) => {
+
                                 const previousMessage =
-                                    messages[index - 1];
+                                    messages[
+                                    index - 1
+                                    ];
 
                                 const showHeader =
                                     !previousMessage ||
+
                                     previousMessage.sender_id !==
                                     message.sender_id;
 
@@ -752,12 +910,14 @@ const ChatContent = () => {
                                             message.message_id
                                         }
                                         avatar={
-                                            message?.sender
+                                            message
+                                                ?.sender
                                                 ?.avatar_url ||
                                             "/images/avatar.png"
                                         }
                                         name={
-                                            message?.sender
+                                            message
+                                                ?.sender
                                                 ?.full_name
                                         }
                                         time={new Date(
@@ -773,6 +933,9 @@ const ChatContent = () => {
                                         messages={[
                                             message.message_text,
                                         ]}
+                                        messageStatus={getMessageStatus(
+                                            message
+                                        )}
                                         isReplay={
                                             message.sender_id ===
                                             currentUserId
@@ -784,6 +947,52 @@ const ChatContent = () => {
                                 );
                             }
                         )}
+                        {/* =====================================
+    TYPING INDICATOR
+===================================== */}
+
+{Object.values(typingUsers).length > 0 && (
+
+    <div className="single-chat-item mb-3">
+
+        <div className="d-flex align-items-center gap-3 mb-2">
+
+            <a href="#" className="avatar-image">
+                <img
+                    src="/images/avatar.png"
+                    className="img-fluid rounded-circle"
+                    alt="avatar"
+                />
+            </a>
+
+            <div className="d-flex align-items-center gap-2">
+
+                <span className="fw-semibold">
+                    {
+                        Object.values(
+                            typingUsers
+                        )[0]?.name
+                    }
+                </span>
+
+                <span className="text-muted fs-12">
+                    typing...
+                </span>
+            </div>
+        </div>
+
+        <div className="wd-120 p-3 rounded-5 bg-gray-200">
+
+            <div className="d-flex gap-1 align-items-center">
+
+                <span className="typing-dot"></span>
+                <span className="typing-dot"></span>
+                <span className="typing-dot"></span>
+
+            </div>
+        </div>
+    </div>
+)}
                     </div>
 
                     {/* MESSAGE EDITOR */}
@@ -804,6 +1013,8 @@ const ChatContent = () => {
                         onSendMessage={
                             handleMessageSent
                         }
+                        socketRef={socketRef}
+
                     />
                 </PerfectScrollbar>
             </div>
