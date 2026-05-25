@@ -1,10 +1,10 @@
 import React from "react";
 
-import { FiDownload } from "react-icons/fi";
+import { FiDownload, FiPaperclip } from "react-icons/fi";
 import {
-    Check,
-    CheckCheck,
-    Clock3,
+  Check,
+  CheckCheck,
+  Clock3,
 } from "lucide-react";
 
 // ======================================
@@ -31,17 +31,20 @@ const ChatMessage = ({ avatar, name, time, messages, isReplay, showHeader = true
 
       {/* MESSAGE BUBBLE */}
       <div className={`wd-500 p-3 rounded-5 bg-gray-200 message-content ${isReplay ? "ms-auto" : ""}`}>
-        {messages.map((message, index) =>
-          message.fileUrl ? (
-            <FileMessage key={index} fileUrl={message.fileUrl} />
-          ) : (
-            <p
-              key={index}
-              className="py-2 px-3 rounded-5 bg-white mb-2"
-              dangerouslySetInnerHTML={{ __html: message }}
-            />
-          )
-        )}
+        {messages.map((msg, index) => (
+          <>
+            {msg.text && (
+              <p
+                className="py-2 px-3 rounded-5 bg-white mb-2"
+                dangerouslySetInnerHTML={{ __html: msg.text }}
+              />
+            )}
+
+            {msg.attachments?.length > 0 && (
+              <FileMessage attachments={msg.attachments} />
+            )}
+          </>
+        ))}
 
         {/* {isTyping && (
           <div className="py-2 px-3 rounded-5 bg-white d-flex align-items-center text typing chat-message-items">
@@ -55,10 +58,10 @@ const ChatMessage = ({ avatar, name, time, messages, isReplay, showHeader = true
         {/* ✅ TICK STATUS — always shown for own messages, below bubble */}
         {isReplay && messageStatus && (
           <div className="d-flex justify-content-end mt-1">
-            {messageStatus === "sending"  && <Clock3 size={14} className="text-muted" />}
-            {messageStatus === "sent"     && <Check size={16} className="text-muted" />}
-            {messageStatus === "delivered"&& <CheckCheck size={16} className="text-muted" />}
-            {messageStatus === "read"     && <CheckCheck size={16} color="#0d6efd" />}
+            {messageStatus === "sending" && <Clock3 size={14} className="text-muted" />}
+            {messageStatus === "sent" && <Check size={16} className="text-muted" />}
+            {messageStatus === "delivered" && <CheckCheck size={16} className="text-muted" />}
+            {messageStatus === "read" && <CheckCheck size={16} color="#0d6efd" />}
           </div>
         )}
       </div>
@@ -72,69 +75,41 @@ export default ChatMessage;
 // FILE MESSAGE
 // ======================================
 
-export const FileMessage = ({
-    fileUrl,
-}) => {
+export const FileMessage = ({ attachments = [] }) => {
+  return (
+    <div className="d-flex flex-column gap-2">
+      {attachments.map((file, index) => (
+        <div
+          key={index}
+          className="d-flex align-items-center justify-content-between bg-white border rounded-3 p-2"
+        >
+          <div className="d-flex align-items-center gap-2">
+            {file.file_type?.startsWith("image") ? (
+              <img
+                src={file.file_url}
+                alt={file.file_name}
+                style={{
+                  width: 50,
+                  height: 50,
+                  objectFit: "cover",
+                  borderRadius: 8,
+                }}
+              />
+            ) : (
+              <FiPaperclip size={18} />
+            )}
 
-    return (
-        fileUrl.map(
-            (
-                {
-                    iconSrc,
-                    fileName,
-                    fileSize,
-                },
-                index
-            ) => (
+            <div>
+              <div className="fw-semibold small">{file.file_name}</div>
+              <small className="text-muted">{file.file_size}</small>
+            </div>
+          </div>
 
-                <div
-                    key={index}
-                    className="mb-3 d-flex align-items-center justify-content-between bg-white border rounded-3"
-                >
-
-                    <div className="d-flex align-items-center">
-
-                        <a
-                            href="#"
-                            className="p-3 d-flex align-items-center border-end wd-70 ht-70"
-                        >
-
-                            <img
-                                src={iconSrc}
-                                className="img-fluid"
-                                alt="image"
-                            />
-                        </a>
-
-                        <div className="d-block ms-3">
-
-                            <a
-                                href="#"
-                                className="fs-13 fw-700 text-dark d-block"
-                            >
-                                {fileName}
-                            </a>
-
-                            <small className="fw-300 text-dark">
-                                {fileSize}
-                            </small>
-                        </div>
-                    </div>
-
-                    <div className="d-flex align-items-center p-3 border-start">
-
-                        <a
-                            href="#"
-                            className="avatar-text file-download"
-                        >
-
-                            <FiDownload
-                                size={16}
-                            />
-                        </a>
-                    </div>
-                </div>
-            )
-        )
-    );
+          <a href={file.file_url} target="_blank" rel="noreferrer">
+            <FiDownload />
+          </a>
+        </div>
+      ))}
+    </div>
+  );
 };

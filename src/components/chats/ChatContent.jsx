@@ -435,6 +435,7 @@ const handleMessageSent = async (payload) => {
         message_text: payload.message,
 
         message_type: "text",
+        
 
         created_at: new Date().toISOString(),
 
@@ -509,8 +510,7 @@ const handleMessageSent = async (payload) => {
                     sender_id:
                         currentUserId,
 
-                    message_type:
-                        "text",
+                      message_type: payload.attachments?.length > 0 ? "file" : "text",
 
                     message_text:
                         payload.message,
@@ -524,63 +524,20 @@ const handleMessageSent = async (payload) => {
         const data =
             await res.json();
 
-        if (data.success) {
-
-            // =====================================
-            // REPLACE TEMP MESSAGE
-            // =====================================
-
-            setMessages((prev) =>
-                prev.map((msg) =>
-
-                    msg.message_id ===
-                        tempMessage.message_id
-                        ? {
-                            ...data.data,
-
-                            // SINGLE TICK
-                            status: "sent",
-                        }
-                        : msg
-                )
-            );
-
-            // =====================================
-            // UPDATE SIDEBAR MESSAGE
-            // =====================================
-
-            setChats((prevChats) =>
-                prevChats.map((chat) => {
-
-                    if (
-                        chat.chat_id ===
-                        payload.chat_id
-                    ) {
-
-                        return {
-                            ...chat,
-
-                            messages:
-                                (chat.messages || []).map(
-                                    (msg) =>
-
-                                        msg.message_id ===
-                                            tempMessage.message_id
-                                            ? {
-                                                ...data.data,
-
-                                                status:
-                                                    "sent",
-                                            }
-                                            : msg
-                                ),
-                        };
-                    }
-
-                    return chat;
-                })
-            );
-        }
+      if (data.success && payload.attachments?.length) {
+  await axios.post(
+    "http://localhost:5000/api/chat-attachments",
+    {
+      message_id: data.data.message_id,
+      attachments: payload.attachments,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+}
 
     } catch (err) {
 
@@ -931,8 +888,11 @@ const handleTyping = () => {
                                             }
                                         )}
                                         messages={[
-                                            message.message_text,
-                                        ]}
+  {
+    text: message.message_text,
+    attachments: message.attachments || [],
+  },
+]}
                                         messageStatus={getMessageStatus(
                                             message
                                         )}

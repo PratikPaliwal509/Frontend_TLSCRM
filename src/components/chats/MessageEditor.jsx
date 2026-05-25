@@ -61,124 +61,101 @@ const MessageEditor = ({
   /* =========================================
       TYPING EMIT
   ========================================= */
-useEffect(() => {
+  useEffect(() => {
 
-  if (
-    !socketRef?.current ||
-    !selectedChat?.chat_id
-  ) {
-    return;
-  }
+    if (
+      !socketRef?.current ||
+      !selectedChat?.chat_id
+    ) {
+      return;
+    }
 
-  if (message.trim()) {
+    if (message.trim()) {
 
-    socketRef.current.emit(
-      "chat:typing",
-      {
-        chat_id:
-          selectedChat.chat_id,
+      socketRef.current.emit(
+        "chat:typing",
+        {
+          chat_id:
+            selectedChat.chat_id,
 
-        user_id:
-          currentUserId,
+          user_id:
+            currentUserId,
 
-        user_name: JSON.parse(
-          localStorage.getItem("user")
-        )?.full_name,
-      }
-    );
+          user_name: JSON.parse(
+            localStorage.getItem("user")
+          )?.full_name,
+        }
+      );
 
-    clearTimeout(
-      typingTimeoutRef.current
-    );
+      clearTimeout(
+        typingTimeoutRef.current
+      );
 
-    typingTimeoutRef.current =
-      setTimeout(() => {
+      typingTimeoutRef.current =
+        setTimeout(() => {
 
-        socketRef.current.emit(
-          "chat:stop-typing",
-          {
-            chat_id:
-              selectedChat.chat_id,
+          socketRef.current.emit(
+            "chat:stop-typing",
+            {
+              chat_id:
+                selectedChat.chat_id,
 
-            user_id:
-              currentUserId,
-          }
-        );
+              user_id:
+                currentUserId,
+            }
+          );
 
-      }, 1000);
+        }, 1000);
 
-  } else {
+    } else {
 
-    socketRef.current.emit(
-      "chat:stop-typing",
-      {
-        chat_id:
-          selectedChat.chat_id,
+      socketRef.current.emit(
+        "chat:stop-typing",
+        {
+          chat_id:
+            selectedChat.chat_id,
 
-        user_id:
-          currentUserId,
-      }
-    );
-  }
+          user_id:
+            currentUserId,
+        }
+      );
+    }
 
-  return () => {
+    return () => {
 
-    clearTimeout(
-      typingTimeoutRef.current
-    );
-  };
+      clearTimeout(
+        typingTimeoutRef.current
+      );
+    };
 
-}, [
-  message,
-  selectedChat,
-]);
+  }, [
+    message,
+    selectedChat,
+  ]);
 
   /* =========================================
       SEND MESSAGE
   ========================================= */
 
   const handleSendMessage = () => {
+    if (!message.trim() && attachments.length === 0) return;
+    if (!selectedChat) return;
 
-    if (
-      !message.trim() &&
-      attachments.length === 0
-    ) {
-      return;
-    }
-
-    if (!selectedChat) {
-      return;
-    }
-
-    // stop typing immediately
-    socketRef?.current?.emit(
-      "typing:stop",
-      {
-        chat_id:
-          selectedChat.chat_id,
-
-        user_id:
-          currentUserId,
-      }
-    );
+    socketRef?.current?.emit("typing:stop", {
+      chat_id: selectedChat.chat_id,
+      user_id: currentUserId,
+    });
 
     onSendMessage?.({
-      chat_id:
-        selectedChat.chat_id,
-
-      message:
-        message.trim(),
-
-      reply_to_message_id:
-        replyMessage?.message_id || null,
+      chat_id: selectedChat.chat_id,
+      message: message.trim(),
+      reply_to_message_id: replyMessage?.message_id || null,
+      attachments: attachments, // ✅ ADD THIS
     });
 
     setMessage("");
-
     setAttachments([]);
-
     setReplyMessage?.(null);
-
     setShowEmojiPicker(false);
   };
 
@@ -186,38 +163,39 @@ useEffect(() => {
       HANDLE FILES
   ========================================= */
 
-  const handleAttachment = (e) => {
+  const handleAttachment = async (e) => {
+    const files = Array.from(e.target.files || []);
 
-    const files =
-      Array.from(
-        e.target.files || []
-      );
+    const uploadedFiles = await Promise.all(
+      files.map(async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "task_attachments");
+        formData.append("folder", "timelog_attachments"); // cloudinary preset
 
-    const mappedFiles =
-      files.map((file) => ({
-        file,
+        const res = await fetch(
+          "https://api.cloudinary.com/v1_1/dwghrvasx/auto/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
-        preview:
-          URL.createObjectURL(file),
+        const data = await res.json();
+        console.log("Cloudinary response:", data);
+        return {
+          file_url: data.secure_url,
+          file_name: file.name,
+          // file_size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+          file_size: data.bytes,
 
-        file_name:
-          file.name,
+          file_type: file.type,
+          preview: data.secure_url,
+        };
+      })
+    );
 
-        file_size:
-          `${(
-            file.size /
-            1024 /
-            1024
-          ).toFixed(2)} MB`,
-
-        mime_type:
-          file.type,
-      }));
-
-    setAttachments((prev) => [
-      ...prev,
-      ...mappedFiles,
-    ]);
+    setAttachments((prev) => [...prev, ...uploadedFiles]);
   };
 
   /* =========================================
@@ -391,10 +369,9 @@ useEffect(() => {
             onKeyDown={
               handleKeyDown
             }
-            placeholder={`Message ${
-              selectedChat?.chat_name ||
+            placeholder={`Message ${selectedChat?.chat_name ||
               ""
-            }`}
+              }`}
             className="form-control border-0 shadow-none resize-none px-4 py-3"
             style={{
               minHeight: 60,
