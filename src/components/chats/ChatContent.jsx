@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 import ChartsHeader from "./ChatHeader";
 import MessageEditor from "./MessageEditor";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import ChatMessage from "./ChatMessage";
+import ChatMessage, { FileMessage } from "./ChatMessage";
 import ChatsUsers from "./ChatsUsers";
 import NewChatUsers from "./NewChatUsers";
 
@@ -37,8 +37,8 @@ const ChatContent = () => {
 
     const [creatingChat, setCreatingChat] =
         useState(false);
-const [typingUsers, setTypingUsers] =
-    useState({});
+    const [typingUsers, setTypingUsers] =
+        useState({});
     const user =
         localStorage.getItem("user");
 
@@ -49,7 +49,14 @@ const [typingUsers, setTypingUsers] =
 
     const token =
         localStorage.getItem("token");
-
+    const normalizeAttachments = (attachments = []) => {
+        return attachments.map((file) => ({
+            file_url: file.file_url,
+            file_name: file.file_name,
+            file_type: file.file_type,
+            file_size: file.file_size,
+        }));
+    };
     const socketRef =
         useRef(null);
 
@@ -92,44 +99,62 @@ const [typingUsers, setTypingUsers] =
                 }
             }
         );
-
-        /* =====================================
-            NEW MESSAGE
-        ===================================== */
-
-     socket.on("chat:new-message", (message) => {
-
-    if (
-        selectedChat &&
-        message.chat_id === selectedChat.chat_id
-    ) {
-        setMessages((prev) => {
-
-            // ✅ find a pending temp from same sender with same text
-            const tempIndex = prev.findIndex(
-                (m) =>
-                    m.message_id?.toString().startsWith("temp_") &&
-                    m.sender_id === message.sender_id &&
-                    m.message_text === message.message_text
+        socket.on("chat:message-updated", (updatedMessage) => {
+            setMessages((prev) =>
+                prev.map((msg) => {
+                    // match by real message_id
+                    if (msg.message_id === updatedMessage.message_id) {
+                        return {
+                            ...msg,
+                            ...updatedMessage,
+                            // always take the latest attachments from server
+                            attachments: updatedMessage.attachments?.length
+                                ? updatedMessage.attachments
+                                : msg.attachments || [],
+                        };
+                    }
+                    return msg;
+                })
             );
-
-            if (tempIndex !== -1) {
-                const updated = [...prev];
-                updated[tempIndex] = { ...message, status: "sent" };
-                return updated;
-            }
-
-            const exists = prev.some(
-                (m) => m.message_id === message.message_id
-            );
-            if (exists) return prev;
-
-            return [...prev, message];
         });
-    }
+        /* =====================================
+                  NEW MESSAGE
+              ===================================== */
 
-    // sidebar update same as above...
-});
+        socket.on("chat:new-message", (message) => {
+            console.log("New message received:", message);
+            if (
+                selectedChat &&
+                message.chat_id === selectedChat.chat_id
+            ) {
+                setMessages((prev) => {
+                    const tempIndex = prev.findIndex(
+                        (m) =>
+                            m.message_id?.toString().startsWith("temp_") &&
+                            m.sender_id === message.sender_id &&
+                            m.message_text === message.message_text
+                    );
+
+                    if (tempIndex !== -1) {
+                        const updated = [...prev];
+                        updated[tempIndex] = {
+                            ...message,
+
+                            // 🔥 preserve temp attachments if backend missing them
+                            attachments:
+                                message.attachments?.length
+                                    ? message.attachments
+                                    : prev[tempIndex].attachments || [],
+
+                            status: "sent",
+                        };
+                        return updated;
+                    }
+
+                    return [...prev, message];
+                });
+            }
+        });
 
         /* =====================================
             MESSAGE READ
@@ -169,66 +194,66 @@ const [typingUsers, setTypingUsers] =
             }
         );
 
-         /* =====================================
-    USER TYPING
+        /* =====================================
+   USER TYPING
 ===================================== */
 
-socket.on(
-    "chat:typing",
-    ({
-        chat_id,
-        user_id,
-        user_name,
-    }) => {
+        socket.on(
+            "chat:typing",
+            ({
+                chat_id,
+                user_id,
+                user_name,
+            }) => {
 
-        if (
-            selectedChat?.chat_id !==
-            chat_id
-        ) {
-            return;
-        }
+                if (
+                    selectedChat?.chat_id !==
+                    chat_id
+                ) {
+                    return;
+                }
 
-        setTypingUsers((prev) => ({
-            ...prev,
+                setTypingUsers((prev) => ({
+                    ...prev,
 
-            [user_id]: {
-                name: user_name,
-                typing: true,
-            },
-        }));
-    }
-);
+                    [user_id]: {
+                        name: user_name,
+                        typing: true,
+                    },
+                }));
+            }
+        );
 
-/* =====================================
-    USER STOP TYPING
-===================================== */
+        /* =====================================
+            USER STOP TYPING
+        ===================================== */
 
-socket.on(
-    "chat:stop-typing",
-    ({
-        chat_id,
-        user_id,
-    }) => {
+        socket.on(
+            "chat:stop-typing",
+            ({
+                chat_id,
+                user_id,
+            }) => {
 
-        if (
-            selectedChat?.chat_id !==
-            chat_id
-        ) {
-            return;
-        }
+                if (
+                    selectedChat?.chat_id !==
+                    chat_id
+                ) {
+                    return;
+                }
 
-        setTypingUsers((prev) => {
+                setTypingUsers((prev) => {
 
-            const updated = {
-                ...prev,
-            };
+                    const updated = {
+                        ...prev,
+                    };
 
-            delete updated[user_id];
+                    delete updated[user_id];
 
-            return updated;
-        });
-    }
-);
+                    return updated;
+                });
+            }
+        );
         return () => {
 
             socket.disconnect();
@@ -399,166 +424,139 @@ socket.on(
         MESSAGE STATUS
     ========================================= */
 
-const getMessageStatus = (message) => {
-  if (message.sender_id !== currentUserId) return null;
+    const getMessageStatus = (message) => {
+        if (message.sender_id !== currentUserId) return null;
 
-  // ✅ Blue double tick — someone read it
-  if (message.reads && message.reads.length > 0) return "read";
+        // ✅ Blue double tick — someone read it
+        if (message.reads && message.reads.length > 0) return "read";
 
-  // ✅ Clock — optimistic temp message still in flight
-  if (message.status === "sending") return "sending";
+        // ✅ Clock — optimistic temp message still in flight
+        if (message.status === "sending") return "sending";
 
-  // ✅ Single tick — API confirmed, not yet delivered
-  if (message.status === "sent") return "sent";
+        // ✅ Single tick — API confirmed, not yet delivered
+        if (message.status === "sent") return "sent";
 
-  // ✅ Double tick — delivered (default for confirmed messages)
-  return "delivered";
-};
+        // ✅ Double tick — delivered (default for confirmed messages)
+        return "delivered";
+    };
 
     /* =========================================
         SEND MESSAGE
     ========================================= */
 
-const handleMessageSent = async (payload) => {
-
-    // =====================================
-    // TEMP MESSAGE (INSTANT UI)
-    // =====================================
-
-    const tempMessage = {
-        message_id: "temp_" + Date.now(),
-
-        chat_id: payload.chat_id,
-
-        sender_id: currentUserId,
-
-        message_text: payload.message,
-
-        message_type: "text",
-        
-
-        created_at: new Date().toISOString(),
-
-        sender: {
-            full_name: "You",
-        },
-
-        // sending | sent | delivered | read
-        status: "sending",
-
-        reads: [],
-    };
-
-    // =====================================
-    // SHOW MESSAGE IMMEDIATELY
-    // =====================================
-
-    setMessages((prev) => [
-        ...prev,
-        tempMessage,
-    ]);
-
-    // =====================================
-    // UPDATE CHAT SIDEBAR IMMEDIATELY
-    // =====================================
-
-    setChats((prevChats) =>
-        prevChats.map((chat) => {
-
-            if (
-                chat.chat_id ===
-                payload.chat_id
-            ) {
-
-                return {
-                    ...chat,
-
-                    messages: [
-                        ...(chat.messages || []),
-                        tempMessage,
-                    ],
-                };
-            }
-
-            return chat;
-        })
-    );
-
-    try {
+    const handleMessageSent = async (payload) => {
+        const hasAttachments = payload.attachments?.length > 0;
 
         // =====================================
-        // SEND REAL MESSAGE
+        // TEMP ATTACHMENT FORMAT (IMPORTANT FIX)
         // =====================================
+        const tempMessage = {
+            message_id: "temp_" + Date.now(),
+            chat_id: payload.chat_id,
+            sender_id: currentUserId,
+            message_text: payload.message || "",
+            message_type: hasAttachments ? "file" : "text",
+            created_at: new Date().toISOString(),
+            sender: {
+                full_name: "You",
+            },
+            status: "sending",
 
-        const res = await fetch(
-            "http://localhost:5000/api/chat-messages",
-            {
-                method: "POST",
+            // ✅ IMPORTANT FIX: show attachments instantly
+            attachments: hasAttachments
+                ? payload.attachments.map((file, i) => ({
+                    file_id: "temp_file_" + i,
+                    file_url: file.file_url,
+                    file_name: file.file_name,
+                    file_type: file.file_type,
+                    file_size: file.file_size,
+                }))
+                : [],
+        };
 
-                headers: {
-                    "Content-Type":
-                        "application/json",
+        // =====================================
+        // INSTANT UI UPDATE
+        // =====================================
+        setMessages((prev) => [...prev, tempMessage]);
 
-                    Authorization:
-                        `Bearer ${token}`,
-                },
+        try {
+            const res = await fetch(
+                "http://localhost:5000/api/chat-messages",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        chat_id: payload.chat_id,
+                        sender_id: currentUserId,
+                        message_type: hasAttachments ? "file" : "text",
+                        message_text: payload.message,
+                        reply_to_message_id: payload.reply_to_message_id,
+                    }),
+                }
+            );
 
-                body: JSON.stringify({
-                    chat_id:
-                        payload.chat_id,
+            const data = await res.json();
 
-                    sender_id:
-                        currentUserId,
+            if (data.success) {
+                const realMessage = data.data;
 
-                      message_type: payload.attachments?.length > 0 ? "file" : "text",
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.message_id === tempMessage.message_id
+                            ? {
+                                ...realMessage,
+                                attachments: msg.attachments || [],
+                                status: "sent",
+                            }
+                            : msg
+                    )
+                );
 
-                    message_text:
-                        payload.message,
+                // =====================================
+                // SEND ATTACHMENTS (ONLY IF ANY)
+                // =====================================
+                if (hasAttachments) {
+                    const attachRes = await axios.post(
+                        "http://localhost:5000/api/chat-attachments",
+                        {
+                            message_id: realMessage.message_id,
+                            chat_id: payload.chat_id,
+                            attachments: payload.attachments,
+                        },
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    );
 
-                    reply_to_message_id:
-                        payload.reply_to_message_id,
-                }),
-            }
-        );
-
-        const data =
-            await res.json();
-
-      if (data.success && payload.attachments?.length) {
-  await axios.post(
-    "http://localhost:5000/api/chat-attachments",
-    {
-      message_id: data.data.message_id,
-      attachments: payload.attachments,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-}
-
-    } catch (err) {
-
-        console.log(err);
-
-        // OPTIONAL FAILED STATUS
-
-        setMessages((prev) =>
-            prev.map((msg) =>
-
-                msg.message_id ===
-                    tempMessage.message_id
-                    ? {
-                        ...msg,
-                        status: "failed",
+                    // ← ADD THIS: update sender's own message with confirmed attachments
+                    if (attachRes.data.success) {
+                        setMessages((prev) =>
+                            prev.map((msg) =>
+                                msg.message_id === realMessage.message_id
+                                    ? {
+                                        ...msg,
+                                        attachments: payload.attachments,
+                                        status: "sent",
+                                    }
+                                    : msg
+                            )
+                        );
                     }
-                    : msg
-            )
-        );
-    }
-};
+                }
+            }
+        } catch (err) {
+            console.log(err);
+
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg.message_id === tempMessage.message_id
+                        ? { ...msg, status: "failed" }
+                        : msg
+                )
+            );
+        }
+    };
     /* =========================================
         CREATE GROUP
     ========================================= */
@@ -740,53 +738,53 @@ const handleMessageSent = async (payload) => {
             );
         }
     };
-const typingTimeoutRef =
-    useRef(null);
+    const typingTimeoutRef =
+        useRef(null);
 
-const handleTyping = () => {
+    const handleTyping = () => {
 
-    if (
-        !socketRef.current ||
-        !selectedChat?.chat_id
-    ) {
-        return;
-    }
-
-    socketRef.current.emit(
-        "chat:typing",
-        {
-            chat_id:
-                selectedChat.chat_id,
-
-            user_id:
-                currentUserId,
-
-            user_name:
-                JSON.parse(user)
-                    ?.full_name,
+        if (
+            !socketRef.current ||
+            !selectedChat?.chat_id
+        ) {
+            return;
         }
-    );
 
-    clearTimeout(
-        typingTimeoutRef.current
-    );
+        socketRef.current.emit(
+            "chat:typing",
+            {
+                chat_id:
+                    selectedChat.chat_id,
 
-    typingTimeoutRef.current =
-        setTimeout(() => {
+                user_id:
+                    currentUserId,
 
-            socketRef.current.emit(
-                "chat:stop-typing",
-                {
-                    chat_id:
-                        selectedChat.chat_id,
+                user_name:
+                    JSON.parse(user)
+                        ?.full_name,
+            }
+        );
 
-                    user_id:
-                        currentUserId,
-                }
-            );
+        clearTimeout(
+            typingTimeoutRef.current
+        );
 
-        }, 1000);
-};
+        typingTimeoutRef.current =
+            setTimeout(() => {
+
+                socketRef.current.emit(
+                    "chat:stop-typing",
+                    {
+                        chat_id:
+                            selectedChat.chat_id,
+
+                        user_id:
+                            currentUserId,
+                    }
+                );
+
+            }, 1000);
+    };
     return (
         <>
             {/* SIDEBAR */}
@@ -843,7 +841,18 @@ const handleTyping = () => {
                     {/* MESSAGES */}
 
                     <div className="content-area-body p-4 min-vh-100">
-
+                        {/* {messages.map((msg, index) => (
+  <React.Fragment key={index}> 
+    {msg.text && (
+      <p className="py-2 px-3 rounded-5 bg-white mb-2"
+        dangerouslySetInnerHTML={{ __html: msg.text }}
+      />
+    )}
+    {msg.attachments?.length > 0 && (
+      <FileMessage attachments={msg.attachments} />
+    )}
+  </React.Fragment>
+))} */}
                         {messages.map(
                             (
                                 message,
@@ -888,11 +897,11 @@ const handleTyping = () => {
                                             }
                                         )}
                                         messages={[
-  {
-    text: message.message_text,
-    attachments: message.attachments || [],
-  },
-]}
+                                            {
+                                                text: message.message_text,
+                                                attachments: message.attachments || [],
+                                            },
+                                        ]}
                                         messageStatus={getMessageStatus(
                                             message
                                         )}
@@ -908,51 +917,51 @@ const handleTyping = () => {
                             }
                         )}
                         {/* =====================================
-    TYPING INDICATOR
-===================================== */}
+                                TYPING INDICATOR
+                            ===================================== */}
 
-{Object.values(typingUsers).length > 0 && (
+                        {Object.values(typingUsers).length > 0 && (
 
-    <div className="single-chat-item mb-3">
+                            <div className="single-chat-item mb-3">
 
-        <div className="d-flex align-items-center gap-3 mb-2">
+                                <div className="d-flex align-items-center gap-3 mb-2">
 
-            <a href="#" className="avatar-image">
-                <img
-                    src="/images/avatar.png"
-                    className="img-fluid rounded-circle"
-                    alt="avatar"
-                />
-            </a>
+                                    <a href="#" className="avatar-image">
+                                        <img
+                                            src="/images/avatar.png"
+                                            className="img-fluid rounded-circle"
+                                            alt="avatar"
+                                        />
+                                    </a>
 
-            <div className="d-flex align-items-center gap-2">
+                                    <div className="d-flex align-items-center gap-2">
 
-                <span className="fw-semibold">
-                    {
-                        Object.values(
-                            typingUsers
-                        )[0]?.name
-                    }
-                </span>
+                                        <span className="fw-semibold">
+                                            {
+                                                Object.values(
+                                                    typingUsers
+                                                )[0]?.name
+                                            }
+                                        </span>
 
-                <span className="text-muted fs-12">
-                    typing...
-                </span>
-            </div>
-        </div>
+                                        <span className="text-muted fs-12">
+                                            typing...
+                                        </span>
+                                    </div>
+                                </div>
 
-        <div className="wd-120 p-3 rounded-5 bg-gray-200">
+                                <div className="wd-120 p-3 rounded-5 bg-gray-200">
 
-            <div className="d-flex gap-1 align-items-center">
+                                    <div className="d-flex gap-1 align-items-center">
 
-                <span className="typing-dot"></span>
-                <span className="typing-dot"></span>
-                <span className="typing-dot"></span>
+                                        <span className="typing-dot"></span>
+                                        <span className="typing-dot"></span>
+                                        <span className="typing-dot"></span>
 
-            </div>
-        </div>
-    </div>
-)}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* MESSAGE EDITOR */}

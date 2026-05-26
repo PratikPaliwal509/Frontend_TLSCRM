@@ -269,9 +269,7 @@ const MessageEditor = ({
                   }}
                 >
 
-                  {attachment.mime_type?.startsWith(
-                    "image"
-                  ) ? (
+                  {attachment.file_type?.startsWith("image") ? (
                     <img
                       src={
                         attachment.preview
