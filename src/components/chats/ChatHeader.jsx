@@ -31,10 +31,13 @@ const chatItemsHeader = [
 
 const ChatHeader = ({
     setSidebarOpen,
-    selectedChat,
-    currentUserId = 4
+    selectedChat
+    
 }) => {
-
+    const user = localStorage.getItem("user");  
+    const currentUserId = user ? JSON.parse(user).user_id : null;
+    console.log("Selected Chat in Header:", selectedChat);
+    console.log("currentUserId Chat in Header:", currentUserId);
     const handleClick = () => {
         topTost()
     };

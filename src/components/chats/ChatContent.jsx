@@ -950,7 +950,7 @@ const ChatContent = () => {
                                     </div>
                                 </div>
 
-                                <div className="wd-120 p-3 rounded-5 bg-gray-200">
+                                {/* <div className="wd-120 p-3 rounded-5 bg-gray-200">
 
                                     <div className="d-flex gap-1 align-items-center">
 
@@ -959,7 +959,7 @@ const ChatContent = () => {
                                         <span className="typing-dot"></span>
 
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         )}
                     </div>

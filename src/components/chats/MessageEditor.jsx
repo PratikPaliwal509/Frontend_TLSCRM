@@ -40,7 +40,7 @@ const MessageEditor = ({
   setReplyMessage,
   onSendMessage,
   currentUserId,
-  socketRef, // ✅ ADD THIS
+  socketRef,
 }) => {
 
   const [message, setMessage] =
@@ -51,6 +51,9 @@ const MessageEditor = ({
 
   const [attachments, setAttachments] =
     useState([]);
+
+  const [uploading, setUploading] =
+    useState(false);
 
   const fileInputRef =
     useRef(null);
@@ -122,16 +125,10 @@ const MessageEditor = ({
     }
 
     return () => {
-
-      clearTimeout(
-        typingTimeoutRef.current
-      );
+      clearTimeout(typingTimeoutRef.current);
     };
 
-  }, [
-    message,
-    selectedChat,
-  ]);
+  }, [message, selectedChat]);
 
   /* =========================================
       SEND MESSAGE
@@ -141,7 +138,7 @@ const MessageEditor = ({
     if (!message.trim() && attachments.length === 0) return;
     if (!selectedChat) return;
 
-    socketRef?.current?.emit("typing:stop", {
+    socketRef?.current?.emit("chat:stop-typing", {
       chat_id: selectedChat.chat_id,
       user_id: currentUserId,
     });
@@ -150,7 +147,7 @@ const MessageEditor = ({
       chat_id: selectedChat.chat_id,
       message: message.trim(),
       reply_to_message_id: replyMessage?.message_id || null,
-      attachments: attachments, // ✅ ADD THIS
+      attachments: attachments,
     });
 
     setMessage("");
@@ -165,51 +162,55 @@ const MessageEditor = ({
 
   const handleAttachment = async (e) => {
     const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
-    const uploadedFiles = await Promise.all(
-      files.map(async (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "task_attachments");
-        formData.append("folder", "timelog_attachments"); // cloudinary preset
+    // ✅ RESET INPUT — so same file can be picked again next time
+    e.target.value = "";
 
-        const res = await fetch(
-          "https://api.cloudinary.com/v1_1/dwghrvasx/auto/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+    setUploading(true);
 
-        const data = await res.json();
-        console.log("Cloudinary response:", data);
-        return {
-          file_url: data.secure_url,
-          file_name: file.name,
-          // file_size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-          file_size: data.bytes,
+    try {
+      const uploadedFiles = await Promise.all(
+        files.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", "task_attachments");
+          formData.append("folder", "timelog_attachments");
 
-          file_type: file.type,
-          preview: data.secure_url,
-        };
-      })
-    );
+          const res = await fetch(
+            "https://api.cloudinary.com/v1_1/dwghrvasx/auto/upload",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
 
-    setAttachments((prev) => [...prev, ...uploadedFiles]);
+          const data = await res.json();
+          return {
+            file_url: data.secure_url,
+            file_name: file.name,
+            file_size: data.bytes,
+            file_type: file.type,
+            preview: data.secure_url,
+          };
+        })
+      );
+
+      setAttachments((prev) => [...prev, ...uploadedFiles]);
+    } catch (err) {
+      console.log("Upload error:", err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   /* =========================================
       REMOVE ATTACHMENT
   ========================================= */
 
-  const removeAttachment = (
-    index
-  ) => {
-
+  const removeAttachment = (index) => {
     setAttachments((prev) =>
-      prev.filter(
-        (_, i) => i !== index
-      )
+      prev.filter((_, i) => i !== index)
     );
   };
 
@@ -218,14 +219,8 @@ const MessageEditor = ({
   ========================================= */
 
   const handleKeyDown = (e) => {
-
-    if (
-      e.key === "Enter" &&
-      !e.shiftKey
-    ) {
-
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-
       handleSendMessage();
     }
   };
@@ -238,65 +233,54 @@ const MessageEditor = ({
       {replyMessage && (
         <div className="px-3 pt-3">
           <ReplyPreview
-            replyMessage={
-              replyMessage
-            }
+            replyMessage={replyMessage}
             isEditorPreview={true}
-            onClose={() =>
-              setReplyMessage(null)
-            }
+            onClose={() => setReplyMessage(null)}
           />
         </div>
       )}
 
-      {/* ATTACHMENTS */}
+      {/* ATTACHMENTS PREVIEW */}
 
       {attachments.length > 0 && (
         <div className="px-3 pt-3">
           <div className="d-flex flex-wrap gap-3">
+            {attachments.map((attachment, index) => (
+              <div
+                key={index}
+                className="position-relative border rounded-3 overflow-hidden"
+                style={{ width: 90, height: 90 }}
+              >
+                {attachment.file_type?.startsWith("image") ? (
+                  <img
+                    src={attachment.preview}
+                    alt="attachment"
+                    className="w-100 h-100 object-fit-cover"
+                  />
+                ) : (
+                  <div className="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                    <FiPaperclip size={22} />
+                  </div>
+                )}
 
-            {attachments.map(
-              (
-                attachment,
-                index
-              ) => (
-                <div
-                  key={index}
-                  className="position-relative border rounded-3 overflow-hidden"
-                  style={{
-                    width: 90,
-                    height: 90,
-                  }}
+                <button
+                  className="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle p-1"
+                  onClick={() => removeAttachment(index)}
                 >
+                  <FiX size={12} />
+                </button>
+              </div>
+            ))}
 
-                  {attachment.file_type?.startsWith("image") ? (
-                    <img
-                      src={
-                        attachment.preview
-                      }
-                      alt="attachment"
-                      className="w-100 h-100 object-fit-cover"
-                    />
-                  ) : (
-                    <div className="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                      <FiPaperclip size={22} />
-                    </div>
-                  )}
-
-                  <button
-                    className="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle p-1"
-                    onClick={() =>
-                      removeAttachment(
-                        index
-                      )
-                    }
-                  >
-                    <FiX size={12} />
-                  </button>
-                </div>
-              )
+            {/* UPLOADING SPINNER */}
+            {uploading && (
+              <div
+                className="border rounded-3 d-flex align-items-center justify-content-center bg-light"
+                style={{ width: 90, height: 90 }}
+              >
+                <div className="spinner-border spinner-border-sm text-secondary" role="status" />
+              </div>
             )}
-
           </div>
         </div>
       )}
@@ -310,12 +294,8 @@ const MessageEditor = ({
         <div className="d-flex align-items-center">
 
           <Dropdown
-            dropdownItems={
-              callingOptions
-            }
-            triggerIcon={
-              <FiPhoneCall size={16} />
-            }
+            dropdownItems={callingOptions}
+            triggerIcon={<FiPhoneCall size={16} />}
             dropdownMenuStyle="wd-250"
             dropdownParentStyle="border-end border-gray-4"
             triggerClass="wd-60 ht-60 d-flex align-items-center justify-content-center"
@@ -325,30 +305,29 @@ const MessageEditor = ({
 
           <button
             className="btn border-0 border-end border-gray-4 rounded-0 wd-60 ht-60"
-            onClick={() =>
-              fileInputRef.current?.click()
-            }
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
           >
             <FiLink size={18} />
           </button>
 
           <button
             className="btn border-0 border-end border-gray-4 rounded-0 wd-60 ht-60"
-            onClick={() =>
-              fileInputRef.current?.click()
-            }
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
           >
             <FiImage size={18} />
           </button>
 
+          {/* ✅ key={attachments.length} forces remount when attachments change
+              which also resets the input — belt-and-suspenders with e.target.value="" */}
           <input
+            key={attachments.length}
             type="file"
             multiple
             hidden
             ref={fileInputRef}
-            onChange={
-              handleAttachment
-            }
+            onChange={handleAttachment}
           />
         </div>
 
@@ -359,39 +338,19 @@ const MessageEditor = ({
           <textarea
             rows={1}
             value={message}
-            onChange={(e) =>
-              setMessage(
-                e.target.value
-              )
-            }
-            onKeyDown={
-              handleKeyDown
-            }
-            placeholder={`Message ${selectedChat?.chat_name ||
-              ""
-              }`}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={`Message ${selectedChat?.chat_name || ""}`}
             className="form-control border-0 shadow-none resize-none px-4 py-3"
-            style={{
-              minHeight: 60,
-              maxHeight: 140,
-            }}
+            style={{ minHeight: 60, maxHeight: 140 }}
           />
 
           {/* EMOJI */}
 
           <button
             className="btn border-0 position-absolute"
-            style={{
-              right: 12,
-              top: "50%",
-              transform:
-                "translateY(-50%)",
-            }}
-            onClick={() =>
-              setShowEmojiPicker(
-                !showEmojiPicker
-              )
-            }
+            style={{ right: 12, top: "50%", transform: "translateY(-50%)" }}
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
             <FiSmile size={18} />
           </button>
@@ -399,21 +358,11 @@ const MessageEditor = ({
           {showEmojiPicker && (
             <div
               className="position-absolute"
-              style={{
-                bottom: "70px",
-                right: "10px",
-                zIndex: 999,
-              }}
+              style={{ bottom: "70px", right: "10px", zIndex: 999 }}
             >
               <EmojiPicker
-                onEmojiClick={(
-                  emojiData
-                ) =>
-                  setMessage(
-                    (prev) =>
-                      prev +
-                      emojiData.emoji
-                  )
+                onEmojiClick={(emojiData) =>
+                  setMessage((prev) => prev + emojiData.emoji)
                 }
               />
             </div>
@@ -423,23 +372,16 @@ const MessageEditor = ({
         {/* SEND */}
 
         <div className="border-start border-gray-4">
-
           <button
             className="btn border-0 wd-60 ht-60"
-            onClick={
-              handleSendMessage
-            }
+            onClick={handleSendMessage}
             disabled={
-              !message.trim() &&
-              attachments.length === 0
+              uploading ||
+              (!message.trim() && attachments.length === 0)
             }
           >
-            <FiSend
-              size={18}
-              strokeWidth={2}
-            />
+            <FiSend size={18} strokeWidth={2} />
           </button>
-
         </div>
       </div>
     </div>
