@@ -73,7 +73,7 @@ const NewChatUsers = ({
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/users/user', {
+            const response = await fetch('http://localhost:5000/api/users/getallusers', {
                 headers: { Authorization: `Bearer ${token}` },
             })
 

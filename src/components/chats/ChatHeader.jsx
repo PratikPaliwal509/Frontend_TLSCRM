@@ -100,7 +100,7 @@ const ChatHeader = ({
                                     />
                                 </div>
                             ) : (
-                                <div className="avatar-text user-avatar-text text-white">
+                                <div className="avatar-text user-avatar-text text-gray-800">
                                     {displayName?.substring(0, 1)}
                                 </div>
                             )
