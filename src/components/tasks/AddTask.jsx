@@ -390,7 +390,7 @@ const handleCreateTask = async () => {
 
                         {/* Project */}
                         <div className="mb-4">
-                            <label className="form-label">Project<span className="text-danger">*</span> </label>
+                            <label className="form-label">Project<span className="text-danger">*</span>   <span className="text-xs text-gray-500 mt-1">If the project is not visible to you, please ask your admin to assign that project to you.</span></label>
                             <select
                                 className="form-control"
                                 value={formData.project_id || 0}
