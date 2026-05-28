@@ -25,7 +25,7 @@ const ChatContent = () => {
     const [chats, setChats] = useState([]);
     const [typingUsers, setTypingUsers] = useState({});
     const [unreadCount, setUnreadCount] = useState(0);
-
+    const [editingMessage, setEditingMessage] = useState(null);
     const user = localStorage.getItem("user");
     const currentUserId = user ? JSON.parse(user).user_id : null;
     const token = localStorage.getItem("token");
@@ -96,7 +96,19 @@ const ChatContent = () => {
                 socket.emit("chat:join", selectedChatRef.current.chat_id);
             }
         });
+        socket.on("chat:message-edited", (updatedMessage) => {
 
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg.message_id === updatedMessage.message_id
+                        ? {
+                            ...msg,
+                            ...updatedMessage,
+                        }
+                        : msg
+                )
+            );
+        });
         socket.on(
             "chat:message-updated",
             (updatedMessage) => {
@@ -134,67 +146,67 @@ const ChatContent = () => {
 
                     if (tempIndex !== -1) {
                         const updated = [...prev];
-                     updated[tempIndex] = {
-    ...message,
+                        updated[tempIndex] = {
+                            ...message,
 
-    attachments:
-        message.attachments?.length
-            ? message.attachments
-            : prev[tempIndex].attachments || [],
+                            attachments:
+                                message.attachments?.length
+                                    ? message.attachments
+                                    : prev[tempIndex].attachments || [],
 
-    replyTo:
-        message.replyTo || prev[tempIndex].replyTo
-            ? {
-                message_id:
-                    message.replyTo?.message_id ||
-                    prev[tempIndex].replyTo?.message_id,
+                            replyTo:
+                                message.replyTo || prev[tempIndex].replyTo
+                                    ? {
+                                        message_id:
+                                            message.replyTo?.message_id ||
+                                            prev[tempIndex].replyTo?.message_id,
 
-                text:
-    message.replyTo?.message_text ??
-    message.replyTo?.text ??
-    prev[tempIndex].replyTo?.text ??
-    "",
+                                        text:
+                                            message.replyTo?.message_text ??
+                                            message.replyTo?.text ??
+                                            prev[tempIndex].replyTo?.text ??
+                                            "",
 
-                sender_name:
-                    message.replyTo?.sender?.full_name ||
-                    prev[tempIndex].replyTo?.sender_name ||
-                    "User",
+                                        sender_name:
+                                            message.replyTo?.sender?.full_name ||
+                                            prev[tempIndex].replyTo?.sender_name ||
+                                            "User",
 
-                attachments:
-                    message.replyTo?.attachments ||
-                    prev[tempIndex].replyTo?.attachments ||
-                    [],
+                                        attachments:
+                                            message.replyTo?.attachments ||
+                                            prev[tempIndex].replyTo?.attachments ||
+                                            [],
 
-                message_type:
-                    message.replyTo?.message_type ||
-                    prev[tempIndex].replyTo?.message_type ||
-                    "text",
-            }
-            : null,
+                                        message_type:
+                                            message.replyTo?.message_type ||
+                                            prev[tempIndex].replyTo?.message_type ||
+                                            "text",
+                                    }
+                                    : null,
 
-    status: "sent",
-};
+                            status: "sent",
+                        };
                         return updated;
                     }
 
-return [
-    ...prev,
-    {
-        ...message,
-        replyTo: message.replyTo
-            ? {
-                message_id: message.replyTo.message_id,
-                text: message.replyTo.message_text ?? message.replyTo.text ?? "",
-                sender_name:
-                    message.replyTo.sender?.full_name || "User",
-                attachments:
-                    message.replyTo.attachments || [],
-                message_type:
-                    message.replyTo.message_type || "text",
-            }
-            : null,
-    },
-];
+                    return [
+                        ...prev,
+                        {
+                            ...message,
+                            replyTo: message.replyTo
+                                ? {
+                                    message_id: message.replyTo.message_id,
+                                    text: message.replyTo.message_text ?? message.replyTo.text ?? "",
+                                    sender_name:
+                                        message.replyTo.sender?.full_name || "User",
+                                    attachments:
+                                        message.replyTo.attachments || [],
+                                    message_type:
+                                        message.replyTo.message_type || "text",
+                                }
+                                : null,
+                        },
+                    ];
                 });
 
                 setTimeout(() => scrollToBottom(), 100);
@@ -799,6 +811,7 @@ return [
                                             isReplay={message.sender_id === currentUserId}
                                             showHeader={showHeader}
                                             onReply={(msg) => setReplyMessage(msg)}
+                                            onEdit={(msg) => setEditingMessage(msg)}
                                         />
                                         {/* <ChatMessage
                                             avatar={message?.sender?.avatar_url || "/images/avatar.png"}
@@ -840,7 +853,6 @@ return [
                             </div>
                         )}
                     </div>
-
                     <MessageEditor
                         selectedChat={selectedChat}
                         currentUserId={currentUserId}
@@ -848,6 +860,8 @@ return [
                         setReplyMessage={setReplyMessage}
                         onSendMessage={handleMessageSent}
                         socketRef={socketRef}
+                        editingMessage={editingMessage}
+                        setEditingMessage={setEditingMessage}
                     />
 
                 </PerfectScrollbar>

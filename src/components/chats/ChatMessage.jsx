@@ -85,6 +85,7 @@ const ChatMessage = ({
   showHeader = true,
   messageStatus,
   onReply,
+  onEdit,
 }) => {
 
   const [hovered, setHovered] = useState(false);
@@ -199,12 +200,15 @@ const ChatMessage = ({
                   </DropdownItem>
 
                   <DropdownItem
-                    onClick={() =>
-                      console.log("Edit")
-                    }
-                  >
-                    Edit
-                  </DropdownItem>
+    onClick={() =>
+        onEdit?.({
+            ...msg,
+            sender_name: name,
+        })
+    }
+>
+    Edit
+</DropdownItem>
 
                   <DropdownItem
                     className="text-danger"

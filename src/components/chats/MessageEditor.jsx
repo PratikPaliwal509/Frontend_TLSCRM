@@ -41,6 +41,8 @@ const MessageEditor = ({
   onSendMessage,
   currentUserId,
   socketRef,
+  editingMessage,
+  setEditingMessage,
 }) => {
 
   const [message, setMessage] =
@@ -60,7 +62,12 @@ const MessageEditor = ({
 
   const typingTimeoutRef =
     useRef(null);
-
+//
+useEffect(() => {
+  if (editingMessage) {
+    setMessage(editingMessage.text || editingMessage.message_text || "");
+  }
+}, [editingMessage]);
   /* =========================================
       TYPING EMIT
   ========================================= */
@@ -134,27 +141,78 @@ const MessageEditor = ({
       SEND MESSAGE
   ========================================= */
 
-  const handleSendMessage = () => {
-    if (!message.trim() && attachments.length === 0) return;
-    if (!selectedChat) return;
+ const handleSendMessage = async () => {
 
-    socketRef?.current?.emit("chat:stop-typing", {
-      chat_id: selectedChat.chat_id,
-      user_id: currentUserId,
-    });
+  if (!message.trim() && attachments.length === 0) return;
 
-    onSendMessage?.({
-      chat_id: selectedChat.chat_id,
-      message: message.trim(),
-      reply_to_message_id: replyMessage?.message_id || null,
-      attachments: attachments,
-    });
+  if (!selectedChat) return;
 
-    setMessage("");
-    setAttachments([]);
-    setReplyMessage?.(null);
-    setShowEmojiPicker(false);
-  };
+  /* =========================
+      EDIT MESSAGE
+  ========================= */
+
+  if (editingMessage) {
+
+    try {
+
+      const res = await fetch(
+        `http://localhost:5000/api/chat-messages/${editingMessage.message_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            message_text: message,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+
+        socketRef.current?.emit(
+          "chat:edit-message",
+          data.data
+        );
+
+        setEditingMessage(null);
+        setMessage("");
+
+      }
+
+    } catch (err) {
+
+      console.log(err);
+
+    }
+
+    return;
+  }
+
+  /* =========================
+      NORMAL SEND
+  ========================= */
+
+  socketRef?.current?.emit("chat:stop-typing", {
+    chat_id: selectedChat.chat_id,
+    user_id: currentUserId,
+  });
+
+  onSendMessage?.({
+    chat_id: selectedChat.chat_id,
+    message: message.trim(),
+    reply_to_message_id: replyMessage?.message_id || null,
+    attachments: attachments,
+  });
+
+  setMessage("");
+  setAttachments([]);
+  setReplyMessage?.(null);
+  setShowEmojiPicker(false);
+};
 
   /* =========================================
       HANDLE FILES
