@@ -24,7 +24,9 @@ const ChatContent = () => {
     const [activeSidebar, setActiveSidebar] = useState("chats");
     const [chats, setChats] = useState([]);
     const [typingUsers, setTypingUsers] = useState({});
+    const [chatTypingUsers, setChatTypingUsers] = useState({}); // { [chat_id]: { [user_id]: name } }
     const [unreadCount, setUnreadCount] = useState(0);
+    const [chatUnreadCounts, setChatUnreadCounts] = useState({}); // { [chat_id]: number }
     const [editingMessage, setEditingMessage] = useState(null);
     const user = localStorage.getItem("user");
     const currentUserId = user ? JSON.parse(user).user_id : null;
@@ -36,6 +38,8 @@ const ChatContent = () => {
     const markedReadIds = useRef(new Set());
     const selectedChatRef = useRef(null);
     const creatingChatRef = useRef(false);
+    const chatsRef = useRef([]); // always mirrors `chats` state so socket handlers can read it
+
     /* =========================================
         SCROLL HELPERS
     ========================================= */
@@ -77,6 +81,57 @@ const ChatContent = () => {
     };
 
     /* =========================================
+        CHAT LIST HELPERS
+    ========================================= */
+
+    /**
+     * Update the last message preview in the chats sidebar list.
+     * Also bumps the chat to the top of the list.
+     */
+    const updateChatLastMessage = (chatId, messageData) => {
+        setChats((prev) => {
+            const idx = prev.findIndex((c) => c.chat_id === chatId);
+            if (idx === -1) return prev;
+
+            const updated = { ...prev[idx] };
+            const msgs = [...(updated.messages || [])];
+
+            // find if message already exists and replace, else append
+            const existingIdx = msgs.findIndex((m) => m.message_id === messageData.message_id);
+            if (existingIdx !== -1) {
+                msgs[existingIdx] = { ...msgs[existingIdx], ...messageData };
+            } else {
+                msgs.push(messageData);
+            }
+
+            updated.messages = msgs;
+
+            // bubble to top
+            const newList = prev.filter((c) => c.chat_id !== chatId);
+            return [updated, ...newList];
+        });
+    };
+
+    /**
+     * Mark a message as deleted in chats sidebar preview.
+     */
+    const deleteChatLastMessage = (chatId, messageId) => {
+        setChats((prev) =>
+            prev.map((c) => {
+                if (c.chat_id !== chatId) return c;
+                return {
+                    ...c,
+                    messages: (c.messages || []).map((m) =>
+                        m.message_id === messageId
+                            ? { ...m, is_deleted: true, message_text: "" }
+                            : m
+                    ),
+                };
+            })
+        );
+    };
+
+    /* =========================================
         SOCKET CONNECT
     ========================================= */
 
@@ -92,44 +147,50 @@ const ChatContent = () => {
 
         socket.on("connect", () => {
             console.log("Socket connected:", socket.id);
-            if (selectedChatRef.current) {
-                socket.emit("chat:join", selectedChatRef.current.chat_id);
-            }
+            // Rejoin ALL chat rooms so we receive messages for every chat,
+            // not just the currently open one.
+            chatsRef.current.forEach((chat) => {
+                socket.emit("chat:join", chat.chat_id);
+            });
         });
-        socket.on("chat:message-edited", (updatedMessage) => {
 
+        // ── EDIT ──────────────────────────────────────────────
+        socket.on("chat:message-edited", (updatedMessage) => {
+            // update message in chat window
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg.message_id === updatedMessage.message_id
+                        ? { ...msg, ...updatedMessage }
+                        : msg
+                )
+            );
+
+            // update sidebar preview if it's the last message
+            updateChatLastMessage(updatedMessage.chat_id, updatedMessage);
+        });
+
+        // ── UPDATE (attachments / status) ─────────────────────
+        socket.on("chat:message-updated", (updatedMessage) => {
             setMessages((prev) =>
                 prev.map((msg) =>
                     msg.message_id === updatedMessage.message_id
                         ? {
                             ...msg,
                             ...updatedMessage,
+                            attachments:
+                                updatedMessage.attachments?.length
+                                    ? updatedMessage.attachments
+                                    : msg.attachments || [],
                         }
                         : msg
                 )
             );
-        });
-        socket.on(
-            "chat:message-updated",
-            (updatedMessage) => {
 
-                setMessages((prev) =>
-                    prev.map((msg) =>
-                        msg.message_id === updatedMessage.message_id
-                            ? {
-                                ...msg,
-                                ...updatedMessage,
-                                attachments:
-                                    updatedMessage.attachments?.length
-                                        ? updatedMessage.attachments
-                                        : msg.attachments || [],
-                            }
-                            : msg
-                    )
-                );
-            }
-        );
-        socket.on("chat:message-deleted", ({ message_id }) => {
+            updateChatLastMessage(updatedMessage.chat_id, updatedMessage);
+        });
+
+        // ── DELETE ─────────────────────────────────────────────
+        socket.on("chat:message-deleted", ({ message_id, chat_id }) => {
             setMessages((prev) =>
                 prev.map((msg) =>
                     msg.message_id === message_id
@@ -137,9 +198,31 @@ const ChatContent = () => {
                         : msg
                 )
             );
+
+            if (chat_id) {
+                deleteChatLastMessage(chat_id, message_id);
+            }
         });
+
+        // ── NEW MESSAGE ────────────────────────────────────────
         socket.on("chat:new-message", (message) => {
             console.log("New message received:", message);
+
+            // update sidebar: bubble chat up + update last message preview
+            updateChatLastMessage(message.chat_id, message);
+
+            // increment unread count for chats that are NOT currently open
+            if (
+                message.sender_id !== currentUserId &&
+                selectedChatRef.current?.chat_id !== message.chat_id
+            ) {
+                setChatUnreadCounts((prev) => ({
+                    ...prev,
+                    [message.chat_id]: (prev[message.chat_id] || 0) + 1,
+                }));
+            }
+
+            // update message window only if this chat is open
             if (
                 selectedChatRef.current &&
                 message.chat_id === selectedChatRef.current.chat_id
@@ -156,42 +239,35 @@ const ChatContent = () => {
                         const updated = [...prev];
                         updated[tempIndex] = {
                             ...message,
-
                             attachments:
                                 message.attachments?.length
                                     ? message.attachments
                                     : prev[tempIndex].attachments || [],
-
                             replyTo:
                                 message.replyTo || prev[tempIndex].replyTo
                                     ? {
                                         message_id:
                                             message.replyTo?.message_id ||
                                             prev[tempIndex].replyTo?.message_id,
-
                                         text:
                                             message.replyTo?.message_text ??
                                             message.replyTo?.text ??
                                             prev[tempIndex].replyTo?.text ??
                                             "",
-
                                         sender_name:
                                             message.replyTo?.sender?.full_name ||
                                             prev[tempIndex].replyTo?.sender_name ||
                                             "User",
-
                                         attachments:
                                             message.replyTo?.attachments ||
                                             prev[tempIndex].replyTo?.attachments ||
                                             [],
-
                                         message_type:
                                             message.replyTo?.message_type ||
                                             prev[tempIndex].replyTo?.message_type ||
                                             "text",
                                     }
                                     : null,
-
                             status: "sent",
                         };
                         return updated;
@@ -205,12 +281,9 @@ const ChatContent = () => {
                                 ? {
                                     message_id: message.replyTo.message_id,
                                     text: message.replyTo.message_text ?? message.replyTo.text ?? "",
-                                    sender_name:
-                                        message.replyTo.sender?.full_name || "User",
-                                    attachments:
-                                        message.replyTo.attachments || [],
-                                    message_type:
-                                        message.replyTo.message_type || "text",
+                                    sender_name: message.replyTo.sender?.full_name || "User",
+                                    attachments: message.replyTo.attachments || [],
+                                    message_type: message.replyTo.message_type || "text",
                                 }
                                 : null,
                         },
@@ -221,6 +294,7 @@ const ChatContent = () => {
             }
         });
 
+        // ── READ RECEIPTS ──────────────────────────────────────
         socket.on("message:read", ({ message_id, user_id }) => {
             setMessages((prev) =>
                 prev.map((msg) => {
@@ -235,20 +309,39 @@ const ChatContent = () => {
             );
         });
 
+        // ── TYPING (chat window) ───────────────────────────────
         socket.on("chat:typing", ({ chat_id, user_id, user_name }) => {
-            if (selectedChatRef.current?.chat_id !== chat_id) return;
-            setTypingUsers((prev) => ({
+            // typing indicator inside open chat
+            if (selectedChatRef.current?.chat_id === chat_id) {
+                setTypingUsers((prev) => ({
+                    ...prev,
+                    [user_id]: { name: user_name, typing: true },
+                }));
+            }
+
+            // typing indicator in sidebar list
+            setChatTypingUsers((prev) => ({
                 ...prev,
-                [user_id]: { name: user_name, typing: true },
+                [chat_id]: {
+                    ...(prev[chat_id] || {}),
+                    [user_id]: user_name,
+                },
             }));
         });
 
         socket.on("chat:stop-typing", ({ chat_id, user_id }) => {
-            if (selectedChatRef.current?.chat_id !== chat_id) return;
-            setTypingUsers((prev) => {
-                const updated = { ...prev };
-                delete updated[user_id];
-                return updated;
+            if (selectedChatRef.current?.chat_id === chat_id) {
+                setTypingUsers((prev) => {
+                    const updated = { ...prev };
+                    delete updated[user_id];
+                    return updated;
+                });
+            }
+
+            setChatTypingUsers((prev) => {
+                const chatTypers = { ...(prev[chat_id] || {}) };
+                delete chatTypers[user_id];
+                return { ...prev, [chat_id]: chatTypers };
             });
         });
 
@@ -262,6 +355,19 @@ const ChatContent = () => {
         selectedChatRef.current = selectedChat;
     }, [selectedChat]);
 
+    // Keep ref in sync so socket reconnect handler always sees latest chats
+    useEffect(() => {
+        chatsRef.current = chats;
+    }, [chats]);
+
+    // Join ALL chat rooms whenever the chat list changes (initial load, new chat added)
+    useEffect(() => {
+        if (!socketRef.current?.connected || !chats.length) return;
+        chats.forEach((chat) => {
+            socketRef.current.emit("chat:join", chat.chat_id);
+        });
+    }, [chats]);
+
     /* =========================================
         FETCH CHATS
     ========================================= */
@@ -274,7 +380,20 @@ const ChatContent = () => {
         try {
             const res = await fetch(`http://localhost:5000/api/chats/user/${currentUserId}`);
             const data = await res.json();
-            setChats(data.data || []);
+            const fetchedChats = data.data || [];
+            setChats(fetchedChats);
+
+            // seed unread counts from initial load
+            const counts = {};
+            fetchedChats.forEach((chat) => {
+                const unread = (chat.messages || []).filter(
+                    (m) =>
+                        m.sender_id !== currentUserId &&
+                        !m.reads?.some((r) => r.user_id === currentUserId)
+                ).length;
+                if (unread > 0) counts[chat.chat_id] = unread;
+            });
+            setChatUnreadCounts(counts);
         } catch (err) {
             console.log(err);
         }
@@ -302,6 +421,9 @@ const ChatContent = () => {
             setMessages(msgs);
             scrollToFirstUnread(msgs);
             markMessagesAsRead(unread);
+
+            // clear unread badge for this chat in sidebar
+            setChatUnreadCounts((prev) => ({ ...prev, [chatId]: 0 }));
 
         } catch (err) {
             console.log(err);
@@ -344,101 +466,59 @@ const ChatContent = () => {
     ========================================= */
 
     const handleSelectChat = (chat) => {
-        if (selectedChat && socketRef.current) {
-            socketRef.current.emit("chat:leave", selectedChat.chat_id);
-        }
+        // Do NOT emit chat:leave — we stay joined to all rooms
+        // so background messages keep arriving for every chat.
 
         setSelectedChat(chat);
         setMessages([]);
         setTypingUsers({});
         setUnreadCount(0);
 
-        if (socketRef.current) {
-            socketRef.current.emit("chat:join", chat.chat_id);
-        }
+        // clear sidebar unread badge
+        setChatUnreadCounts((prev) => ({ ...prev, [chat.chat_id]: 0 }));
 
         fetchMessages(chat.chat_id);
     };
 
     /* =========================================
         CREATE DIRECT CHAT
-        — if chat with this user already exists,
-          open it. Otherwise create a new one.
     ========================================= */
 
     const handleCreateChat = async (targetUser) => {
-
-        // 🚫 Prevent multiple rapid clicks
         if (creatingChatRef.current) return;
-
         creatingChatRef.current = true;
 
         try {
-
-            // check if DM already exists
             const existing = chats.find(
                 (c) =>
                     c.chat_type === "direct" &&
-                    c.participants?.some(
-                        (p) => p.user_id === targetUser.user_id
-                    )
+                    c.participants?.some((p) => p.user_id === targetUser.user_id)
             );
 
             if (existing) {
-
                 handleSelectChat(existing);
                 setActiveSidebar("chats");
-
                 return;
             }
 
-            // create new direct chat
             const res = await axios.post(
                 "http://localhost:5000/api/chats",
-                {
-                    chat_type: "direct",
-                    created_by: currentUserId,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
+                { chat_type: "direct", created_by: currentUserId },
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
 
             const newChat = res.data.data;
 
-            // add current user
             await axios.post(
                 "http://localhost:5000/api/chat-participants",
-                {
-                    chat_id: newChat.chat_id,
-                    user_id: currentUserId,
-                    role: "member",
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
+                { chat_id: newChat.chat_id, user_id: currentUserId, role: "member" },
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
 
-            // add target user
             await axios.post(
                 "http://localhost:5000/api/chat-participants",
-                {
-                    chat_id: newChat.chat_id,
-                    user_id: targetUser.user_id,
-                    role: "member",
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
+                { chat_id: newChat.chat_id, user_id: targetUser.user_id, role: "member" },
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
 
             const fullChat = {
@@ -446,27 +526,21 @@ const ChatContent = () => {
                 chat_type: "direct",
                 participants: [
                     { user_id: currentUserId },
-                    {
-                        user_id: targetUser.user_id,
-                        user: targetUser,
-                    },
+                    { user_id: targetUser.user_id, user: targetUser },
                 ],
                 messages: [],
             };
 
             setChats((prev) => [fullChat, ...prev]);
-
             handleSelectChat(fullChat);
-
             setActiveSidebar("chats");
 
+            // join the new room right away
+            socketRef.current?.emit("chat:join", fullChat.chat_id);
+
         } catch (err) {
-
             console.log("Create chat error:", err);
-
         } finally {
-
-            // ✅ unlock
             creatingChatRef.current = false;
         }
     };
@@ -517,11 +591,7 @@ const ChatContent = () => {
                 )
             );
 
-            const finalGroup = {
-                ...newGroup,
-                participants: tempGroup.participants,
-                messages: [],
-            };
+            const finalGroup = { ...newGroup, participants: tempGroup.participants, messages: [] };
 
             setChats((prev) =>
                 prev.map((chat) => (chat.chat_id === tempGroup.chat_id ? finalGroup : chat))
@@ -547,9 +617,13 @@ const ChatContent = () => {
         if (message.status === "sent") return "sent";
         return "delivered";
     };
+
+    /* =========================================
+        DELETE MESSAGE
+    ========================================= */
+
     const handleDeleteMessage = async (message) => {
         try {
-            // Optimistic UI: mark as deleted immediately (don't filter out)
             setMessages((prev) =>
                 prev.map((m) =>
                     m.message_id === message.message_id
@@ -558,13 +632,14 @@ const ChatContent = () => {
                 )
             );
 
-            // API call
+            // optimistic sidebar update
+            deleteChatLastMessage(message.chat_id, message.message_id);
+
             await axios.delete(
                 `http://localhost:5000/api/chat-messages/${message.message_id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            // Emit to other users in the chat
             socketRef.current?.emit("chat:delete-message", {
                 message_id: message.message_id,
                 chat_id: message.chat_id,
@@ -572,7 +647,6 @@ const ChatContent = () => {
 
         } catch (err) {
             console.log(err);
-            // Rollback on failure
             setMessages((prev) =>
                 prev.map((m) =>
                     m.message_id === message.message_id
@@ -582,6 +656,7 @@ const ChatContent = () => {
             );
         }
     };
+
     /* =========================================
         SEND MESSAGE
     ========================================= */
@@ -600,24 +675,11 @@ const ChatContent = () => {
             status: "sending",
             replyTo: replyMessage
                 ? {
-                    message_id:
-                        replyMessage.message_id,
-
-                    text:
-                        replyMessage.text ||
-                        replyMessage.message_text ||
-                        "",
-
-                    sender_name:
-                        replyMessage.sender_name ||
-                        replyMessage.sender?.full_name ||
-                        "User",
-
-                    attachments:
-                        replyMessage.attachments || [],
-
-                    message_type:
-                        replyMessage.message_type || "text",
+                    message_id: replyMessage.message_id,
+                    text: replyMessage.text || replyMessage.message_text || "",
+                    sender_name: replyMessage.sender_name || replyMessage.sender?.full_name || "User",
+                    attachments: replyMessage.attachments || [],
+                    message_type: replyMessage.message_type || "text",
                 }
                 : null,
             attachments: hasAttachments
@@ -630,12 +692,15 @@ const ChatContent = () => {
                 }))
                 : [],
         };
-        console.log("Temp message to send:", tempMessage);
+
         setMessages((prev) => [...prev, tempMessage]);
+
+        // optimistic sidebar update
+        updateChatLastMessage(payload.chat_id, tempMessage);
+
         scrollToBottom();
 
         try {
-            console.log("Sending message to server...", payload);
             const res = await fetch("http://localhost:5000/api/chat-messages", {
                 method: "POST",
                 headers: {
@@ -647,10 +712,7 @@ const ChatContent = () => {
                     sender_id: currentUserId,
                     message_type: hasAttachments ? "file" : "text",
                     message_text: payload.message,
-
-                    // FIX
-                    reply_to_message_id:
-                        replyMessage?.message_id || null,
+                    reply_to_message_id: replyMessage?.message_id || null,
                 }),
             });
 
@@ -665,35 +727,25 @@ const ChatContent = () => {
                             ? {
                                 ...realMessage,
                                 attachments: msg.attachments || [],
-                                replyTo:
-                                    realMessage.replyTo
-                                        ? {
-                                            message_id:
-                                                realMessage.replyTo.message_id,
-
-                                            text:
-                                                realMessage.replyTo.message_text || "",
-
-                                            sender_name:
-                                                realMessage.replyTo.sender?.full_name ||
-                                                msg.replyTo?.sender_name ||
-                                                "User",
-
-                                            attachments:
-                                                realMessage.replyTo.attachments || [],
-
-                                            message_type:
-                                                realMessage.replyTo.message_type || "text",
-                                        }
-                                        : msg.replyTo || null,
+                                replyTo: realMessage.replyTo
+                                    ? {
+                                        message_id: realMessage.replyTo.message_id,
+                                        text: realMessage.replyTo.message_text || "",
+                                        sender_name: realMessage.replyTo.sender?.full_name || msg.replyTo?.sender_name || "User",
+                                        attachments: realMessage.replyTo.attachments || [],
+                                        message_type: realMessage.replyTo.message_type || "text",
+                                    }
+                                    : msg.replyTo || null,
                                 status: "sent",
                             }
                             : msg
                     )
                 );
 
-                if (hasAttachments) {
+                // update sidebar with confirmed message
+                updateChatLastMessage(payload.chat_id, { ...realMessage, status: "sent" });
 
+                if (hasAttachments) {
                     const attachRes = await axios.post(
                         "http://localhost:5000/api/chat-attachments",
                         {
@@ -701,46 +753,28 @@ const ChatContent = () => {
                             chat_id: payload.chat_id,
                             attachments: payload.attachments,
                         },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
+                        { headers: { Authorization: `Bearer ${token}` } }
                     );
 
                     if (attachRes.data.success) {
-
-                        // FETCH UPDATED MESSAGE
                         const updatedRes = await axios.get(
                             `http://localhost:5000/api/chat-messages/${realMessage.message_id}`,
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${token}`,
-                                },
-                            }
+                            { headers: { Authorization: `Bearer ${token}` } }
                         );
 
-                        const updatedMessage =
-                            updatedRes.data.data;
+                        const updatedMessage = updatedRes.data.data;
 
-                        // UPDATE LOCAL STATE
                         setMessages((prev) =>
                             prev.map((msg) =>
-                                msg.message_id ===
-                                    realMessage.message_id
-                                    ? {
-                                        ...updatedMessage,
-                                        status: "sent",
-                                    }
+                                msg.message_id === realMessage.message_id
+                                    ? { ...updatedMessage, status: "sent" }
                                     : msg
                             )
                         );
 
-                        // EMIT UPDATED SOCKET EVENT
-                        socketRef.current?.emit(
-                            "chat:update-message",
-                            updatedMessage
-                        );
+                        updateChatLastMessage(payload.chat_id, updatedMessage);
+
+                        socketRef.current?.emit("chat:update-message", updatedMessage);
                     }
                 }
             }
@@ -762,8 +796,6 @@ const ChatContent = () => {
             !m.reads?.some((r) => r.user_id === currentUserId)
     );
 
-    const typingTimeoutRef = useRef(null);
-
     return (
         <>
             {activeSidebar === "chats" && (
@@ -773,6 +805,8 @@ const ChatContent = () => {
                     handleSelectChat={handleSelectChat}
                     selectedChat={selectedChat}
                     chats={chats}
+                    chatUnreadCounts={chatUnreadCounts}
+                    chatTypingUsers={chatTypingUsers}
                 />
             )}
 
@@ -780,7 +814,7 @@ const ChatContent = () => {
                 <NewChatUsers
                     sidebarOpen={true}
                     setSidebarOpen={() => setActiveSidebar("chats")}
-                    handleCreateChat={handleCreateChat}       // ✅ NEW
+                    handleCreateChat={handleCreateChat}
                     handleCreateGroup={handleCreateGroup}
                 />
             )}
@@ -840,12 +874,9 @@ const ChatContent = () => {
                                                     ? {
                                                         message_id: message.replyTo.message_id,
                                                         text: message.replyTo.message_text ?? message.replyTo.text ?? "",
-                                                        sender_name:
-                                                            message.replyTo.sender?.full_name || "User",
-                                                        attachments:
-                                                            message.replyTo.attachments || [],
-                                                        message_type:
-                                                            message.replyTo.message_type || "text",
+                                                        sender_name: message.replyTo.sender?.full_name || "User",
+                                                        attachments: message.replyTo.attachments || [],
+                                                        message_type: message.replyTo.message_type || "text",
                                                     }
                                                     : null,
                                             }]}
@@ -856,21 +887,6 @@ const ChatContent = () => {
                                             onEdit={(msg) => setEditingMessage(msg)}
                                             onDelete={handleDeleteMessage}
                                         />
-                                        {/* <ChatMessage
-                                            avatar={message?.sender?.avatar_url || "/images/avatar.png"}
-                                            name={message?.sender?.full_name}
-                                            time={new Date(message.created_at).toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                            messages={[{
-                                                text: message.message_text,
-                                                attachments: message.attachments || [],
-                                            }]}
-                                            messageStatus={getMessageStatus(message)}
-                                            isReplay={message.sender_id === currentUserId}
-                                            showHeader={showHeader}
-                                        /> */}
                                     </div>
                                 </React.Fragment>
                             );
@@ -896,6 +912,7 @@ const ChatContent = () => {
                             </div>
                         )}
                     </div>
+
                     <MessageEditor
                         selectedChat={selectedChat}
                         currentUserId={currentUserId}
