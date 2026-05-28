@@ -129,7 +129,15 @@ const ChatContent = () => {
                 );
             }
         );
-
+        socket.on("chat:message-deleted", ({ message_id }) => {
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg.message_id === message_id
+                        ? { ...msg, is_deleted: true, message_text: "", attachments: [] }
+                        : msg
+                )
+            );
+        });
         socket.on("chat:new-message", (message) => {
             console.log("New message received:", message);
             if (
@@ -539,7 +547,41 @@ const ChatContent = () => {
         if (message.status === "sent") return "sent";
         return "delivered";
     };
+    const handleDeleteMessage = async (message) => {
+        try {
+            // Optimistic UI: mark as deleted immediately (don't filter out)
+            setMessages((prev) =>
+                prev.map((m) =>
+                    m.message_id === message.message_id
+                        ? { ...m, is_deleted: true, message_text: "", attachments: [] }
+                        : m
+                )
+            );
 
+            // API call
+            await axios.delete(
+                `http://localhost:5000/api/chat-messages/${message.message_id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            // Emit to other users in the chat
+            socketRef.current?.emit("chat:delete-message", {
+                message_id: message.message_id,
+                chat_id: message.chat_id,
+            });
+
+        } catch (err) {
+            console.log(err);
+            // Rollback on failure
+            setMessages((prev) =>
+                prev.map((m) =>
+                    m.message_id === message.message_id
+                        ? { ...m, is_deleted: false }
+                        : m
+                )
+            );
+        }
+    };
     /* =========================================
         SEND MESSAGE
     ========================================= */
@@ -812,6 +854,7 @@ const ChatContent = () => {
                                             showHeader={showHeader}
                                             onReply={(msg) => setReplyMessage(msg)}
                                             onEdit={(msg) => setEditingMessage(msg)}
+                                            onDelete={handleDeleteMessage}
                                         />
                                         {/* <ChatMessage
                                             avatar={message?.sender?.avatar_url || "/images/avatar.png"}

@@ -86,6 +86,7 @@ const ChatMessage = ({
   messageStatus,
   onReply,
   onEdit,
+  onDelete,
 }) => {
 
   const [hovered, setHovered] = useState(false);
@@ -200,20 +201,20 @@ const ChatMessage = ({
                   </DropdownItem>
 
                   <DropdownItem
-    onClick={() =>
-        onEdit?.({
-            ...msg,
-            sender_name: name,
-        })
-    }
->
-    Edit
-</DropdownItem>
+                    onClick={() =>
+                      onEdit?.({
+                        ...msg,
+                        sender_name: name,
+                      })
+                    }
+                  >
+                    Edit
+                  </DropdownItem>
 
                   <DropdownItem
                     className="text-danger"
                     onClick={() =>
-                      console.log("Delete")
+                      onDelete?.(msg)
                     }
                   >
                     Delete
@@ -230,109 +231,92 @@ const ChatMessage = ({
             {msg.replyTo && (
               <div
                 className="px-3 py-2 mb-2 rounded-3"
-                style={{
-                  background: "#f4f6f9",
-                  borderLeft: "4px solid #5e72e4",
-                }}
+                style={{ background: "#f4f6f9", borderLeft: "4px solid #5e72e4" }}
               >
-                {/* SENDER */}
-                <div
-                  className="fw-semibold mb-1"
-                  style={{
-                    fontSize: 12,
-                    color: "#5e72e4",
-                    lineHeight: 1.2,
-                  }}
-                >
+                <div className="fw-semibold mb-1" style={{ fontSize: 12, color: "#5e72e4" }}>
                   {msg.replyTo.sender_name}
                 </div>
 
-                {/* REPLY TEXT */}
-                {msg.replyTo.text && (
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: "#6c757d",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      marginBottom:
-                        msg.replyTo.attachments?.length > 0
-                          ? 8
-                          : 0,
-                    }}
-                  >
-                    {msg.replyTo.text}
+                {/* Show deleted state if original was deleted */}
+                {msg.replyTo.is_deleted ? (
+                  <div style={{ fontSize: 13, color: "#adb5bd", fontStyle: "italic" }}>
+                    This message was deleted
                   </div>
-                )}
-
-                {/* REPLY ATTACHMENT */}
-                {msg.replyTo.attachments?.length > 0 && (
-                  <div
-                    className="d-flex align-items-center gap-2"
-                    style={{
-                      background: "#fff",
-                      borderRadius: 8,
-                      padding: "6px 8px",
-                    }}
-                  >
-                    {msg.replyTo.attachments[0]
-                      ?.file_type?.startsWith("image") ? (
-                      <img
-                        src={
-                          msg.replyTo.attachments[0]
-                            .file_url
-                        }
-                        alt="reply"
-                        style={{
-                          width: 40,
-                          height: 40,
-                          objectFit: "cover",
-                          borderRadius: 6,
-                        }}
-                      />
-                    ) : (
-                      <FiPaperclip
-                        size={16}
-                        className="text-muted"
-                      />
+                ) : (
+                  <>
+                    {msg.replyTo.text && (
+                      <div style={{ fontSize: 13, color: "#6c757d", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {msg.replyTo.text}
+                      </div>
                     )}
-
-                    <div
-                      style={{
-                        fontSize: 12,
-                        color: "#6c757d",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {msg.replyTo.attachments[0]
-                        ?.file_name || "Attachment"}
-                    </div>
-                  </div>
+                    {msg.replyTo.attachments?.length > 0 && (
+                      <div className="d-flex align-items-center gap-2" style={{ background: "#fff", borderRadius: 8, padding: "6px 8px" }}>
+                        {msg.replyTo.attachments[0]?.file_type?.startsWith("image") ? (
+                          <img src={msg.replyTo.attachments[0].file_url} alt="reply"
+                            style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 6 }} />
+                        ) : (
+                          <FiPaperclip size={16} className="text-muted" />
+                        )}
+                        <div style={{ fontSize: 12, color: "#6c757d", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {msg.replyTo.attachments[0]?.file_name || "Attachment"}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
             {/* TEXT */}
 
-            {msg.text && (
+            {/* TEXT */}
+
+            {msg.is_deleted ? (
               <p
-                className="py-2 px-3 bg-white mb-2"
-                dangerouslySetInnerHTML={{
-                  __html: msg.text,
+                className="py-2 px-3 mb-2 text-muted fst-italic"
+                style={{
+                  background: "#f1f1f1",
+                  borderRadius: 10,
+                  opacity: 0.8,
                 }}
-              />
+              >
+                This message was deleted
+              </p>
+            ) : (
+              <>
+                {msg.text && (
+                  <div className="position-relative">
+
+                    <p
+                      className="py-2 px-3 bg-white mb-1"
+                      dangerouslySetInnerHTML={{
+                        __html: msg.text,
+                      }}
+                    />
+
+                    {/* EDITED TAG */}
+                    {msg.is_edited && (
+                      <div
+                        className="text-muted text-end pe-2"
+                        style={{
+                          fontSize: 11,
+                          marginTop: "-4px",
+                        }}
+                      >
+                        edited
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             {/* ATTACHMENTS */}
 
-            {msg.attachments?.length > 0 && (
+            {!msg.is_deleted && msg.attachments?.length > 0 && (
               <FileMessage
                 attachments={msg.attachments}
               />
             )}
-
           </div>
         ))}
 
