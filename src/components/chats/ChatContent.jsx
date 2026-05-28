@@ -35,7 +35,7 @@ const ChatContent = () => {
     const messageRefs = useRef({});
     const markedReadIds = useRef(new Set());
     const selectedChatRef = useRef(null);
-const creatingChatRef = useRef(false);
+    const creatingChatRef = useRef(false);
     /* =========================================
         SCROLL HELPERS
     ========================================= */
@@ -97,21 +97,26 @@ const creatingChatRef = useRef(false);
             }
         });
 
-        socket.on("chat:message-updated", (updatedMessage) => {
-            setMessages((prev) =>
-                prev.map((msg) =>
-                    msg.message_id === updatedMessage.message_id
-                        ? {
-                            ...msg,
-                            ...updatedMessage,
-                            attachments: updatedMessage.attachments?.length
-                                ? updatedMessage.attachments
-                                : msg.attachments || [],
-                        }
-                        : msg
-                )
-            );
-        });
+        socket.on(
+            "chat:message-updated",
+            (updatedMessage) => {
+
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.message_id === updatedMessage.message_id
+                            ? {
+                                ...msg,
+                                ...updatedMessage,
+                                attachments:
+                                    updatedMessage.attachments?.length
+                                        ? updatedMessage.attachments
+                                        : msg.attachments || [],
+                            }
+                            : msg
+                    )
+                );
+            }
+        );
 
         socket.on("chat:new-message", (message) => {
             console.log("New message received:", message);
@@ -129,17 +134,67 @@ const creatingChatRef = useRef(false);
 
                     if (tempIndex !== -1) {
                         const updated = [...prev];
-                        updated[tempIndex] = {
-                            ...message,
-                            attachments: message.attachments?.length
-                                ? message.attachments
-                                : prev[tempIndex].attachments || [],
-                            status: "sent",
-                        };
+                     updated[tempIndex] = {
+    ...message,
+
+    attachments:
+        message.attachments?.length
+            ? message.attachments
+            : prev[tempIndex].attachments || [],
+
+    replyTo:
+        message.replyTo || prev[tempIndex].replyTo
+            ? {
+                message_id:
+                    message.replyTo?.message_id ||
+                    prev[tempIndex].replyTo?.message_id,
+
+                text:
+    message.replyTo?.message_text ??
+    message.replyTo?.text ??
+    prev[tempIndex].replyTo?.text ??
+    "",
+
+                sender_name:
+                    message.replyTo?.sender?.full_name ||
+                    prev[tempIndex].replyTo?.sender_name ||
+                    "User",
+
+                attachments:
+                    message.replyTo?.attachments ||
+                    prev[tempIndex].replyTo?.attachments ||
+                    [],
+
+                message_type:
+                    message.replyTo?.message_type ||
+                    prev[tempIndex].replyTo?.message_type ||
+                    "text",
+            }
+            : null,
+
+    status: "sent",
+};
                         return updated;
                     }
 
-                    return [...prev, message];
+return [
+    ...prev,
+    {
+        ...message,
+        replyTo: message.replyTo
+            ? {
+                message_id: message.replyTo.message_id,
+                text: message.replyTo.message_text ?? message.replyTo.text ?? "",
+                sender_name:
+                    message.replyTo.sender?.full_name || "User",
+                attachments:
+                    message.replyTo.attachments || [],
+                message_type:
+                    message.replyTo.message_type || "text",
+            }
+            : null,
+    },
+];
                 });
 
                 setTimeout(() => scrollToBottom(), 100);
@@ -291,110 +346,110 @@ const creatingChatRef = useRef(false);
           open it. Otherwise create a new one.
     ========================================= */
 
-  const handleCreateChat = async (targetUser) => {
+    const handleCreateChat = async (targetUser) => {
 
-    // 🚫 Prevent multiple rapid clicks
-    if (creatingChatRef.current) return;
+        // 🚫 Prevent multiple rapid clicks
+        if (creatingChatRef.current) return;
 
-    creatingChatRef.current = true;
+        creatingChatRef.current = true;
 
-    try {
+        try {
 
-        // check if DM already exists
-        const existing = chats.find(
-            (c) =>
-                c.chat_type === "direct" &&
-                c.participants?.some(
-                    (p) => p.user_id === targetUser.user_id
-                )
-        );
+            // check if DM already exists
+            const existing = chats.find(
+                (c) =>
+                    c.chat_type === "direct" &&
+                    c.participants?.some(
+                        (p) => p.user_id === targetUser.user_id
+                    )
+            );
 
-        if (existing) {
+            if (existing) {
 
-            handleSelectChat(existing);
+                handleSelectChat(existing);
+                setActiveSidebar("chats");
+
+                return;
+            }
+
+            // create new direct chat
+            const res = await axios.post(
+                "http://localhost:5000/api/chats",
+                {
+                    chat_type: "direct",
+                    created_by: currentUserId,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const newChat = res.data.data;
+
+            // add current user
+            await axios.post(
+                "http://localhost:5000/api/chat-participants",
+                {
+                    chat_id: newChat.chat_id,
+                    user_id: currentUserId,
+                    role: "member",
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            // add target user
+            await axios.post(
+                "http://localhost:5000/api/chat-participants",
+                {
+                    chat_id: newChat.chat_id,
+                    user_id: targetUser.user_id,
+                    role: "member",
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const fullChat = {
+                ...newChat,
+                chat_type: "direct",
+                participants: [
+                    { user_id: currentUserId },
+                    {
+                        user_id: targetUser.user_id,
+                        user: targetUser,
+                    },
+                ],
+                messages: [],
+            };
+
+            setChats((prev) => [fullChat, ...prev]);
+
+            handleSelectChat(fullChat);
+
             setActiveSidebar("chats");
 
-            return;
+        } catch (err) {
+
+            console.log("Create chat error:", err);
+
+        } finally {
+
+            // ✅ unlock
+            creatingChatRef.current = false;
         }
-
-        // create new direct chat
-        const res = await axios.post(
-            "http://localhost:5000/api/chats",
-            {
-                chat_type: "direct",
-                created_by: currentUserId,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        const newChat = res.data.data;
-
-        // add current user
-        await axios.post(
-            "http://localhost:5000/api/chat-participants",
-            {
-                chat_id: newChat.chat_id,
-                user_id: currentUserId,
-                role: "member",
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        // add target user
-        await axios.post(
-            "http://localhost:5000/api/chat-participants",
-            {
-                chat_id: newChat.chat_id,
-                user_id: targetUser.user_id,
-                role: "member",
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        const fullChat = {
-            ...newChat,
-            chat_type: "direct",
-            participants: [
-                { user_id: currentUserId },
-                {
-                    user_id: targetUser.user_id,
-                    user: targetUser,
-                },
-            ],
-            messages: [],
-        };
-
-        setChats((prev) => [fullChat, ...prev]);
-
-        handleSelectChat(fullChat);
-
-        setActiveSidebar("chats");
-
-    } catch (err) {
-
-        console.log("Create chat error:", err);
-
-    } finally {
-
-        // ✅ unlock
-        creatingChatRef.current = false;
-    }
-};
+    };
 
     /* =========================================
         CREATE GROUP
@@ -489,6 +544,28 @@ const creatingChatRef = useRef(false);
             created_at: new Date().toISOString(),
             sender: { full_name: "You" },
             status: "sending",
+            replyTo: replyMessage
+                ? {
+                    message_id:
+                        replyMessage.message_id,
+
+                    text:
+                        replyMessage.text ||
+                        replyMessage.message_text ||
+                        "",
+
+                    sender_name:
+                        replyMessage.sender_name ||
+                        replyMessage.sender?.full_name ||
+                        "User",
+
+                    attachments:
+                        replyMessage.attachments || [],
+
+                    message_type:
+                        replyMessage.message_type || "text",
+                }
+                : null,
             attachments: hasAttachments
                 ? payload.attachments.map((file, i) => ({
                     file_id: "temp_file_" + i,
@@ -499,11 +576,12 @@ const creatingChatRef = useRef(false);
                 }))
                 : [],
         };
-
+        console.log("Temp message to send:", tempMessage);
         setMessages((prev) => [...prev, tempMessage]);
         scrollToBottom();
 
         try {
+            console.log("Sending message to server...", payload);
             const res = await fetch("http://localhost:5000/api/chat-messages", {
                 method: "POST",
                 headers: {
@@ -515,7 +593,10 @@ const creatingChatRef = useRef(false);
                     sender_id: currentUserId,
                     message_type: hasAttachments ? "file" : "text",
                     message_text: payload.message,
-                    reply_to_message_id: payload.reply_to_message_id,
+
+                    // FIX
+                    reply_to_message_id:
+                        replyMessage?.message_id || null,
                 }),
             });
 
@@ -527,12 +608,38 @@ const creatingChatRef = useRef(false);
                 setMessages((prev) =>
                     prev.map((msg) =>
                         msg.message_id === tempMessage.message_id
-                            ? { ...realMessage, attachments: msg.attachments || [], status: "sent" }
+                            ? {
+                                ...realMessage,
+                                attachments: msg.attachments || [],
+                                replyTo:
+                                    realMessage.replyTo
+                                        ? {
+                                            message_id:
+                                                realMessage.replyTo.message_id,
+
+                                            text:
+                                                realMessage.replyTo.message_text || "",
+
+                                            sender_name:
+                                                realMessage.replyTo.sender?.full_name ||
+                                                msg.replyTo?.sender_name ||
+                                                "User",
+
+                                            attachments:
+                                                realMessage.replyTo.attachments || [],
+
+                                            message_type:
+                                                realMessage.replyTo.message_type || "text",
+                                        }
+                                        : msg.replyTo || null,
+                                status: "sent",
+                            }
                             : msg
                     )
                 );
 
                 if (hasAttachments) {
+
                     const attachRes = await axios.post(
                         "http://localhost:5000/api/chat-attachments",
                         {
@@ -540,16 +647,45 @@ const creatingChatRef = useRef(false);
                             chat_id: payload.chat_id,
                             attachments: payload.attachments,
                         },
-                        { headers: { Authorization: `Bearer ${token}` } }
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
                     );
 
                     if (attachRes.data.success) {
+
+                        // FETCH UPDATED MESSAGE
+                        const updatedRes = await axios.get(
+                            `http://localhost:5000/api/chat-messages/${realMessage.message_id}`,
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                },
+                            }
+                        );
+
+                        const updatedMessage =
+                            updatedRes.data.data;
+
+                        // UPDATE LOCAL STATE
                         setMessages((prev) =>
                             prev.map((msg) =>
-                                msg.message_id === realMessage.message_id
-                                    ? { ...msg, attachments: payload.attachments, status: "sent" }
+                                msg.message_id ===
+                                    realMessage.message_id
+                                    ? {
+                                        ...updatedMessage,
+                                        status: "sent",
+                                    }
                                     : msg
                             )
+                        );
+
+                        // EMIT UPDATED SOCKET EVENT
+                        socketRef.current?.emit(
+                            "chat:update-message",
+                            updatedMessage
                         );
                     }
                 }
@@ -643,13 +779,42 @@ const creatingChatRef = useRef(false);
                                                 minute: "2-digit",
                                             })}
                                             messages={[{
+                                                ...message,
+                                                text: message.message_text,
+                                                attachments: message.attachments || [],
+                                                replyTo: message.replyTo
+                                                    ? {
+                                                        message_id: message.replyTo.message_id,
+                                                        text: message.replyTo.message_text ?? message.replyTo.text ?? "",
+                                                        sender_name:
+                                                            message.replyTo.sender?.full_name || "User",
+                                                        attachments:
+                                                            message.replyTo.attachments || [],
+                                                        message_type:
+                                                            message.replyTo.message_type || "text",
+                                                    }
+                                                    : null,
+                                            }]}
+                                            messageStatus={getMessageStatus(message)}
+                                            isReplay={message.sender_id === currentUserId}
+                                            showHeader={showHeader}
+                                            onReply={(msg) => setReplyMessage(msg)}
+                                        />
+                                        {/* <ChatMessage
+                                            avatar={message?.sender?.avatar_url || "/images/avatar.png"}
+                                            name={message?.sender?.full_name}
+                                            time={new Date(message.created_at).toLocaleTimeString([], {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
+                                            messages={[{
                                                 text: message.message_text,
                                                 attachments: message.attachments || [],
                                             }]}
                                             messageStatus={getMessageStatus(message)}
                                             isReplay={message.sender_id === currentUserId}
                                             showHeader={showHeader}
-                                        />
+                                        /> */}
                                     </div>
                                 </React.Fragment>
                             );

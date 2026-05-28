@@ -16,9 +16,9 @@ const ReplyPreview = ({
             {replyMessage.sender_name}
           </small>
 
-          <div className="small text-muted mt-1">
-            {replyMessage.message_text}
-          </div>
+<div className="small text-muted mt-1">
+  {replyMessage.text || replyMessage.message_text}
+</div>
         </div>
 
         <button

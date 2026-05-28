@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { FiDownload, FiPaperclip } from "react-icons/fi";
+import {
+  FiDownload,
+  FiPaperclip,
+  FiChevronDown,
+} from "react-icons/fi";
+
 import {
   Check,
   CheckCheck,
   Clock3,
 } from "lucide-react";
 
+import {
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
+
 // ======================================
-// FILE MESSAGE — moved above ChatMessage
-// so it's defined before it's used
+// FILE MESSAGE
 // ======================================
 
 export const FileMessage = ({ attachments = [] }) => {
@@ -21,6 +32,7 @@ export const FileMessage = ({ attachments = [] }) => {
           className="d-flex align-items-center justify-content-between bg-white border rounded-3 p-2"
         >
           <div className="d-flex align-items-center gap-2">
+
             {file.file_type?.startsWith("image") ? (
               <img
                 src={file.file_url}
@@ -37,12 +49,21 @@ export const FileMessage = ({ attachments = [] }) => {
             )}
 
             <div>
-              <div className="fw-semibold small">{file.file_name}</div>
-              <small className="text-muted">{file.file_size}</small>
+              <div className="fw-semibold small">
+                {file.file_name}
+              </div>
+
+              <small className="text-muted">
+                {file.file_size}
+              </small>
             </div>
           </div>
 
-          <a href={file.file_url} target="_blank" rel="noreferrer">
+          <a
+            href={file.file_url}
+            target="_blank"
+            rel="noreferrer"
+          >
             <FiDownload />
           </a>
         </div>
@@ -52,53 +73,301 @@ export const FileMessage = ({ attachments = [] }) => {
 };
 
 // ======================================
-// SINGLE CHAT MESSAGE — UI unchanged
+// CHAT MESSAGE
 // ======================================
 
-const ChatMessage = ({ avatar, name, time, messages, isReplay, showHeader = true, messageStatus }) => {
-  return (
-    <div className="single-chat-item mb-3">
+const ChatMessage = ({
+  avatar,
+  name,
+  time,
+  messages,
+  isReplay,
+  showHeader = true,
+  messageStatus,
+  onReply,
+}) => {
 
-      {/* HEADER — only shown for first message in a group */}
+  const [hovered, setHovered] = useState(false);
+
+  const [dropdownOpen, setDropdownOpen] =
+    useState(false);
+
+  const toggle = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  return (
+    <div
+      className="single-chat-item mb-3"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+
+      {/* HEADER */}
+
       {showHeader && (
-        <div className={`d-flex align-items-center gap-3 mb-3 ${isReplay ? "flex-row-reverse" : ""}`}>
+        <div
+          className={`d-flex align-items-center gap-3 mb-2 ${isReplay ? "flex-row-reverse" : ""
+            }`}
+        >
+
           <a href="#" className="avatar-image">
-            <img src={avatar} className="img-fluid rounded-circle" alt="avatar" />
+            <img
+              src={avatar}
+              className="img-fluid rounded-circle"
+              alt="avatar"
+            />
           </a>
-          <div className={`d-flex align-items-center gap-2 ${isReplay ? "flex-row-reverse" : ""}`}>
+
+          <div
+            className={`d-flex align-items-center gap-2 ${isReplay ? "flex-row-reverse" : ""
+              }`}
+          >
+
             <a href="#">{name}</a>
+
             <span className="wd-5 ht-5 bg-gray-400 rounded-circle"></span>
-            <span className="fs-11 text-muted">{time}</span>
+
+            <span className="fs-11 text-muted">
+              {time}
+            </span>
+
           </div>
         </div>
       )}
 
       {/* MESSAGE BUBBLE */}
-      <div className={`wd-500 p-3 rounded-5 bg-gray-200 message-content ${isReplay ? "ms-auto" : ""}`}>
-        {messages.map((msg, index) => (
-          <React.Fragment key={index}>
+
+      <div
+        className={`wd-500 p-3 rounded-4 bg-gray-200 message-content position-relative ${isReplay ? "ms-auto" : ""
+          }`}
+      >
+
+        {/* MESSAGE LIST */}
+
+        {messages?.map((msg, index) => (
+
+          <div
+            key={index}
+            className="position-relative"
+          >
+
+            {/* WHATSAPP MENU */}
+
+            <div
+              style={{
+                position: "absolute",
+                top: "4px",
+                right: "4px",
+                opacity: hovered ? 1 : 0,
+                transition: "0.2s ease",
+                zIndex: 10,
+              }}
+            >
+
+              <Dropdown
+                isOpen={dropdownOpen}
+                toggle={toggle}
+              >
+
+                <DropdownToggle
+                  tag="div"
+                  style={{
+                    cursor: "pointer",
+                    width: 24,
+                    height: 24,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "50%",
+                  }}
+                >
+                  <FiChevronDown size={16} />
+                </DropdownToggle>
+
+                <DropdownMenu end>
+
+                  <DropdownItem
+                    onClick={() =>
+                      onReply?.({
+                        ...msg,
+                        sender_name: name,
+                      })
+                    }
+                  >
+                    Reply
+                  </DropdownItem>
+
+                  <DropdownItem
+                    onClick={() =>
+                      console.log("Edit")
+                    }
+                  >
+                    Edit
+                  </DropdownItem>
+
+                  <DropdownItem
+                    className="text-danger"
+                    onClick={() =>
+                      console.log("Delete")
+                    }
+                  >
+                    Delete
+                  </DropdownItem>
+
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+
+            {/* REPLY PREVIEW */}
+
+            {/* REPLY PREVIEW */}
+
+            {msg.replyTo && (
+              <div
+                className="px-3 py-2 mb-2 rounded-3"
+                style={{
+                  background: "#f4f6f9",
+                  borderLeft: "4px solid #5e72e4",
+                }}
+              >
+                {/* SENDER */}
+                <div
+                  className="fw-semibold mb-1"
+                  style={{
+                    fontSize: 12,
+                    color: "#5e72e4",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {msg.replyTo.sender_name}
+                </div>
+
+                {/* REPLY TEXT */}
+                {msg.replyTo.text && (
+                  <div
+                    style={{
+                      fontSize: 13,
+                      color: "#6c757d",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      marginBottom:
+                        msg.replyTo.attachments?.length > 0
+                          ? 8
+                          : 0,
+                    }}
+                  >
+                    {msg.replyTo.text}
+                  </div>
+                )}
+
+                {/* REPLY ATTACHMENT */}
+                {msg.replyTo.attachments?.length > 0 && (
+                  <div
+                    className="d-flex align-items-center gap-2"
+                    style={{
+                      background: "#fff",
+                      borderRadius: 8,
+                      padding: "6px 8px",
+                    }}
+                  >
+                    {msg.replyTo.attachments[0]
+                      ?.file_type?.startsWith("image") ? (
+                      <img
+                        src={
+                          msg.replyTo.attachments[0]
+                            .file_url
+                        }
+                        alt="reply"
+                        style={{
+                          width: 40,
+                          height: 40,
+                          objectFit: "cover",
+                          borderRadius: 6,
+                        }}
+                      />
+                    ) : (
+                      <FiPaperclip
+                        size={16}
+                        className="text-muted"
+                      />
+                    )}
+
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#6c757d",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {msg.replyTo.attachments[0]
+                        ?.file_name || "Attachment"}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            {/* TEXT */}
+
             {msg.text && (
               <p
-                className="py-2 px-3 rounded-5 bg-white mb-2"
-                dangerouslySetInnerHTML={{ __html: msg.text }}
+                className="py-2 px-3 bg-white mb-2"
+                dangerouslySetInnerHTML={{
+                  __html: msg.text,
+                }}
               />
             )}
 
+            {/* ATTACHMENTS */}
+
             {msg.attachments?.length > 0 && (
-              <FileMessage attachments={msg.attachments} />
+              <FileMessage
+                attachments={msg.attachments}
+              />
             )}
-          </React.Fragment>
+
+          </div>
         ))}
 
-        {/* TICK STATUS */}
+        {/* MESSAGE STATUS */}
+
         {isReplay && messageStatus && (
           <div className="d-flex justify-content-end mt-1">
-            {messageStatus === "sending"   && <Clock3     size={14} className="text-muted" />}
-            {messageStatus === "sent"      && <Check      size={16} className="text-muted" />}
-            {messageStatus === "delivered" && <CheckCheck size={16} className="text-muted" />}
-            {messageStatus === "read"      && <CheckCheck size={16} color="#0d6efd" />}
+
+            {messageStatus === "sending" && (
+              <Clock3
+                size={14}
+                className="text-muted"
+              />
+            )}
+
+            {messageStatus === "sent" && (
+              <Check
+                size={16}
+                className="text-muted"
+              />
+            )}
+
+            {messageStatus === "delivered" && (
+              <CheckCheck
+                size={16}
+                className="text-muted"
+              />
+            )}
+
+            {messageStatus === "read" && (
+              <CheckCheck
+                size={16}
+                color="#53bdeb"
+              />
+            )}
+
           </div>
         )}
+
       </div>
     </div>
   );
