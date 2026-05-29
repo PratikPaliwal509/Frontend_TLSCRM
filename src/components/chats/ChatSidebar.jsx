@@ -70,7 +70,6 @@ const ChatSidebar = ({
   const getChats = async () => {
     try {
       setLoading(true);
-console.log(currentUserId)
       const res = await fetch(`${API_URL}/chats/user/${currentUserId}`, {
         headers: {
           Authorization: `Bearer ${token}`,

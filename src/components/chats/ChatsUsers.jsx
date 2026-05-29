@@ -2,10 +2,7 @@ import React, {
   Fragment,
   useState,
 } from "react";
-
 import { Link } from "react-router-dom";
-
-import { FiX } from "react-icons/fi";
 
 import Dropdown from "@/components/shared/Dropdown";
 
@@ -18,9 +15,14 @@ import {
   FiPhoneCall,
   FiStar,
   FiTrash2,
+  FiImage,
+  FiFileText,
   FiVideo,
-} from "react-icons/fi";
+  FiMusic,
+  FiPaperclip,
 
+} from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 const filteringOptions = [
@@ -54,26 +56,168 @@ const chatItems = [
  * Handles: deleted messages, file-only messages, edited messages.
  */
 const getLastMessagePreview = (chat, currentUserId) => {
-  const msgs = chat.messages || [];
+  // Support both messages[] array and flat last_message / latestMessage fields
+  const msgs = chat.messages?.length
+    ? chat.messages
+    : chat.last_message
+      ? [chat.last_message]
+      : chat.latestMessage
+        ? [chat.latestMessage]
+        : [];
+
   if (!msgs.length) return "No messages yet";
 
   const last = msgs[msgs.length - 1];
+  if (!last) return "No messages yet";
 
   if (last.is_deleted) return "🚫 This message was deleted";
 
   const isMine = last.sender_id === currentUserId;
   const prefix = isMine ? "You: " : "";
 
-  if (last.message_text) {
+  // message_text may come as message_text OR text depending on API shape
+  const rawText = last.message_text ?? last.text ?? "";
+
+  if (rawText) {
     const edited = last.is_edited ? " (edited)" : "";
-    // strip HTML tags for preview
-    const plain = last.message_text.replace(/<[^>]*>/g, "");
-    return `${prefix}${plain}${edited}`;
+    // strip HTML tags for clean preview
+    const plain = rawText.replace(/<[^>]*>/g, "").trim();
+    if (plain) return `${prefix}${plain}${edited}`;
   }
 
   if (last.attachments?.length) {
-    const isImage = last.attachments[0]?.file_type?.startsWith("image");
-    return `${prefix}${isImage ? "📷 Photo" : "📎 Attachment"}`;
+
+    const file = last.attachments[0];
+
+    const type = file?.file_type || "";
+
+    // IMAGE
+    if (type.startsWith("image")) {
+      return (
+        <>
+          <FiImage
+            size={14}
+            className="me-1"
+          />
+          {prefix}Photo
+        </>
+      );
+    }
+
+    // VIDEO
+    if (type.startsWith("video")) {
+      return (
+        <>
+          <FiVideo
+            size={14}
+            className="me-1"
+          />
+          {prefix}Video
+        </>
+      );
+    }
+
+    // AUDIO
+    if (type.startsWith("audio")) {
+      return (
+        <>
+          <FiMusic
+            size={14}
+            className="me-1"
+          />
+          {prefix}Audio
+        </>
+      );
+    }
+
+    // PDF / DOC
+    if (
+      type.includes("pdf") ||
+      type.includes("document") ||
+      type.includes("word")
+    ) {
+      return (
+        <>
+          <FiFileText
+            size={14}
+            className="me-1"
+          />
+          {prefix}Document
+        </>
+      );
+    }
+
+    // DEFAULT
+    return (
+      <>
+        <FiPaperclip
+          size={14}
+          className="me-1"
+        />
+        {prefix}Attachment
+      </>
+    );
+  }
+
+  // message_type fallback (e.g. API returns type but no text yet)
+  if (last.message_type === "file") {
+    return (
+      <>
+        <FiPaperclip
+          size={14}
+          className="me-1"
+        />
+        {prefix}Attachment
+      </>
+    );
+  }
+
+  if (last.message_type === "image") {
+    return (
+      <>
+        <FiImage
+          size={14}
+          className="me-1"
+        />
+        {prefix}Photo
+      </>
+    );
+  }
+
+  if (last.message_type === "video") {
+    return (
+      <>
+        <FiVideo
+          size={14}
+          className="me-1"
+        />
+        {prefix}Video
+      </>
+    );
+  }
+
+  if (last.message_type === "audio") {
+    return (
+      <>
+        <FiMusic
+          size={14}
+          className="me-1"
+        />
+        {prefix}Audio
+      </>
+    );
+  }
+
+  if (last.message_type === "document") {
+    return (
+      <>
+        <FiFileText
+          size={14}
+          className="me-1"
+        />
+        {prefix}Document
+      </>
+    );
   }
 
   return "No messages yet";
@@ -88,7 +232,6 @@ const ChatsUsers = ({
   chatUnreadCounts = {},   // { [chat_id]: number }
   chatTypingUsers = {},    // { [chat_id]: { [user_id]: name } }
 }) => {
-
   const [selectOption, setSelectOption] = useState("Newest");
 
   const user = localStorage.getItem("user");
@@ -174,14 +317,20 @@ const ChatsUsers = ({
               // ── last message preview ──────────────────────────
               const lastMessagePreview = getLastMessagePreview(chat, currentUserId);
 
-              // ── timestamp from last message ───────────────────
-              const msgs = chat.messages || [];
+              // ── timestamp from last message (same fallback as preview helper) ──
+              const msgs = chat.messages?.length
+                ? chat.messages
+                : chat.last_message
+                  ? [chat.last_message]
+                  : chat.latestMessage
+                    ? [chat.latestMessage]
+                    : [];
               const lastMessage = msgs[msgs.length - 1];
               const lastTime = lastMessage?.created_at
                 ? new Date(lastMessage.created_at).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
                 : "";
 
               // ── unread badge ──────────────────────────────────
@@ -202,9 +351,8 @@ const ChatsUsers = ({
                 <div
                   key={chat.chat_id}
                   onClick={() => handleSelectChat(chat)}
-                  className={`p-4 d-flex position-relative border-bottom c-pointer single-item chat-single-item ${
-                    selectedChat?.chat_id === chat.chat_id ? "bg-gray-200" : ""
-                  }`}
+                  className={`p-4 d-flex position-relative border-bottom c-pointer single-item chat-single-item ${selectedChat?.chat_id === chat.chat_id ? "bg-gray-200" : ""
+                    }`}
                 >
 
                   {/* AVATAR */}
@@ -249,17 +397,16 @@ const ChatsUsers = ({
                         {typingText}
                       </p>
                     ) : (
-                      <p
-                        className={`fs-12 mt-2 mb-0 text-truncate-2-line ${
-                          lastMessage?.is_deleted
-                            ? "text-muted fst-italic"
-                            : unreadCount > 0
+                      <div
+                        className={`fs-12 mt-2 mb-0 d-flex align-items-center gap-1 text-truncate-2-line ${lastMessage?.is_deleted
+                          ? "text-muted fst-italic"
+                          : unreadCount > 0
                             ? "fw-bold"
                             : "fw-semibold"
-                        }`}
+                          }`}
                       >
                         {lastMessagePreview}
-                      </p>
+                      </div>
                     )}
 
                   </div>

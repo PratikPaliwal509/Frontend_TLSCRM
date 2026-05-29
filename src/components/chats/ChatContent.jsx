@@ -384,15 +384,20 @@ const ChatContent = () => {
             setChats(fetchedChats);
 
             // seed unread counts from initial load
+            // seed unread counts from backend unread_count
             const counts = {};
+
             fetchedChats.forEach((chat) => {
-                const unread = (chat.messages || []).filter(
-                    (m) =>
-                        m.sender_id !== currentUserId &&
-                        !m.reads?.some((r) => r.user_id === currentUserId)
-                ).length;
-                if (unread > 0) counts[chat.chat_id] = unread;
+                counts[chat.chat_id] = chat.unread_count || 0;
+
+                console.log(
+                    "Chat ID:",
+                    chat.chat_id,
+                    "Unread Count:",
+                    chat.unread_count
+                );
             });
+
             setChatUnreadCounts(counts);
         } catch (err) {
             console.log(err);

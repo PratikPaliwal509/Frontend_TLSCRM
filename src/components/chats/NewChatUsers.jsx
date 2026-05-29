@@ -79,7 +79,6 @@ const NewChatUsers = ({
 
             const data =
                 await response.json();
-            console.log("Fetched users:", data);
             const filtered =
                 data?.data?.filter(
                     (u) =>
