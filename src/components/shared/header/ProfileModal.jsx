@@ -22,7 +22,7 @@ const ProfileModal = () => {
     const fetchUser = async () => {
       
       try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
+        const res = await fetch("https://api-0ggv.onrender.com/api/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

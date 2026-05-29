@@ -156,7 +156,7 @@ useEffect(() => {
     try {
 
       const res = await fetch(
-        `http://localhost:5000/api/chat-messages/${editingMessage.message_id}`,
+        `https://api-0ggv.onrender.com/api/chat-messages/${editingMessage.message_id}`,
         {
           method: "PUT",
           headers: {
@@ -351,7 +351,7 @@ useEffect(() => {
 
         <div className="d-flex align-items-center">
 
-          <Dropdown
+          {/* <Dropdown
             dropdownItems={callingOptions}
             triggerIcon={<FiPhoneCall size={16} />}
             dropdownMenuStyle="wd-250"
@@ -359,7 +359,7 @@ useEffect(() => {
             triggerClass="wd-60 ht-60 d-flex align-items-center justify-content-center"
             tooltipTitle="Calling Options"
             isAvatar={false}
-          />
+          /> */}
 
           <button
             className="btn border-0 border-end border-gray-4 rounded-0 wd-60 ht-60"

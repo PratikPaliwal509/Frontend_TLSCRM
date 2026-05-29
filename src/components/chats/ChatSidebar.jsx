@@ -18,7 +18,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://api-0ggv.onrender.com/api";
 
 const filteringOptions = [
   "Newest",

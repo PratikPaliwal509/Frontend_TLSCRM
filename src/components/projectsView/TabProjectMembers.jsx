@@ -14,7 +14,7 @@ const TabProjectMembers = ({ project }) => {
 
         try {
             const res = await fetch(
-                `http://localhost:5000//api/projects/${projectId}/members/${userId}`,
+                `https://api-0ggv.onrender.com//api/projects/${projectId}/members/${userId}`,
                 {
                     method: 'DELETE',
                     headers: {

@@ -407,7 +407,7 @@ const ChatsUsers = ({
                           <span className="fs-10 text-muted">{lastTime}</span>
                         </div>
 
-                        <Dropdown dropdownItems={chatItems} />
+                        {/* <Dropdown dropdownItems={chatItems} /> */}
                       </div>
 
                       {/* BOTTOM ROW: typing OR last message preview */}

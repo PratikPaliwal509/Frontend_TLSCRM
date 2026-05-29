@@ -30,7 +30,7 @@ const ProjectTable = ({ statusFilter, projects, setProjects }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/projects', {
+        const res = await fetch('https://api-0ggv.onrender.com/api/projects', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -92,7 +92,7 @@ const ProjectTable = ({ statusFilter, projects, setProjects }) => {
       setUpdatingStatusId(id)
 
       const res = await fetch(
-        `http://localhost:5000/api/projects/${id}/status`,
+        `https://api-0ggv.onrender.com/api/projects/${id}/status`,
         {
           method: "PATCH",
           headers: {

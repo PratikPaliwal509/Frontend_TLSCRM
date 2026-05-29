@@ -32,9 +32,9 @@ const chatItemsHeader = [
 const ChatHeader = ({
     setSidebarOpen,
     selectedChat
-    
+
 }) => {
-    const user = localStorage.getItem("user");  
+    const user = localStorage.getItem("user");
     const currentUserId = user ? JSON.parse(user).user_id : null;
     const handleClick = () => {
         topTost()
@@ -138,11 +138,10 @@ const ChatHeader = ({
                 </div>
 
                 {/* RIGHT SIDE */}
-                <div className="page-header-right ms-auto">
+                {/* <div className="page-header-right ms-auto">
 
                     <div className="d-flex align-items-center justify-content-center gap-2">
 
-                        {/* AUDIO CALL */}
                         <Link
                             to="#"
                             className="d-flex"
@@ -155,7 +154,6 @@ const ChatHeader = ({
                             </div>
                         </Link>
 
-                        {/* VIDEO CALL */}
                         <Link
                             to="#"
                             className="d-flex"
@@ -168,7 +166,6 @@ const ChatHeader = ({
                             </div>
                         </Link>
 
-                        {/* FAVORITE */}
                         <Link
                             to="#"
                             className="d-flex d-none d-sm-block"
@@ -182,7 +179,6 @@ const ChatHeader = ({
                             </div>
                         </Link>
 
-                        {/* INFO */}
                         <Link
                             to="#"
                             className="ac-info-sidebar-open-trigger"
@@ -195,7 +191,6 @@ const ChatHeader = ({
                             </div>
                         </Link>
 
-                        {/* DROPDOWN */}
                         <Dropdown
                             dropdownItems={chatItemsHeader}
                             triggerClass={"avatar-md"}
@@ -204,7 +199,7 @@ const ChatHeader = ({
 
                     </div>
 
-                </div>
+                </div> */}
             </div>
         </>
     )

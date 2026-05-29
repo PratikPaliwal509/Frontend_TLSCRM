@@ -10,7 +10,15 @@ import {
     FiSearch,
     FiUsers,
 } from "react-icons/fi";
-
+const spinnerStyle = {
+    width: 16,
+    height: 16,
+    border: "2px solid #ffffff",
+    borderTop: "2px solid transparent",
+    borderRadius: "50%",
+    display: "inline-block",
+    animation: "spin 0.7s linear infinite",
+};
 const NewChatUsers = ({
     sidebarOpen,
     setSidebarOpen,
@@ -75,7 +83,7 @@ const NewChatUsers = ({
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/users/getallusers', {
+            const response = await fetch('https://api-0ggv.onrender.com/api/users/getallusers', {
                 headers: { Authorization: `Bearer ${token}` },
             })
 
@@ -175,6 +183,15 @@ const NewChatUsers = ({
                         />
                     </div>
                 </div>
+                {creatingChat && !isGroupMode && (
+    <div
+        className="d-flex align-items-center gap-2 px-3 py-2 bg-primary text-white"
+        style={{ fontSize: 13 }}
+    >
+        <div style={spinnerStyle} />
+        <span>Opening chat…</span>
+    </div>
+)}
                 {/* SELECTED USERS */}
 
                 {isGroupMode &&
@@ -229,73 +246,67 @@ const NewChatUsers = ({
 
                 <div className="content-sidebar-items">
                     {loading ? <div className="text-center p-5 text-muted">Loading...</div> :
-                        ((!(filteredUsers.length === 0)) ? filteredUsers.map((user) => (
-                            <div
-                                key={user.user_id}
-                                className="p-3 d-flex align-items-center border-bottom c-pointer hover-bg"
-                                onClick={async () => {
+                        ((!(filteredUsers.length === 0)) ? filteredUsers.map((user) => {
+                            const isCreatingThisUser = creatingChat; // disables ALL rows while any creation is in progress
 
-                                    if (creatingChat) return;
-
-                                    if (isGroupMode) {
-
-                                        handleSelectGroupUser(user);
-
-                                    } else {
-
-                                        try {
-
-                                            setCreatingChat(true);
-
-                                            await handleCreateChat(user);
-
-                                        } finally {
-
-                                            setCreatingChat(false);
+                            return (
+                                <div
+                                    key={user.user_id}
+                                    className={`p-3 d-flex align-items-center border-bottom position-relative
+                ${isCreatingThisUser ? "" : "c-pointer hover-bg"}`}
+                                    style={{
+                                        opacity: isCreatingThisUser ? 0.5 : 1,
+                                        pointerEvents: isCreatingThisUser ? "none" : "auto",
+                                        transition: "opacity 0.2s ease",
+                                        cursor: isCreatingThisUser ? "not-allowed" : "pointer",
+                                    }}
+                                    onClick={async () => {
+                                        if (creatingChat) return;
+                                        if (isGroupMode) {
+                                            handleSelectGroupUser(user);
+                                        } else {
+                                            try {
+                                                setCreatingChat(true);
+                                                await handleCreateChat(user);
+                                            } finally {
+                                                setCreatingChat(false);
+                                            }
                                         }
-                                    }
-                                }}
-                            >
+                                    }}
+                                >
+                                    {/* AVATAR */}
+                                    {user.avatar_url ? (
+                                        <img
+                                            src={user.avatar_url}
+                                            alt="avatar"
+                                            className="rounded-circle"
+                                            width={45}
+                                            height={45}
+                                        />
+                                    ) : (
+                                        <div
+                                            className="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                                            style={{ width: "45px", height: "45px" }}
+                                        >
+                                            {user.full_name?.charAt(0)}
+                                        </div>
+                                    )}
 
-                                {/* AVATAR */}
-
-                                {user.avatar_url ? (
-                                    <img
-                                        src={user.avatar_url}
-                                        alt="avatar"
-                                        className="rounded-circle"
-                                        width={45}
-                                        height={45}
-                                    />
-                                ) : (
-                                    <div
-                                        className="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-                                        style={{
-                                            width: "45px",
-                                            height: "45px",
-                                        }}
-                                    >
-                                        {user.full_name?.charAt(
-                                            0
-                                        )}
+                                    {/* INFO */}
+                                    <div className="ms-3 flex-grow-1">
+                                        <h6 className="mb-0 fw-semibold">{user.full_name}</h6>
+                                        <small className="text-muted">{user.email}</small>
                                     </div>
-                                )}
 
-                                {/* INFO */}
-
-                                <div className="ms-3">
-
-                                    <h6 className="mb-0 fw-semibold">
-                                        {user.full_name}
-                                    </h6>
-
-                                    <small className="text-muted">
-                                        {user.email}
-                                    </small>
+                                    {/* LOADING SPINNER — only on the user being created */}
+                                    {creatingChat && (
+                                        <div className="ms-auto">
+                                            <div style={spinnerStyle} />
+                                        </div>
+                                    )}
                                 </div>
-                                
-                            </div>
-                        )) :
+                            );
+                        }) :
                             (
                                 <div className="text-center p-5 text-muted">
                                     No users found

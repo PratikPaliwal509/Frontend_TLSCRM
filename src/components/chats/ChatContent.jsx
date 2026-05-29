@@ -138,7 +138,7 @@ const ChatContent = () => {
     useEffect(() => {
         if (!token) return;
 
-        socketRef.current = io("http://localhost:5000", {
+        socketRef.current = io("https://api-0ggv.onrender.com", {
             auth: { token },
             transports: ["websocket"],
         });
@@ -378,7 +378,7 @@ const ChatContent = () => {
 
     const fetchChats = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/chats/user/${currentUserId}`);
+            const res = await fetch(`https://api-0ggv.onrender.com/api/chats/user/${currentUserId}`);
             const data = await res.json();
             const fetchedChats = data.data || [];
             setChats(fetchedChats);
@@ -411,7 +411,7 @@ const ChatContent = () => {
 
     const fetchMessages = async (chatId) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/chat-messages/chat/${chatId}`);
+            const res = await fetch(`https://api-0ggv.onrender.com/api/chat-messages/chat/${chatId}`);
             const data = await res.json();
             const msgs = data.data || [];
 
@@ -446,7 +446,7 @@ const ChatContent = () => {
             markedReadIds.current.add(message.message_id);
             try {
                 await axios.post(
-                    `http://localhost:5000/api/chat-messages/${message.message_id}/read`,
+                    `https://api-0ggv.onrender.com/api/chat-messages/${message.message_id}/read`,
                     {},
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
@@ -509,7 +509,7 @@ const ChatContent = () => {
             }
 
             const res = await axios.post(
-                "http://localhost:5000/api/chats",
+                "https://api-0ggv.onrender.com/api/chats",
                 { chat_type: "direct", created_by: currentUserId },
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
@@ -517,13 +517,13 @@ const ChatContent = () => {
             const newChat = res.data.data;
 
             await axios.post(
-                "http://localhost:5000/api/chat-participants",
+                "https://api-0ggv.onrender.com/api/chat-participants",
                 { chat_id: newChat.chat_id, user_id: currentUserId, role: "member" },
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
 
             await axios.post(
-                "http://localhost:5000/api/chat-participants",
+                "https://api-0ggv.onrender.com/api/chat-participants",
                 { chat_id: newChat.chat_id, user_id: targetUser.user_id, role: "member" },
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
@@ -575,7 +575,7 @@ const ChatContent = () => {
 
         try {
             const createResponse = await axios.post(
-                "http://localhost:5000/api/chats",
+                "https://api-0ggv.onrender.com/api/chats",
                 { agency_id: 1, chat_type: "group", chat_name: groupName, created_by: currentUserId },
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
@@ -583,7 +583,7 @@ const ChatContent = () => {
             const newGroup = createResponse.data.data;
 
             await axios.post(
-                "http://localhost:5000/api/chat-participants",
+                "https://api-0ggv.onrender.com/api/chat-participants",
                 { chat_id: newGroup.chat_id, user_id: currentUserId, role: "admin" },
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
             );
@@ -591,7 +591,7 @@ const ChatContent = () => {
             await Promise.all(
                 selectedUsers.map((u) =>
                     axios.post(
-                        "http://localhost:5000/api/chat-participants",
+                        "https://api-0ggv.onrender.com/api/chat-participants",
                         { chat_id: newGroup.chat_id, user_id: u.user_id, role: "member" },
                         { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
                     )
@@ -643,7 +643,7 @@ const ChatContent = () => {
             deleteChatLastMessage(message.chat_id, message.message_id);
 
             await axios.delete(
-                `http://localhost:5000/api/chat-messages/${message.message_id}`,
+                `https://api-0ggv.onrender.com/api/chat-messages/${message.message_id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -708,7 +708,7 @@ const ChatContent = () => {
         scrollToBottom();
 
         try {
-            const res = await fetch("http://localhost:5000/api/chat-messages", {
+            const res = await fetch("https://api-0ggv.onrender.com/api/chat-messages", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -754,7 +754,7 @@ const ChatContent = () => {
 
                 if (hasAttachments) {
                     const attachRes = await axios.post(
-                        "http://localhost:5000/api/chat-attachments",
+                        "https://api-0ggv.onrender.com/api/chat-attachments",
                         {
                             message_id: realMessage.message_id,
                             chat_id: payload.chat_id,
@@ -765,7 +765,7 @@ const ChatContent = () => {
 
                     if (attachRes.data.success) {
                         const updatedRes = await axios.get(
-                            `http://localhost:5000/api/chat-messages/${realMessage.message_id}`,
+                            `https://api-0ggv.onrender.com/api/chat-messages/${realMessage.message_id}`,
                             { headers: { Authorization: `Bearer ${token}` } }
                         );
 
@@ -866,6 +866,7 @@ const ChatContent = () => {
                                             messageRefs.current[message.message_id] = el;
                                         }}
                                     >
+                                        
                                         <ChatMessage
                                             avatar={message?.sender?.avatar_url || "/images/avatar1.jpg"}
                                             name={message?.sender?.full_name}

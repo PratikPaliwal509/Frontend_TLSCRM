@@ -219,3 +219,7 @@
 .notification-content small {
   font-size: 12px;
 }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
