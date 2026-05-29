@@ -203,7 +203,20 @@ const ChatContent = () => {
                 deleteChatLastMessage(chat_id, message_id);
             }
         });
+        socket.on("chat:new-chat", (chat) => {
 
+            setChats((prev) => {
+
+                const exists = prev.some(
+                    (c) => c.chat_id === chat.chat_id
+                );
+
+                if (exists) return prev;
+
+                return [chat, ...prev];
+            });
+
+        });
         // ── NEW MESSAGE ────────────────────────────────────────
         socket.on("chat:new-message", (message) => {
             console.log("New message received:", message);
@@ -492,62 +505,85 @@ const ChatContent = () => {
     ========================================= */
 
     const handleCreateChat = async (targetUser) => {
+
         if (creatingChatRef.current) return;
+
         creatingChatRef.current = true;
 
         try {
+
+            // frontend existing check
             const existing = chats.find(
                 (c) =>
                     c.chat_type === "direct" &&
-                    c.participants?.some((p) => p.user_id === targetUser.user_id)
+                    c.participants?.some(
+                        (p) =>
+                            p.user_id === targetUser.user_id
+                    )
             );
 
+            // open existing chat
             if (existing) {
+
                 handleSelectChat(existing);
+
                 setActiveSidebar("chats");
+
                 return;
             }
 
+            // create new chat
             const res = await axios.post(
                 "https://api-0ggv.onrender.com/api/chats",
-                { chat_type: "direct", created_by: currentUserId },
-                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+                {
+                    chat_type: "direct",
+                    created_by: currentUserId,
+                    user_id: targetUser.user_id,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
             );
 
             const newChat = res.data.data;
 
-            await axios.post(
-                "https://api-0ggv.onrender.com/api/chat-participants",
-                { chat_id: newChat.chat_id, user_id: currentUserId, role: "member" },
-                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
-            );
+            // prevent duplicate insert
+            setChats((prev) => {
 
-            await axios.post(
-                "https://api-0ggv.onrender.com/api/chat-participants",
-                { chat_id: newChat.chat_id, user_id: targetUser.user_id, role: "member" },
-                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
-            );
+                const alreadyExists = prev.some(
+                    (c) =>
+                        c.chat_id === newChat.chat_id
+                );
 
-            const fullChat = {
-                ...newChat,
-                chat_type: "direct",
-                participants: [
-                    { user_id: currentUserId },
-                    { user_id: targetUser.user_id, user: targetUser },
-                ],
-                messages: [],
-            };
+                if (alreadyExists) {
+                    return prev;
+                }
 
-            setChats((prev) => [fullChat, ...prev]);
-            handleSelectChat(fullChat);
+                return [newChat, ...prev];
+            });
+
+            handleSelectChat(newChat);
+
             setActiveSidebar("chats");
 
-            // join the new room right away
-            socketRef.current?.emit("chat:join", fullChat.chat_id);
+            // join socket room
+            socketRef.current?.emit(
+                "chat:join",
+                newChat.chat_id
+            );
 
         } catch (err) {
-            console.log("Create chat error:", err);
+
+            console.log(
+                "Create chat error:",
+                err
+            );
+
         } finally {
+
             creatingChatRef.current = false;
         }
     };
@@ -866,7 +902,7 @@ const ChatContent = () => {
                                             messageRefs.current[message.message_id] = el;
                                         }}
                                     >
-                                        
+
                                         <ChatMessage
                                             avatar={message?.sender?.avatar_url || "/images/avatar1.jpg"}
                                             name={message?.sender?.full_name}
