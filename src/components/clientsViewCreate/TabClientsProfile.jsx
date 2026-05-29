@@ -122,7 +122,7 @@ const handleCreateInvoice = async () => {
     setLoading(true)
 
     const response = await fetch(
-      `https://api-0ggv.onrender.com/api/clients/generate/${client.client_id}`, {
+      `http://localhost:5000/api/clients/generate/${client.client_id}`, {
 
         method: "POST",
 

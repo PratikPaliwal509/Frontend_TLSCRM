@@ -26,7 +26,7 @@ const DepartmentsTable = () => {
       try {
         const token = localStorage.getItem('token')
 
-        const res = await fetch('https://api-0ggv.onrender.com/api/departments', {
+        const res = await fetch('http://localhost:5000/api/departments', {
           headers: { Authorization: `Bearer ${token}` },
         })
         const result = await res.json()

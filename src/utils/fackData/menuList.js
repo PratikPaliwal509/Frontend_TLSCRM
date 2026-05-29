@@ -34,6 +34,14 @@ export const menuList = [
                 permissionAction: "view",
             },
             {
+                id: 201,
+                name: "Chats",
+                path: "/applications/chat",
+                subdropdownMenu: false,
+                permissionKey: "tasks",
+                permissionAction: "view",
+            },
+            {
                 id: 202,
                 name: "Notes",
                 path: "/applications/notes",

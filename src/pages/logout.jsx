@@ -8,7 +8,7 @@ const Logout = () => {
     // clear auth
     localStorage.removeItem("token");
     localStorage.removeItem("permissions");
-
+localStorage.removeItem("lastChatId");
     // redirect after 2 sec (optional)
     setTimeout(() => {
       navigate("/authentication/login");

@@ -22,7 +22,7 @@ const ProfileModal = () => {
     const fetchUser = async () => {
       
       try {
-        const res = await fetch("https://api-0ggv.onrender.com/api/users/me", {
+        const res = await fetch("http://localhost:5000/api/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -45,6 +45,8 @@ const ProfileModal = () => {
   // 🔹 LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("permissions");
+    localStorage.removeItem("lastChatId");
     navigate("/authentication/login");
   };
 

@@ -16,7 +16,7 @@ const AddTask = () => {
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
     const [tasks, setTasks] = useState([])
-
+    const [projectLoading, setProjectLoading] = useState(true)
     // const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
         project_id: '',
@@ -35,6 +35,10 @@ const AddTask = () => {
         blocks: [],
         visible_to_client: false,
         client_approval_required: false,
+        is_recurring: false,
+        recurrence_type: '',
+        interval: 1,
+        daysOfWeek: [],
 
     })
     const taskTypeOptions = [
@@ -59,14 +63,18 @@ const AddTask = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                // const res = await fetch('https://api-0ggv.onrender.com/api/projects/managed', {
-                const res = await fetch('https://api-0ggv.onrender.com/api/projects/projects-members', {
+
+                // const res = await fetch('http://localhost:5000/api/projects/managed', {
+                const res = await fetch('http://localhost:5000/api/projects/projects-members', {
+
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
                 setProjects(data?.data || data || [])
             } catch (err) {
                 console.error('Fetch projects error', err)
+            } finally {
+                setProjectLoading(false)
             }
         }
 
@@ -76,7 +84,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+                const res = await fetch('http://localhost:5000/api/tasks', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -101,7 +109,7 @@ const AddTask = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch('https://api-0ggv.onrender.com/api/users/user', {
+                const res = await fetch('http://localhost:5000/api/users/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 const data = await res.json()
@@ -163,14 +171,24 @@ const AddTask = () => {
     /* =========================
        Create Task + Assign Users
     ========================== */
-const handleCreateTask = async () => {
+    const handleCreateTask = async () => {
         if (!validateForm()) return;
 
         setLoading(true);
 
         try {
+            let recurrence_pattern = null;
+
+            if (formData.is_recurring) {
+                recurrence_pattern = {
+                    type: formData.recurrence_type,
+                    interval: formData.interval || 1,
+                    daysOfWeek: formData.daysOfWeek || [],
+                    next_run_at: formData.due_date || new Date().toISOString()
+                };
+            }
             /* -------- Create Task -------- */
-            const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
+            const res = await fetch('http://localhost:5000/api/tasks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,10 +206,20 @@ const handleCreateTask = async () => {
                     labels: formData.labels.map(l => l.value),
                     task_type: formData.task_type,
                     is_milestone: formData.is_milestone,
-                    depends_on: formData.depends_on.map(d => d.value),
-                    blocks: formData.blocks.map(b => b.value),
+
+                    is_recurring: formData.is_recurring,
+                    recurrence_pattern,
+
+                    // ❌ REMOVE dependencies if recurring
+                    depends_on: formData.is_recurring ? [] : formData.depends_on.map(d => d.value),
+                    blocks: formData.is_recurring ? [] : formData.blocks.map(b => b.value),
+
                     visible_to_client: formData.visible_to_client,
                     client_approval_required: formData.client_approval_required,
+                    // depends_on: formData.depends_on.map(d => d.value),
+                    // blocks: formData.blocks.map(b => b.value),
+                    // visible_to_client: formData.visible_to_client,
+                    // client_approval_required: formData.client_approval_required,
                 }),
             });
 
@@ -206,7 +234,7 @@ const handleCreateTask = async () => {
 
             /* -------- Assign Users (NON-BLOCKING) -------- */
             if (formData.assignees.length > 0) {
-                fetch(`https://api-0ggv.onrender.com/api/tasks/${taskId}/assign`, {
+                fetch(`http://localhost:5000/api/tasks/${taskId}/assign`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -253,84 +281,7 @@ const handleCreateTask = async () => {
             setLoading(false);
         }
     };
-//     const handleCreateTask = async () => {
-//     if (!validateForm()) return;
 
-//     setLoading(true);
-
-//     try {
-//         /* -------- Create Task (WITH ASSIGNEES) -------- */
-//         const res = await fetch('https://api-0ggv.onrender.com/api/tasks', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 Authorization: `Bearer ${token}`,
-//             },
-//             body: JSON.stringify({
-//                 project_id: formData.project_id,
-//                 task_title: formData.task_title,
-//                 description: formData.description,
-//                 start_date: formData.start_date,
-//                 due_date: formData.due_date,
-//                 estimated_hours: formData.estimated_hours,
-//                 status: formData.status,
-//                 priority: formData.priority,
-//                 labels: formData.labels.map(l => l.value),
-//                 task_type: formData.task_type,
-//                 is_milestone: formData.is_milestone,
-//                 depends_on: formData.depends_on.map(d => d.value),
-//                 blocks: formData.blocks.map(b => b.value),
-//                 visible_to_client: formData.visible_to_client,
-//                 client_approval_required: formData.client_approval_required,
-
-//                 // ✅ NEW (IMPORTANT)
-//                 assignees: formData.assignees.map(a => a.value),
-//             }),
-//         });
-
-//         if (!res.ok) throw new Error('Task creation failed');
-
-//         const taskRes = await res.json();
-
-//         /* ✅ Instant UI response */
-//         toast.success('Task created successfully');
-//         closeModal();
-
-//         /* -------- Reset Form -------- */
-//         setFormData({
-//             project_id: '',
-//             task_title: '',
-//             description: '',
-//             start_date: null,
-//             due_date: null,
-//             estimated_hours: '',
-//             status: 'to_do',
-//             priority: 'medium',
-//             labels: [],
-//             assignees: [],
-//             task_type: '',
-//             is_milestone: false,
-//             depends_on: [],
-//             blocks: [],
-//             visible_to_client: false,
-//             client_approval_required: false,
-//         });
-
-//         /* -------- Notify UI -------- */
-//         try {
-//             const created = taskRes?.data || taskRes;
-//             window.dispatchEvent(
-//                 new CustomEvent('task:created', { detail: created })
-//             );
-//         } catch (e) {}
-
-//     } catch (err) {
-//         console.error(err);
-//         toast.error(err.message || 'Error creating task');
-//     } finally {
-//         setLoading(false);
-//     }
-// };
     const dependsOnOptions = tasks.filter(
         t => !(formData.blocks || []).some(b => b.value === t.value)
     )
@@ -390,25 +341,42 @@ const handleCreateTask = async () => {
 
                         {/* Project */}
                         <div className="mb-4">
-                            <label className="form-label">Project<span className="text-danger">*</span>   <span className="text-xs text-gray-500 mt-1">If the project is not visible to you, please ask your admin to assign that project to you.</span></label>
-                            <select
-                                className="form-control"
-                                value={formData.project_id || 0}
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        project_id: Number(e.target.value),
-                                    })
-                                }
-                            >
-                                <option value={0}>Select Project</option>
-                                {projects.map((p) => (
-                                    <option key={p.project_id} value={p.project_id}>
-                                        {p.project_name}
-                                    </option>
-                                ))}
-                            </select>
 
+                            <label className="form-label">
+                                Project<span className="text-danger">* </span>
+                                <span className="text-xs text-gray-500">
+                                    If the project is not visible to you, please ask your admin to add you as a project member.
+                                </span>
+                            </label>
+
+                            {projectLoading ? (
+                                <div className="border rounded p-3 text-center text-muted bg-light">
+                                    Loading projects...
+                                </div>
+                            ) : projects.length > 0 ? (
+                                <select
+                                    className="form-control"
+                                    value={formData.project_id || 0}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            project_id: Number(e.target.value),
+                                        })
+                                    }
+                                >
+                                    <option value={0}>Select Project</option>
+
+                                    {projects.map((p) => (
+                                        <option key={p.project_id} value={p.project_id}>
+                                            {p.project_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <div className="border rounded p-3 text-center text-muted bg-light">
+                                    No projects available
+                                </div>
+                            )}
                         </div>
 
                         {/* Task Name */}
@@ -565,7 +533,6 @@ const handleCreateTask = async () => {
                                 ))}
                             </div>
                         </div>
-
                         <div className="mb-4">
                             <label className="form-label">Task Type</label>
                             <select
@@ -583,74 +550,133 @@ const handleCreateTask = async () => {
                                 ))}
                             </select>
                         </div>
-
-                        <div className="form-check mb-4">
+                        <div className="form-check mb-3">
                             <input
                                 className="form-check-input"
                                 type="checkbox"
-                                id="isMilestone"
-                                checked={formData.is_milestone}
+                                id="isRecurring"
+                                checked={formData.is_recurring}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, is_milestone: e.target.checked })
+                                    setFormData({ ...formData, is_recurring: e.target.checked })
                                 }
                             />
-                            <label className="form-check-label" htmlFor="isMilestone">
-                                Mark as Milestone<span className="text-xs text-gray-500">
-                                    (Marks this task as a key milestone in the project)
-                                </span>
-                            </label>
+                            <label className="form-check-label">Recurring Task <span className="text-xs text-gray-500">You set it once → it repeats daily/weekly/monthly automatically</span></label>
                         </div>
 
-                        <div className="mb-4">
-                            <label className="form-label">Depends On <span className="text-xs text-gray-500 mt-1">(Select tasks that must be completed before this task starts)</span></label>
+                        {formData.is_recurring && (
+                            <>
+                                <div className="mb-3">
+                                    <label className="form-label">Recurrence Type</label>
+                                    <select
+                                        className="form-control"
+                                        value={formData.recurrence_type}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, recurrence_type: e.target.value })
+                                        }
+                                    >
+                                        <option value="">Select</option>
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                    </select>
+                                </div>
 
-                            <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
-                                {dependsOnOptions.map(task => (
-                                    <div key={task.value} className="form-check">
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            id={`depends-${task.value}`}
-                                            checked={formData.depends_on.some(d => d.value === task.value)}
-                                            onChange={() => toggleDependsOn(task)}
-                                        />
-                                        <label
-                                            className="form-check-label"
-                                            htmlFor={`depends-${task.value}`}
-                                        >
-                                            {task.label}
-                                        </label>
+                                {formData.recurrence_type === 'weekly' && (
+                                    <div className="mb-3">
+                                        <label>Select Days</label>
+                                        {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
+                                            <div key={day}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.daysOfWeek.includes(day)}
+                                                    onChange={() => {
+                                                        const exists = formData.daysOfWeek.includes(day);
+                                                        setFormData({
+                                                            ...formData,
+                                                            daysOfWeek: exists
+                                                                ? formData.daysOfWeek.filter(d => d !== day)
+                                                                : [...formData.daysOfWeek, day]
+                                                        });
+                                                    }}
+                                                />
+                                                {day}
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
+                                )}
+                            </>
+                        )}
+                        {!formData.is_recurring && <>
+
+
+                            <div className="form-check mb-4">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="isMilestone"
+                                    checked={formData.is_milestone}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, is_milestone: e.target.checked })
+                                    }
+                                />
+                                <label className="form-check-label" htmlFor="isMilestone">
+                                    Mark as Milestone<span className="text-xs text-gray-500">
+                                        (Marks this task as a key milestone in the project)
+                                    </span>
+                                </label>
                             </div>
-                        </div>
 
-                        <div className="mb-4">
-                            <label className="form-label">Blocking Task <span className="text-xs text-gray-500">
-                                (Select tasks that will be blocked until this task is completed)
-                            </span></label>
+                            <div className="mb-4">
+                                <label className="form-label">Depends On <span className="text-xs text-gray-500 mt-1">(Select tasks that must be completed before this task starts)</span></label>
 
-                            <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
-                                {blocksOptions.map(task => (
-                                    <div key={task.value} className="form-check">
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            id={`blocks-${task.value}`}
-                                            checked={formData.blocks.some(b => b.value === task.value)}
-                                            onChange={() => toggleBlocks(task)}
-                                        />
-                                        <label
-                                            className="form-check-label"
-                                            htmlFor={`blocks-${task.value}`}
-                                        >
-                                            {task.label}
-                                        </label>
-                                    </div>
-                                ))}
+                                <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
+                                    {dependsOnOptions.map(task => (
+                                        <div key={task.value} className="form-check">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id={`depends-${task.value}`}
+                                                checked={formData.depends_on.some(d => d.value === task.value)}
+                                                onChange={() => toggleDependsOn(task)}
+                                            />
+                                            <label
+                                                className="form-check-label"
+                                                htmlFor={`depends-${task.value}`}
+                                            >
+                                                {task.label}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
+                            <div className="mb-4">
+                                <label className="form-label">Blocking Task <span className="text-xs text-gray-500">
+                                    (Select tasks that will be blocked until this task is completed)
+                                </span></label>
+
+                                <div className="border rounded p-2" style={{ maxHeight: 150, overflowY: 'auto' }}>
+                                    {blocksOptions.map(task => (
+                                        <div key={task.value} className="form-check">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id={`blocks-${task.value}`}
+                                                checked={formData.blocks.some(b => b.value === task.value)}
+                                                onChange={() => toggleBlocks(task)}
+                                            />
+                                            <label
+                                                className="form-check-label"
+                                                htmlFor={`blocks-${task.value}`}
+                                            >
+                                                {task.label}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                        }
                         <div className="form-check mb-3">
                             <input
                                 className="form-check-input"

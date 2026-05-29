@@ -33,7 +33,7 @@ const AdminTaskTimelogs = ({ taskId, project_id, role }) => {
 
     try {
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/tasks/timelogs/${project_id}/${taskId}`,
+        `http://localhost:5000/api/tasks/timelogs/${project_id}/${taskId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -60,7 +60,7 @@ const AdminTaskTimelogs = ({ taskId, project_id, role }) => {
 
     try {
       await fetch(
-        `https://api-0ggv.onrender.com/api/tasks/timelogs/${logId}/approve`,
+        `http://localhost:5000/api/tasks/timelogs/${logId}/approve`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

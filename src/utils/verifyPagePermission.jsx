@@ -31,7 +31,7 @@ export const verifyPagePermission = async (
        FETCH ROLE
     ============================ */
     const res = await fetch(
-      `https://api-0ggv.onrender.com/api/roles/${user.role_id}`,
+      `http://localhost:5000/api/roles/${user.role_id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     )
 

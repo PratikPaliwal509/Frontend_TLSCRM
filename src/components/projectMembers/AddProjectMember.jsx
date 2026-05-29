@@ -21,8 +21,8 @@ const AddProjectMember = () => {
       setProjectsLoading(true);
       try {
         const res = await fetch(
-          // "https://api-0ggv.onrender.com/api/projects/managed",
-          "https://api-0ggv.onrender.com/api/projects",
+          // "http://localhost:5000/api/projects/managed",
+          "http://localhost:5000/api/projects",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -55,7 +55,7 @@ const AddProjectMember = () => {
       setUsersLoading(true);
       try {
         const res = await fetch(
-          `https://api-0ggv.onrender.com/api/projects/${projectId}/users`,
+          `http://localhost:5000/api/projects/${projectId}/users`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -103,7 +103,7 @@ const AddProjectMember = () => {
 
     try {
       const res = await fetch(
-        `https://api-0ggv.onrender.com/api/projects/${projectId}/members`,
+        `http://localhost:5000/api/projects/${projectId}/members`,
         {
           method: "POST",
           headers: {

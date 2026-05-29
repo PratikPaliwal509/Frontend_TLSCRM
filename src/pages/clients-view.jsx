@@ -26,7 +26,7 @@ const ClientsView = () => {
       try {
         const token = localStorage.getItem('token')
 
-        const res = await fetch(`https://api-0ggv.onrender.com/api/clients/client/${id}`, {
+        const res = await fetch(`http://localhost:5000/api/clients/client/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
