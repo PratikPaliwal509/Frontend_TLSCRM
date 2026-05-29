@@ -45,6 +45,8 @@ const ProfileModal = () => {
   // 🔹 LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("permissions");
+    localStorage.removeItem("lastChatId");
     navigate("/authentication/login");
   };
 

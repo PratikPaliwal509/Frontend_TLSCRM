@@ -383,22 +383,23 @@ const ChatContent = () => {
             const fetchedChats = data.data || [];
             setChats(fetchedChats);
 
-            // seed unread counts from initial load
-            // seed unread counts from backend unread_count
             const counts = {};
-
             fetchedChats.forEach((chat) => {
                 counts[chat.chat_id] = chat.unread_count || 0;
-
-                console.log(
-                    "Chat ID:",
-                    chat.chat_id,
-                    "Unread Count:",
-                    chat.unread_count
-                );
             });
-
             setChatUnreadCounts(counts);
+
+            // ✅ Restore last visited chat
+            const lastChatId = localStorage.getItem("lastChatId");
+            if (lastChatId) {
+                const lastChat = fetchedChats.find(
+                    (c) => String(c.chat_id) === String(lastChatId)
+                );
+                if (lastChat) {
+                    handleSelectChat(lastChat);
+                }
+            }
+
         } catch (err) {
             console.log(err);
         }
@@ -478,7 +479,8 @@ const ChatContent = () => {
         setMessages([]);
         setTypingUsers({});
         setUnreadCount(0);
-
+        //  Persist last visited chat
+        localStorage.setItem("lastChatId", chat.chat_id);
         // clear sidebar unread badge
         setChatUnreadCounts((prev) => ({ ...prev, [chat.chat_id]: 0 }));
 
@@ -865,7 +867,7 @@ const ChatContent = () => {
                                         }}
                                     >
                                         <ChatMessage
-                                            avatar={message?.sender?.avatar_url || "/images/avatar.png"}
+                                            avatar={message?.sender?.avatar_url || "/images/avatar1.jpg"}
                                             name={message?.sender?.full_name}
                                             time={new Date(message.created_at).toLocaleTimeString([], {
                                                 hour: "2-digit",
@@ -885,6 +887,7 @@ const ChatContent = () => {
                                                     }
                                                     : null,
                                             }]}
+                                            currentUserId={currentUserId}   // ADD THIS
                                             messageStatus={getMessageStatus(message)}
                                             isReplay={message.sender_id === currentUserId}
                                             showHeader={showHeader}

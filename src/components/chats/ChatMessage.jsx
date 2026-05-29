@@ -84,6 +84,7 @@ const ChatMessage = ({
   isReplay,
   showHeader = true,
   messageStatus,
+  currentUserId,
   onReply,
   onEdit,
   onDelete,
@@ -199,27 +200,28 @@ const ChatMessage = ({
                   >
                     Reply
                   </DropdownItem>
+                  {msg.sender_id === currentUserId && (<>
+                    <DropdownItem
+                      onClick={() =>
+                        onEdit?.({
+                          ...msg,
+                          sender_name: name,
+                        })
+                      }
+                    >
+                      Edit
+                    </DropdownItem>
 
-                  <DropdownItem
-                    onClick={() =>
-                      onEdit?.({
-                        ...msg,
-                        sender_name: name,
-                      })
-                    }
-                  >
-                    Edit
-                  </DropdownItem>
-
-                  <DropdownItem
-                    className="text-danger"
-                    onClick={() =>
-                      onDelete?.(msg)
-                    }
-                  >
-                    Delete
-                  </DropdownItem>
-
+                    <DropdownItem
+                      className="text-danger"
+                      onClick={() =>
+                        onDelete?.(msg)
+                      }
+                    >
+                      Delete
+                    </DropdownItem>
+                  </>
+                  )}
                 </DropdownMenu>
               </Dropdown>
             </div>
