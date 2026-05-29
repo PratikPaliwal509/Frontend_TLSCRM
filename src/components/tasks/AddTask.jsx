@@ -550,7 +550,7 @@ const AddTask = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="form-check mb-3">
+                        {/* <div className="form-check mb-3">
                             <input
                                 className="form-check-input"
                                 type="checkbox"
@@ -561,7 +561,7 @@ const AddTask = () => {
                                 }
                             />
                             <label className="form-check-label">Recurring Task <span className="text-xs text-gray-500">You set it once → it repeats daily/weekly/monthly automatically</span></label>
-                        </div>
+                        </div> */}
 
                         {formData.is_recurring && (
                             <>
