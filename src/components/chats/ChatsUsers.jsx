@@ -222,13 +222,48 @@ const getLastMessagePreview = (chat, currentUserId) => {
 
   return "No messages yet";
 };
+const ChatSkeleton = () => {
+  return (
+    <div className="p-4 d-flex border-bottom">
+      <div
+        className="placeholder-glow rounded-circle"
+        style={{
+          width: 48,
+          height: 48,
+          minWidth: 48,
+        }}
+      >
+        <span className="placeholder w-100 h-100 rounded-circle"></span>
+      </div>
 
+      <div className="ms-3 flex-grow-1">
+        <div className="d-flex justify-content-between mb-2">
+          <span
+            className="placeholder col-4"
+            style={{ height: 14 }}
+          ></span>
+
+          <span
+            className="placeholder col-2"
+            style={{ height: 12 }}
+          ></span>
+        </div>
+
+        <span
+          className="placeholder col-8"
+          style={{ height: 12 }}
+        ></span>
+      </div>
+    </div>
+  );
+};
 const ChatsUsers = ({
   sidebarOpen,
   setSidebarOpen,
   handleSelectChat,
   selectedChat,
   chats,
+  loading = false,
   chatUnreadCounts = {},   // { [chat_id]: number }
   chatTypingUsers = {},    // { [chat_id]: { [user_id]: name } }
 }) => {
@@ -304,7 +339,13 @@ const ChatsUsers = ({
           {/* CHAT LIST */}
           <div className="content-sidebar-items">
 
-            {chats.length === 0 ? (
+            {loading ? (
+  <>
+    {[...Array(8)].map((_, i) => (
+      <ChatSkeleton key={i} />
+    ))}
+  </>
+) : chats.length === 0 ? (
 
               <div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
                 <div className="mb-3">
@@ -440,7 +481,7 @@ const ChatsUsers = ({
 
           </div>
         </div>
-
+          
         {/* <a
           href="#"
           className="content-sidebar-footer px-4 py-3 fs-11 text-uppercase d-block text-center"

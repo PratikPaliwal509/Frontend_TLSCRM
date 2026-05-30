@@ -5,7 +5,7 @@ import React, {
 } from "react";
 
 import { io } from "socket.io-client";
-
+import ChatMessageSkeleton from "./ChatMessageSkeleton.";
 import ChartsHeader from "./ChatHeader";
 import MessageEditor from "./MessageEditor";
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -14,6 +14,7 @@ import ChatsUsers from "./ChatsUsers";
 import NewChatUsers from "./NewChatUsers";
 
 import axios from "axios";
+import { set } from "date-fns";
 
 const ChatContent = () => {
 
@@ -31,7 +32,8 @@ const ChatContent = () => {
     const user = localStorage.getItem("user");
     const currentUserId = user ? JSON.parse(user).user_id : null;
     const token = localStorage.getItem("token");
-
+    const [loadingChats, setLoadingChats] = useState(true);
+    const [loadingMessages, setLoadingMessages] = useState(true);
     const socketRef = useRef(null);
     const scrollContainerRef = useRef(null);
     const messageRefs = useRef({});
@@ -391,6 +393,7 @@ const ChatContent = () => {
 
     const fetchChats = async () => {
         try {
+            setLoadingChats(true);
             const res = await fetch(`https://api-0ggv.onrender.com/api/chats/user/${currentUserId}`);
             const data = await res.json();
             const fetchedChats = data.data || [];
@@ -415,6 +418,8 @@ const ChatContent = () => {
 
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoadingChats(false);
         }
     };
 
@@ -424,6 +429,7 @@ const ChatContent = () => {
 
     const fetchMessages = async (chatId) => {
         try {
+            setLoadingMessages(true);
             const res = await fetch(`https://api-0ggv.onrender.com/api/chat-messages/chat/${chatId}`);
             const data = await res.json();
             const msgs = data.data || [];
@@ -446,6 +452,8 @@ const ChatContent = () => {
 
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoadingMessages(false);
         }
     };
 
@@ -844,6 +852,7 @@ const ChatContent = () => {
             {activeSidebar === "chats" && (
                 <ChatsUsers
                     sidebarOpen={true}
+                    loading={loadingChats}
                     setSidebarOpen={() => setActiveSidebar("newChat")}
                     handleSelectChat={handleSelectChat}
                     selectedChat={selectedChat}
@@ -902,36 +911,36 @@ const ChatContent = () => {
                                             messageRefs.current[message.message_id] = el;
                                         }}
                                     >
-
-                                        <ChatMessage
-                                            avatar={message?.sender?.avatar_url || "/images/avatar1.jpg"}
-                                            name={message?.sender?.full_name}
-                                            time={new Date(message.created_at).toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                            messages={[{
-                                                ...message,
-                                                text: message.message_text,
-                                                attachments: message.attachments || [],
-                                                replyTo: message.replyTo
-                                                    ? {
-                                                        message_id: message.replyTo.message_id,
-                                                        text: message.replyTo.message_text ?? message.replyTo.text ?? "",
-                                                        sender_name: message.replyTo.sender?.full_name || "User",
-                                                        attachments: message.replyTo.attachments || [],
-                                                        message_type: message.replyTo.message_type || "text",
-                                                    }
-                                                    : null,
-                                            }]}
-                                            currentUserId={currentUserId}   // ADD THIS
-                                            messageStatus={getMessageStatus(message)}
-                                            isReplay={message.sender_id === currentUserId}
-                                            showHeader={showHeader}
-                                            onReply={(msg) => setReplyMessage(msg)}
-                                            onEdit={(msg) => setEditingMessage(msg)}
-                                            onDelete={handleDeleteMessage}
-                                        />
+                                    
+                                            <ChatMessage
+                                                avatar={message?.sender?.avatar_url || "/images/avatar1.jpg"}
+                                                name={message?.sender?.full_name}
+                                                time={new Date(message.created_at).toLocaleTimeString([], {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })}
+                                                messages={[{
+                                                    ...message,
+                                                    text: message.message_text,
+                                                    attachments: message.attachments || [],
+                                                    replyTo: message.replyTo
+                                                        ? {
+                                                            message_id: message.replyTo.message_id,
+                                                            text: message.replyTo.message_text ?? message.replyTo.text ?? "",
+                                                            sender_name: message.replyTo.sender?.full_name || "User",
+                                                            attachments: message.replyTo.attachments || [],
+                                                            message_type: message.replyTo.message_type || "text",
+                                                        }
+                                                        : null,
+                                                }]}
+                                                currentUserId={currentUserId}   // ADD THIS
+                                                messageStatus={getMessageStatus(message)}
+                                                isReplay={message.sender_id === currentUserId}
+                                                showHeader={showHeader}
+                                                onReply={(msg) => setReplyMessage(msg)}
+                                                onEdit={(msg) => setEditingMessage(msg)}
+                                                onDelete={handleDeleteMessage}
+                                            />
                                     </div>
                                 </React.Fragment>
                             );
