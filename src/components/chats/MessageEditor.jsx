@@ -15,6 +15,7 @@ import {
   FiSmile,
   FiVideo,
   FiX,
+  FiCheckSquare,
 } from "react-icons/fi";
 
 import EmojiPicker from "emoji-picker-react";
@@ -43,6 +44,7 @@ const MessageEditor = ({
   socketRef,
   editingMessage,
   setEditingMessage,
+  onOpenTaskModal
 }) => {
 
   const [message, setMessage] =
@@ -62,12 +64,12 @@ const MessageEditor = ({
 
   const typingTimeoutRef =
     useRef(null);
-//
-useEffect(() => {
-  if (editingMessage) {
-    setMessage(editingMessage.text || editingMessage.message_text || "");
-  }
-}, [editingMessage]);
+  //
+  useEffect(() => {
+    if (editingMessage) {
+      setMessage(editingMessage.text || editingMessage.message_text || "");
+    }
+  }, [editingMessage]);
   /* =========================================
       TYPING EMIT
   ========================================= */
@@ -141,78 +143,78 @@ useEffect(() => {
       SEND MESSAGE
   ========================================= */
 
- const handleSendMessage = async () => {
+  const handleSendMessage = async () => {
 
-  if (!message.trim() && attachments.length === 0) return;
+    if (!message.trim() && attachments.length === 0) return;
 
-  if (!selectedChat) return;
+    if (!selectedChat) return;
 
-  /* =========================
-      EDIT MESSAGE
-  ========================= */
+    /* =========================
+        EDIT MESSAGE
+    ========================= */
 
-  if (editingMessage) {
+    if (editingMessage) {
 
-    try {
+      try {
 
-      const res = await fetch(
-        `https://api-0ggv.onrender.com/api/chat-messages/${editingMessage.message_id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            message_text: message,
-          }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.success) {
-
-        socketRef.current?.emit(
-          "chat:edit-message",
-          data.data
+        const res = await fetch(
+          `https://api-0ggv.onrender.com/api/chat-messages/${editingMessage.message_id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              message_text: message,
+            }),
+          }
         );
 
-        setEditingMessage(null);
-        setMessage("");
+        const data = await res.json();
+
+        if (data.success) {
+
+          socketRef.current?.emit(
+            "chat:edit-message",
+            data.data
+          );
+
+          setEditingMessage(null);
+          setMessage("");
+
+        }
+
+      } catch (err) {
+
+        console.log(err);
 
       }
 
-    } catch (err) {
-
-      console.log(err);
-
+      return;
     }
 
-    return;
-  }
+    /* =========================
+        NORMAL SEND
+    ========================= */
 
-  /* =========================
-      NORMAL SEND
-  ========================= */
+    socketRef?.current?.emit("chat:stop-typing", {
+      chat_id: selectedChat.chat_id,
+      user_id: currentUserId,
+    });
 
-  socketRef?.current?.emit("chat:stop-typing", {
-    chat_id: selectedChat.chat_id,
-    user_id: currentUserId,
-  });
+    onSendMessage?.({
+      chat_id: selectedChat.chat_id,
+      message: message.trim(),
+      reply_to_message_id: replyMessage?.message_id || null,
+      attachments: attachments,
+    });
 
-  onSendMessage?.({
-    chat_id: selectedChat.chat_id,
-    message: message.trim(),
-    reply_to_message_id: replyMessage?.message_id || null,
-    attachments: attachments,
-  });
-
-  setMessage("");
-  setAttachments([]);
-  setReplyMessage?.(null);
-  setShowEmojiPicker(false);
-};
+    setMessage("");
+    setAttachments([]);
+    setReplyMessage?.(null);
+    setShowEmojiPicker(false);
+  };
 
   /* =========================================
       HANDLE FILES
@@ -285,7 +287,6 @@ useEffect(() => {
 
   return (
     <div className="border-top border-gray-4 bg-white sticky-bottom">
-
       {/* REPLY PREVIEW */}
 
       {replyMessage && (
@@ -376,7 +377,13 @@ useEffect(() => {
           >
             <FiImage size={18} />
           </button>
-
+          <button
+            className="btn border-0 border-end border-gray-4 rounded-0 wd-60 ht-60"
+            onClick={onOpenTaskModal}
+            title="Create Task"
+          >
+            <FiCheckSquare size={18} />
+          </button>
           {/* ✅ key={attachments.length} forces remount when attachments change
               which also resets the input — belt-and-suspenders with e.target.value="" */}
           <input

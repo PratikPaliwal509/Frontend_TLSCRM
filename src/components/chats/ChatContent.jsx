@@ -4,6 +4,7 @@ import React, {
     useRef,
 } from "react";
 
+import TaskModal from "./TaskModal";
 import { io } from "socket.io-client";
 import ChatMessageSkeleton from "./ChatMessageSkeleton.";
 import ChartsHeader from "./ChatHeader";
@@ -41,7 +42,8 @@ const ChatContent = () => {
     const selectedChatRef = useRef(null);
     const creatingChatRef = useRef(false);
     const chatsRef = useRef([]); // always mirrors `chats` state so socket handlers can read it
-
+const [showTaskModal, setShowTaskModal] =
+  useState(false);
     /* =========================================
         SCROLL HELPERS
     ========================================= */
@@ -923,6 +925,7 @@ const ChatContent = () => {
                                                     ...message,
                                                     text: message.message_text,
                                                     attachments: message.attachments || [],
+                                                    task: message.task,
                                                     replyTo: message.replyTo
                                                         ? {
                                                             message_id: message.replyTo.message_id,
@@ -966,7 +969,23 @@ const ChatContent = () => {
                             </div>
                         )}
                     </div>
-
+<TaskModal
+  show={showTaskModal}
+  onClose={() =>
+    setShowTaskModal(false)
+  }
+  selectedChat={selectedChat}
+  currentUserId={currentUserId}
+  onTaskCreated={(task) => {
+    handleMessageSent({
+      chat_id:
+        selectedChat.chat_id,
+      message: `📋 ${task.task_name}`,
+      task,
+      attachments: [],
+    });
+  }}
+/>
                     <MessageEditor
                         selectedChat={selectedChat}
                         currentUserId={currentUserId}
@@ -976,6 +995,8 @@ const ChatContent = () => {
                         socketRef={socketRef}
                         editingMessage={editingMessage}
                         setEditingMessage={setEditingMessage}
+                          onOpenTaskModal={() => setShowTaskModal(true)}
+
                     />
 
                 </PerfectScrollbar>

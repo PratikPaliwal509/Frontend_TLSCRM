@@ -89,7 +89,8 @@ const ChatMessage = ({
   onEdit,
   onDelete,
 }) => {
-
+console.log("Rendering ChatMessage:",
+  messages)
   const [hovered, setHovered] = useState(false);
 
   const [dropdownOpen, setDropdownOpen] =
@@ -318,6 +319,61 @@ const ChatMessage = ({
               <FileMessage
                 attachments={msg.attachments}
               />
+            )}
+            {msg.message_type === "task" && msg.task && (
+              <div
+                className="bg-white border rounded-3 p-3 mb-2"
+                style={{
+                  borderLeft: "4px solid #5e72e4",
+                }}
+              >
+                <div className="fw-bold">
+                  📋 {msg.task.task_title}
+                </div>
+
+                <div className="text-muted small">
+                  {msg.task.description}
+                </div>
+
+                <div className="mt-2 d-flex gap-2 flex-wrap">
+                  <span className="badge bg-primary">
+                    {msg.task.task_number}
+                  </span>
+
+                  <span className="badge bg-warning text-dark">
+                    {msg.task.priority}
+                  </span>
+
+                  <span className="badge bg-info">
+                    {msg.task.status}
+                  </span>
+                </div>
+
+                {msg.task.project && (
+                  <div className="small text-muted mt-2">
+                    Project: {msg.task.project.project_name}
+                  </div>
+                )}
+
+                {msg.task.assignments?.length > 0 && (
+                  <div className="mt-2">
+                    <small className="fw-semibold">
+                      Assigned To:
+                    </small>
+
+                    <div>
+                      {msg.task.assignments.map((a) => (
+                        <span
+                          key={a.assignment_id}
+                          className="badge bg-secondary me-1"
+                        >
+                          {a.user.full_name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         ))}
