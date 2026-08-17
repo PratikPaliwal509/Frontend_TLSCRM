@@ -6,7 +6,7 @@ const WeeklyPlanHeader = () => {
   return (
     <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">
       <Link
-        to="/applications/weekly-plans/create"
+        to="/weekly-plans/create"
         className="btn btn-primary"
       >
         <FiPlus className="me-2" />

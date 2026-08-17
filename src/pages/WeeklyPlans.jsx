@@ -65,7 +65,7 @@ const WeeklyPlans = () => {
                     style={{ cursor: "pointer" }}
                     onClick={() =>
                       window.location.href =
-                        `/applications/weekly-plans/${plan.weekly_plan_id}`
+                        `/weekly-plans/${plan.weekly_plan_id}`
                     }
                   >
                     <td>{plan.title}</td>

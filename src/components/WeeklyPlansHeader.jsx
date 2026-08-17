@@ -22,7 +22,7 @@ const WeeklyPlansHeader = () => {
       <button
         className="btn btn-primary p-2"
         onClick={() =>
-          navigate("/applications/weekly-plans/create")
+          navigate("/weekly-plans/create")
         }
       >
         Create Weekly Plan

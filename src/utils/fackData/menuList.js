@@ -78,8 +78,8 @@ export const menuList = [
 
     },
     {
-        id: 7,
-        name: "Weekly Plan",
+        id: 20,
+        name: "weekly-plans",
         path: "#",
         icon: "feather-clock",
         permissionKey: "weekly_plan",
@@ -88,15 +88,15 @@ export const menuList = [
             {
                 id: 701,
                 name: "Weekly Plan List",
-                path: "/applications/weekly-plans",
+                path: "/weekly-plans",
                 subdropdownMenu: false,
                 permissionKey: "weekly_plan",
                 permissionAction: "view",
             },
             {
-                id: 701,
+                id: 702,
                 name: "Create Weekly Plan",
-                path: "/applications/weekly-plans/create",
+                path: "/weekly-plans/create",
                 subdropdownMenu: false,
                 permissionKey: "weekly_plan",
                 permissionAction: "create",

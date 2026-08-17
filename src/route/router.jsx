@@ -319,6 +319,18 @@ export const router = createBrowserRouter([
                 path:"/roles/view/:id",
                 element:<RoleView/>
             },
+            {
+                path: "/weekly-plans",
+                element: <WeeklyPlans />
+            },
+            {
+                path: "/weekly-plans/create",
+                element: <CreateWeeklyPlan />
+            },
+            {
+                path: "/weekly-plans/:id",
+                element: <WeeklyPlanDetails />
+            },
 
         ]
     },
@@ -358,18 +370,7 @@ export const router = createBrowserRouter([
                 path: "/applications/storage",
                 element: <AppsStorage />
             },
-            {
-                path: "/applications/weekly-plans",
-                element: <WeeklyPlans />
-            },
-            {
-                path: "/applications/weekly-plans/create",
-                element: <CreateWeeklyPlan />
-            },
-            {
-                path: "/applications/weekly-plans/:id",
-                element: <WeeklyPlanDetails />
-            },
+            
             
         ]
     },
