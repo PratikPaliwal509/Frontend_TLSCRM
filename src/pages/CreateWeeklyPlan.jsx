@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify';
+// import Footer from "@/components/shared/Footer";
 const CreateWeeklyPlan = () => {
     const [loading, setLoading] = useState(false);
     const [projects, setProjects] = useState([]);
@@ -140,7 +141,8 @@ toast.success('Weekly Plan Created successfully');
     };
 
     return (
-        <div className="container-fluid py-4">
+        <>
+        <div className="main-content container-fluid py-4">
             <div className="card">
                 <div className="card-header">
                     <h4>Create Weekly Plan</h4>
@@ -385,6 +387,8 @@ toast.success('Weekly Plan Created successfully');
                 </div>
             </div>
         </div>
+        {/* <Footer /> */}
+        </>
     );
 };
 

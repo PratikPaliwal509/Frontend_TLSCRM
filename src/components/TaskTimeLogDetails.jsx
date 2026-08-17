@@ -14,9 +14,37 @@ const TaskTimeLogDetails = ({ taskId, project_id, role }) => {
 
   /* ---------------- HELPERS ---------------- */
 
-  const formatTime = (date) =>
-    date ? new Date(date).toLocaleString() : "-"
+const formatTime = (date) => {
+  if (!date) return "-";
 
+  const value = String(date);
+
+  // Extract the original date/time without timezone conversion
+  const match = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/
+  );
+
+  if (!match) return value;
+
+  const [, year, month, day, hour, minute] = match;
+
+  const dateObj = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute)
+  );
+
+  return dateObj.toLocaleString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
   const formatDuration = (start, end) => {
     if (!start || !end) return "-"
     const seconds =
