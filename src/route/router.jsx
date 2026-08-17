@@ -103,6 +103,9 @@ import TimesheetPage from "../pages/timesheetPage";
 import TeamTimesheetPage from "../pages/teamTimesheetPage";
 import UserHierarchy from "../pages/UserHierchy";
 import Logout from "../pages/logout";
+import CreateWeeklyPlan from "../pages/CreateWeeklyPlan";
+import WeeklyPlanDetails from "../pages/WeeklyPlanDetails";
+import WeeklyPlans from "../pages/WeeklyPlans";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -355,6 +358,19 @@ export const router = createBrowserRouter([
                 path: "/applications/storage",
                 element: <AppsStorage />
             },
+            {
+                path: "/applications/weekly-plans",
+                element: <WeeklyPlans />
+            },
+            {
+                path: "/applications/weekly-plans/create",
+                element: <CreateWeeklyPlan />
+            },
+            {
+                path: "/applications/weekly-plans/:id",
+                element: <WeeklyPlanDetails />
+            },
+            
         ]
     },
 

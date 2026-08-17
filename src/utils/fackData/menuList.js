@@ -73,8 +73,39 @@ export const menuList = [
                 permissionKey: "storage",
                 permissionAction: "view",
             },
+           
         ],
+
     },
+    {
+        id: 7,
+        name: "Weekly Plan",
+        path: "#",
+        icon: "feather-clock",
+        permissionKey: "weekly_plan",
+        permissionAction: "view",
+        dropdownMenu: [
+            {
+                id: 701,
+                name: "Weekly Plan List",
+                path: "/applications/weekly-plans",
+                subdropdownMenu: false,
+                permissionKey: "weekly_plan",
+                permissionAction: "view",
+            },
+            {
+                id: 701,
+                name: "Create Weekly Plan",
+                path: "/applications/weekly-plans/create",
+                subdropdownMenu: false,
+                permissionKey: "weekly_plan",
+                permissionAction: "create",
+            },
+           
+        ],
+
+    },
+    
     {
         id: 3,
         name: "clients",
