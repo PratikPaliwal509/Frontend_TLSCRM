@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { toast } from 'react-toastify';
 const CreateWeeklyPlan = () => {
     const [loading, setLoading] = useState(false);
     const [projects, setProjects] = useState([]);
@@ -113,8 +113,8 @@ const CreateWeeklyPlan = () => {
             );
 
             console.log(res.data);
-
-            alert("Weekly Plan Created");
+toast.success('Weekly Plan Created successfully');
+            // alert("Weekly Plan Created");
 
             setFormData({
                 project_id: "",
@@ -132,7 +132,8 @@ const CreateWeeklyPlan = () => {
             });
         } catch (error) {
             console.error(error);
-            alert("Failed to create weekly plan");
+            toast.error('Failed to create weekly plan');
+            // alert("Failed to create weekly plan");
         } finally {
             setLoading(false);
         }
