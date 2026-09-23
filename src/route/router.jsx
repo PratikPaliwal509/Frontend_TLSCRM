@@ -106,6 +106,9 @@ import Logout from "../pages/logout";
 import CreateWeeklyPlan from "../pages/CreateWeeklyPlan";
 import WeeklyPlanDetails from "../pages/WeeklyPlanDetails";
 import WeeklyPlans from "../pages/WeeklyPlans";
+import MetaPosts from "../pages/MetaPosts";
+import MetaForms from "../pages/metaForms";
+import MetaFormLeads from "../pages/metaFormLeads";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -331,7 +334,18 @@ export const router = createBrowserRouter([
                 path: "/weekly-plans/:id",
                 element: <WeeklyPlanDetails />
             },
-
+            {
+                path: "/meta/posts/list",
+                element: <MetaPosts />
+            },
+            {
+                path: "/meta/forms",
+                element: <MetaForms />
+            },
+            {
+                path: "/meta/forms/:formId/leads",
+                element: <MetaFormLeads />
+            },
         ]
     },
     {
