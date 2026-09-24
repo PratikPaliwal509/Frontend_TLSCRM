@@ -213,6 +213,14 @@ export const menuList = [
                 permissionKey: "teams",
                 permissionAction: "view",
             },
+            {
+                id: 504,
+                name: "Campaigns",
+                path: "/meta-ads/campaigns",
+                subdropdownMenu: false,
+                permissionKey: "teams",
+                permissionAction: "view",
+            },
         ]
     },
     {

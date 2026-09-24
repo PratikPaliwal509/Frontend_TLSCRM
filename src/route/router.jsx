@@ -109,6 +109,21 @@ import WeeklyPlans from "../pages/WeeklyPlans";
 import MetaPosts from "../pages/MetaPosts";
 import MetaForms from "../pages/metaForms";
 import MetaFormLeads from "../pages/metaFormLeads";
+import CampaignsList from "../pages/campaignsList";
+import CampaignCreate from "../pages/campaignCreate";
+import CampaignEdit from "../pages/CampaignEdit";
+import CampaignView from "../pages/CampaignView";
+import AdSetCreate from "../pages/AdSetCreate";
+import CreativesList from "../pages/CreativesList";
+import CreativeCreate from "../pages/CreativeCreate";
+import CreativeEdit from "../pages/CreativeEdit";
+import AdSetsList from "../pages/AdSetsList";
+import AdSetView from "../pages/AdSetView";
+import AdsList from "../pages/AdsList";
+import AdView from "../pages/AdView";
+import CreativeView from "../pages/CreativeView";
+import AdCreate from "../pages/AdCreate";
+// import MetaAdView from "../pages/MetaAdView";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -345,6 +360,76 @@ export const router = createBrowserRouter([
             {
                 path: "/meta/forms/:formId/leads",
                 element: <MetaFormLeads />
+            },
+            {
+                path: "/meta-ads/campaigns",
+                element: <CampaignsList />
+            },
+            {
+                path: "/meta-ads/campaigns/create",
+                element: <CampaignCreate  />
+            },
+            // {
+            //     path: "/meta-ads/campaigns/edit/:id",
+            //     element: <CampaignEdit  />
+            // },
+
+
+            {
+                path: "/meta-ads/campaigns/view/:id",
+                element: <CampaignView  />
+            },
+
+
+            {
+                path: "/meta-ads/campaigns/:campaignId/adsets",
+                element: <AdSetsList  />
+            },
+            {
+                path: "/meta-ads/campaigns/:campaignId/adsets/create",
+                element: <AdSetCreate  />
+            },
+            {
+                path: "/meta-ads/adsets/view/:id",
+                element: <AdSetView  />
+            },
+            {
+                path: "/meta-ads/adsets/:adSetId/ads",
+                element: <AdsList  />
+            },
+            {
+                path: "/meta-ads/adsets/:adSetId/ads/create",
+                element: <AdCreate  />
+            },
+            // {
+            //     path: "/meta-ads/ads/edit/:id",
+            //     element: <AdEdit   />
+            // },
+            {
+                path: "/meta-ads/ads/view/:adId",
+                element: <AdView   />
+            },
+
+
+            {
+                path: "/meta-ads/ads/:adId/creatives",
+                element: <CreativesList   />
+            },
+
+
+            // {
+            //     path: "/meta-ads/ads/:adId/creatives/create",
+            //     element: <CreativeCreate   />
+            // },
+            // {
+            //     path: "/meta-ads/creatives/edit/:id",
+            //     element: <CreativeEdit   />
+            // },
+
+
+            {
+                path: "/meta-ads/creatives/view/:creativeId",
+                element: <CreativeView  />
             },
         ]
     },
