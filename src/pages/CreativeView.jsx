@@ -4,6 +4,7 @@ import PageHeader from "@/components/shared/pageHeader/PageHeader";
 import { FiArrowLeft, FiEdit, FiImage, FiVideo } from "react-icons/fi";
 import { toast } from "react-toastify";
 import CreativesHeader from "@/components/metaAds/CreativesHeader";
+import Footer from "@/components/shared/Footer";
 
 const CreativeView = () => {
     const { creativeId, adId } = useParams();
@@ -494,7 +495,7 @@ const CreativeView = () => {
                     </div>
 
                     {/* Object Story Spec */}
-                    {creative.object_story_spec && (
+                    {/* {creative.object_story_spec && (
                         <div className="card mb-4">
                             <div className="card-header">
                                 <h6 className="mb-0">
@@ -519,10 +520,11 @@ const CreativeView = () => {
                                 </pre>
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };

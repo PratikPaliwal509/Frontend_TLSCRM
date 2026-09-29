@@ -15,18 +15,30 @@ const MetaAdForm = ({
 
     const navigate = useNavigate();
 
-    // For:
-    // /meta-ads/adsets/:adSetId/ads/create
-    const { campaignId, adSetId } = useParams();
+    const {
+        campaignId,
+        adSetId
+    } = useParams();
+
+    // =========================================
+    // FORM STATE
+    // =========================================
 
     const [form, setForm] = useState({
 
         // Common
-        name: initialData.name || "",
-        status: initialData.status || "PAUSED",
+        name:
+            initialData.name ||
+            "",
+
+        status:
+            initialData.status ||
+            "PAUSED",
 
         // Campaign
-        objective: initialData.objective || "",
+        objective:
+            initialData.objective ||
+            "",
 
         // Ad Set
         dailyBudget:
@@ -49,6 +61,10 @@ const MetaAdForm = ({
             initialData.bid_strategy ||
             "LOWEST_COST_WITHOUT_CAP",
 
+        bidAmount:
+            initialData.bidAmount ||
+            initialData.bid_amount ||
+            "",
         ageMin:
             initialData.ageMin ||
             initialData.age_min ||
@@ -70,10 +86,12 @@ const MetaAdForm = ({
         // Ad
         adSetId:
             initialData.adSetId ||
+            initialData.adset_id ||
             "",
 
         creativeId:
             initialData.creativeId ||
+            initialData.creative_id ||
             "",
 
         // Creative
@@ -82,19 +100,25 @@ const MetaAdForm = ({
             "",
 
         message:
-            initialData.message ||
+            initialData.message || initialData?.object_story_spec?.link_data?.message ||
             "",
 
         link:
-            initialData.link ||
+            initialData.link || initialData?.object_story_spec?.link_data?.link ||
             "",
 
-        // Image
+        imageHash:
+            initialData.imageHash ||
+            initialData.image_hash ||
+            "",
+
+        // New image
         image:
             null
     });
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] =
+        useState(false);
 
     // =========================================
     // HANDLE CHANGE
@@ -112,7 +136,9 @@ const MetaAdForm = ({
 
             setForm((prev) => ({
                 ...prev,
-                image: files?.[0] || null
+                image:
+                    files?.[0] ||
+                    null
             }));
 
             return;
@@ -131,12 +157,14 @@ const MetaAdForm = ({
     const createImage = async (token) => {
 
         if (!form.image) {
+
             throw new Error(
                 "Please select an image"
             );
         }
 
-        const formData = new FormData();
+        const formData =
+            new FormData();
 
         formData.append(
             "image",
@@ -157,7 +185,8 @@ const MetaAdForm = ({
             }
         );
 
-        const result = await res.json();
+        const result =
+            await res.json();
 
         console.log(
             "IMAGE RESPONSE:",
@@ -172,16 +201,14 @@ const MetaAdForm = ({
             );
         }
 
-        /*
-         * Adjust this depending on your
-         * actual API response.
-         */
+        const images =
+            result.data?.images;
 
-       const images = result.data?.images;
+        const imageHash =
+            images
+                ? Object.values(images)[0]?.hash
+                : null;
 
-const imageHash = images
-    ? Object.values(images)[0]?.hash
-    : null;
         if (!imageHash) {
 
             throw new Error(
@@ -211,7 +238,6 @@ const imageHash = images
                 form.message,
 
             imageHash:
-
                 imageHash,
 
             link:
@@ -260,17 +286,6 @@ const imageHash = images
             );
         }
 
-        /*
-         * Expected Meta response may be:
-         *
-         * {
-         *   success: true,
-         *   data: {
-         *      id: "2572527086548742"
-         *   }
-         * }
-         */
-
         const creativeId =
             result.data?.id ||
             result.data?.creativeId ||
@@ -296,10 +311,14 @@ const imageHash = images
         creativeId
     ) => {
 
-        if (!adSetId) {
+        const actualAdSetId =
+            adSetId ||
+            form.adSetId;
+
+        if (!actualAdSetId) {
 
             throw new Error(
-                "Ad Set ID is missing from URL"
+                "Ad Set ID is missing"
             );
         }
 
@@ -309,11 +328,13 @@ const imageHash = images
                 form.name,
 
             adSetId:
-                adSetId,
+                actualAdSetId,
 
             creativeId:
-                creativeId
+                creativeId,
 
+            status:
+                form.status
         };
 
         console.log(
@@ -362,6 +383,74 @@ const imageHash = images
     };
 
     // =========================================
+    // UPDATE AD
+    // =========================================
+
+    const updateAd = async (token) => {
+
+        if (!editId) {
+
+            throw new Error(
+                "Ad ID is missing"
+            );
+        }
+
+        const adData = {
+
+            name:
+                form.name,
+
+            status:
+                form.status
+
+        };
+
+        console.log(
+            "UPDATE AD REQUEST:",
+            adData
+        );
+
+        const res = await fetch(
+            `${API_URL}/api/meta-ads/ads/${editId}`,
+            {
+                method: "PUT",
+
+                headers: {
+
+                    Authorization:
+                        `Bearer ${token}`,
+
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(
+                        adData
+                    )
+            }
+        );
+
+        const result =
+            await res.json();
+
+        console.log(
+            "UPDATE AD RESPONSE:",
+            result
+        );
+
+        if (!res.ok) {
+
+            throw new Error(
+                result.message ||
+                "Ad update failed"
+            );
+        }
+
+        return result;
+    };
+
+    // =========================================
     // SUBMIT
     // =========================================
 
@@ -377,25 +466,50 @@ const imageHash = images
                 localStorage.getItem("token");
 
             // =====================================
-            // AD FLOW
+            // AD
             // =====================================
 
             if (type === "ad") {
 
-                if (!adSetId) {
+                // ---------------------------------
+                // EDIT AD
+                // ---------------------------------
+
+                if (editId) {
+
+                    toast.info(
+                        "Updating ad..."
+                    );
+
+                    await updateAd(token);
+
+                    toast.success(
+                        "Ad updated successfully"
+                    );
+
+                    navigate(-1);
+
+                    return;
+                }
+
+                // ---------------------------------
+                // CREATE AD
+                // ---------------------------------
+
+                const actualAdSetId =
+                    adSetId ||
+                    form.adSetId;
+
+                if (!actualAdSetId) {
 
                     toast.error(
-                        "Ad Set ID is missing from URL"
+                        "Ad Set ID is missing"
                     );
 
                     return;
                 }
 
-                /*
-                 * STEP 1
-                 * Upload image
-                 */
-
+                // STEP 1
                 toast.info(
                     "Uploading image..."
                 );
@@ -408,11 +522,7 @@ const imageHash = images
                     imageHash
                 );
 
-                /*
-                 * STEP 2
-                 * Create creative
-                 */
-
+                // STEP 2
                 toast.info(
                     "Creating creative..."
                 );
@@ -428,11 +538,7 @@ const imageHash = images
                     creativeId
                 );
 
-                /*
-                 * STEP 3
-                 * Create Ad
-                 */
-
+                // STEP 3
                 toast.info(
                     "Creating ad..."
                 );
@@ -441,10 +547,6 @@ const imageHash = images
                     token,
                     creativeId
                 );
-
-                /*
-                 * DONE
-                 */
 
                 toast.success(
                     "Ad, creative and image created successfully"
@@ -508,7 +610,7 @@ const imageHash = images
                     }
 
                     endpoint =
-                        `/api/meta-ads/campaigns/${campaignId}/adsets`;
+                        `/api/meta-ads/adsets/${campaignId}`;
                 }
 
                 requestData = {
@@ -517,7 +619,9 @@ const imageHash = images
                         form.name,
 
                     dailyBudget:
-                        Number(form.dailyBudget),
+                        Number(
+                            form.dailyBudget
+                        ),
 
                     billingEvent:
                         form.billingEvent,
@@ -527,6 +631,11 @@ const imageHash = images
 
                     bidStrategy:
                         form.bidStrategy,
+
+                    bidAmount:
+                        form.bidAmount
+                            ? Number(form.bidAmount)
+                            : undefined,
 
                     targeting: {
 
@@ -538,10 +647,14 @@ const imageHash = images
                         },
 
                         age_min:
-                            Number(form.ageMin),
+                            Number(
+                                form.ageMin
+                            ),
 
                         age_max:
-                            Number(form.ageMax),
+                            Number(
+                                form.ageMax
+                            ),
 
                         targeting_automation: {
 
@@ -558,7 +671,7 @@ const imageHash = images
             }
 
             // =====================================
-            // CREATIVE DIRECT
+            // CREATIVE
             // =====================================
 
             if (type === "creative") {
@@ -595,6 +708,15 @@ const imageHash = images
                     ? "PUT"
                     : "POST";
 
+            console.log(
+                "REQUEST:",
+                {
+                    method,
+                    endpoint,
+                    requestData
+                }
+            );
+
             const res = await fetch(
                 `${API_URL}${endpoint}`,
                 {
@@ -619,6 +741,11 @@ const imageHash = images
 
             const result =
                 await res.json();
+
+            console.log(
+                "API RESPONSE:",
+                result
+            );
 
             if (!res.ok) {
 
@@ -678,11 +805,21 @@ const imageHash = images
                         <div className="mb-4">
 
                             <h5 className="mb-1">
-                                Create Ad
+
+                                {editId
+                                    ? "Edit Ad"
+                                    : "Create Ad"
+                                }
+
                             </h5>
 
                             <p className="text-muted mb-0">
-                                Create an ad with a new creative.
+
+                                {editId
+                                    ? "Update your existing Meta ad."
+                                    : "Create an ad with a new creative."
+                                }
+
                             </p>
 
                         </div>
@@ -704,14 +841,18 @@ const imageHash = images
                                 <input
                                     type="text"
                                     className="form-control"
-                                    value={adSetId || ""}
+                                    value={
+                                        adSetId ||
+                                        form.adSetId ||
+                                        ""
+                                    }
                                     readOnly
                                 />
 
                             </div>
 
                             <small className="text-muted">
-                                Automatically taken from the URL.
+                                Ad Set ID associated with this ad.
                             </small>
 
                         </div>
@@ -738,144 +879,185 @@ const imageHash = images
                                     value={form.name}
                                     onChange={handleChange}
                                     className="form-control"
-                                    placeholder="TLS Test Ad - Paused"
+                                    placeholder="TLS Test Ad"
                                     required
                                 />
 
                             </div>
+
+                            {editId && (
+
+                                <div className="col-md-6">
+
+                                    <label className="form-label fw-semibold">
+                                        Status
+                                    </label>
+
+                                    <select
+                                        name="status"
+                                        value={form.status}
+                                        onChange={handleChange}
+                                        className="form-select"
+                                    >
+
+                                        <option value="PAUSED">
+                                            Paused
+                                        </option>
+
+                                        <option value="ACTIVE">
+                                            Active
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            )}
 
                         </div>
 
-                        <hr className="my-4" />
+                        {/* ================================= */}
+                        {/* CREATE ONLY CREATIVE SECTION */}
+                        {/* ================================= */}
 
-                        {/* CREATIVE */}
+                        {!editId && (
 
-                        <h6 className="mb-3">
-                            Creative
-                        </h6>
+                            <>
 
-                        <div className="row g-4">
+                                <hr className="my-4" />
 
-                            {/* CREATIVE NAME */}
+                                <h6 className="mb-3">
+                                    Creative
+                                </h6>
 
-                            <div className="col-md-6">
+                                <div className="row g-4">
 
-                                <label className="form-label fw-semibold">
-                                    Creative Name
-                                </label>
+                                    {/* CREATIVE NAME */}
 
-                                <input
-                                    type="text"
-                                    name="creativeName"
-                                    value={
-                                        form.creativeName
-                                    }
-                                    onChange={handleChange}
-                                    className="form-control"
-                                    placeholder="TLS Test Creative"
-                                    required
-                                />
+                                    <div className="col-md-6">
 
-                            </div>
+                                        <label className="form-label fw-semibold">
+                                            Creative Name
+                                        </label>
 
-                            {/* WEBSITE */}
+                                        <input
+                                            type="text"
+                                            name="creativeName"
+                                            value={
+                                                form.creativeName
+                                            }
+                                            onChange={handleChange}
+                                            className="form-control"
+                                            placeholder="TLS Test Creative"
+                                            required
+                                        />
 
-                            <div className="col-md-6">
+                                    </div>
 
-                                <label className="form-label fw-semibold">
-                                    Website Link
-                                </label>
+                                    {/* WEBSITE */}
 
-                                <input
-                                    type="url"
-                                    name="link"
-                                    value={form.link}
-                                    onChange={handleChange}
-                                    className="form-control"
-                                    placeholder="https://techleela.com"
-                                    required
-                                />
+                                    <div className="col-md-6">
 
-                            </div>
+                                        <label className="form-label fw-semibold">
+                                            Website Link
+                                        </label>
 
-                            {/* MESSAGE */}
+                                        <input
+                                            type="url"
+                                            name="link"
+                                            value={form.link}
+                                            onChange={handleChange}
+                                            className="form-control"
+                                            placeholder="https://techleela.com"
+                                            required
+                                        />
 
-                            <div className="col-md-12">
+                                    </div>
 
-                                <label className="form-label fw-semibold">
-                                    Message
-                                </label>
+                                    {/* MESSAGE */}
 
-                                <textarea
-                                    name="message"
-                                    value={form.message}
-                                    onChange={handleChange}
-                                    className="form-control"
-                                    rows="4"
-                                    placeholder="Discover our services. Contact us today."
-                                    required
-                                />
+                                    <div className="col-md-12">
 
-                            </div>
+                                        <label className="form-label fw-semibold">
+                                            Message
+                                        </label>
 
-                            {/* IMAGE */}
+                                        <textarea
+                                            name="message"
+                                            value={form.message}
+                                            onChange={handleChange}
+                                            className="form-control"
+                                            rows="4"
+                                            placeholder="Discover our services. Contact us today."
+                                            required
+                                        />
 
-                            <div className="col-md-12">
+                                    </div>
 
-                                <label className="form-label fw-semibold">
-                                    Image
-                                </label>
+                                    {/* IMAGE */}
 
-                                <input
-                                    type="file"
-                                    name="image"
-                                    accept="image/*"
-                                    onChange={handleChange}
-                                    className="form-control"
-                                    required={!editId}
-                                />
+                                    <div className="col-md-12">
 
-                                <small className="text-muted">
-                                    Image will be uploaded first and its
-                                    image hash will automatically be used
-                                    to create the creative.
-                                </small>
+                                        <label className="form-label fw-semibold">
+                                            Image
+                                        </label>
 
-                            </div>
+                                        <input
+                                            type="file"
+                                            name="image"
+                                            accept="image/*"
+                                            onChange={handleChange}
+                                            className="form-control"
+                                            required
+                                        />
 
-                        </div>
+                                        <small className="text-muted">
+                                            Image will be uploaded first,
+                                            then used to create the creative.
+                                        </small>
 
-                        <div className="alert alert-light border mt-4 mb-0">
+                                    </div>
 
-                            <strong>Creation flow:</strong>
+                                </div>
 
-                            <div className="mt-2">
+                                <div className="alert alert-light border mt-4 mb-0">
 
-                                <span>
-                                    1. Upload Image
-                                </span>
+                                    <strong>
+                                        Creation flow:
+                                    </strong>
 
-                                <span className="mx-2">
-                                    →
-                                </span>
+                                    <div className="mt-2">
 
-                                <span>
-                                    2. Create Creative
-                                </span>
+                                        <span>
+                                            1. Upload Image
+                                        </span>
 
-                                <span className="mx-2">
-                                    →
-                                </span>
+                                        <span className="mx-2">
+                                            →
+                                        </span>
 
-                                <span>
-                                    3. Create Ad
-                                </span>
+                                        <span>
+                                            2. Create Creative
+                                        </span>
 
-                            </div>
+                                        <span className="mx-2">
+                                            →
+                                        </span>
 
-                        </div>
+                                        <span>
+                                            3. Create Ad
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </>
+
+                        )}
 
                     </>
+
                 )}
 
                 {/* ================================= */}
@@ -1037,10 +1219,6 @@ const imageHash = images
                                     Impressions
                                 </option>
 
-                                <option value="LINK_CLICKS">
-                                    Link Clicks
-                                </option>
-
                             </select>
 
                         </div>
@@ -1069,7 +1247,31 @@ const imageHash = images
                             </select>
 
                         </div>
+                        <div className="col-md-6">
 
+                            <label className="form-label fw-semibold">
+                                Bid Amount
+                            </label>
+
+                            <input
+                                type="number"
+                                name="bidAmount"
+                                value={form.bidAmount}
+                                onChange={handleChange}
+                                className="form-control"
+                                min="1"
+                                placeholder="Example: 100"
+                                disabled={
+                                    form.bidStrategy ===
+                                    "LOWEST_COST_WITHOUT_CAP"
+                                }
+                            />
+
+                            <small className="text-muted">
+                                Required when using Bid Cap or Target Cost.
+                            </small>
+
+                        </div>
                         <div className="col-md-6">
 
                             <label className="form-label fw-semibold">
@@ -1168,14 +1370,13 @@ const imageHash = images
                             <label className="form-label fw-semibold">
                                 Website Link
                             </label>
-
                             <input
                                 type="url"
                                 name="link"
                                 value={form.link}
+                                disabled={true}
                                 onChange={handleChange}
                                 className="form-control"
-                                required
                             />
 
                         </div>
@@ -1187,17 +1388,17 @@ const imageHash = images
                             </label>
 
                             <textarea
+                                disabled={true}
                                 name="message"
                                 value={form.message}
                                 onChange={handleChange}
                                 className="form-control"
                                 rows="4"
-                                required
                             />
 
                         </div>
 
-                        <div className="col-md-12">
+                        {/* <div className="col-md-12">
 
                             <label className="form-label fw-semibold">
                                 Image Hash
@@ -1209,10 +1410,9 @@ const imageHash = images
                                 value={form.imageHash}
                                 onChange={handleChange}
                                 className="form-control"
-                                required
                             />
 
-                        </div>
+                        </div> */}
 
                     </div>
                 )}
@@ -1251,6 +1451,7 @@ const imageHash = images
                         </div>
 
                     </div>
+
                 )}
 
             </div>
@@ -1279,14 +1480,17 @@ const imageHash = images
                 >
 
                     {loading
-                        ? type === "ad"
-                            ? "Creating Ad..."
-                            : "Saving..."
+                        ? editId
+                            ? "Updating..."
+                            : type === "ad"
+                                ? "Creating Ad..."
+                                : "Saving..."
                         : editId
                             ? "Update"
                             : type === "ad"
                                 ? "Create Ad"
-                                : "Create"}
+                                : "Create"
+                    }
 
                 </button>
 

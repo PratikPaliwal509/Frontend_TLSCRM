@@ -123,6 +123,8 @@ import AdsList from "../pages/AdsList";
 import AdView from "../pages/AdView";
 import CreativeView from "../pages/CreativeView";
 import AdCreate from "../pages/AdCreate";
+import AdSetEdit from "../pages/AdSetEdit";
+import AdEdit from "../pages/AdEdit";
 // import MetaAdView from "../pages/MetaAdView";
 export const router = createBrowserRouter([
     {
@@ -369,10 +371,10 @@ export const router = createBrowserRouter([
                 path: "/meta-ads/campaigns/create",
                 element: <CampaignCreate  />
             },
-            // {
-            //     path: "/meta-ads/campaigns/edit/:id",
-            //     element: <CampaignEdit  />
-            // },
+            {
+                path: "/meta-ads/campaigns/edit/:id",
+                element: <CampaignEdit  />
+            },
 
 
             {
@@ -390,6 +392,10 @@ export const router = createBrowserRouter([
                 element: <AdSetCreate  />
             },
             {
+                path: "/meta-ads/adsets/edit/:id",
+                element: <AdSetEdit  />
+            },
+            {
                 path: "/meta-ads/adsets/view/:id",
                 element: <AdSetView  />
             },
@@ -401,10 +407,10 @@ export const router = createBrowserRouter([
                 path: "/meta-ads/adsets/:adSetId/ads/create",
                 element: <AdCreate  />
             },
-            // {
-            //     path: "/meta-ads/ads/edit/:id",
-            //     element: <AdEdit   />
-            // },
+            {
+                path: "/meta-ads/ads/edit/:id",
+                element: <AdEdit   />
+            },
             {
                 path: "/meta-ads/ads/view/:adId",
                 element: <AdView   />
@@ -421,10 +427,10 @@ export const router = createBrowserRouter([
             //     path: "/meta-ads/ads/:adId/creatives/create",
             //     element: <CreativeCreate   />
             // },
-            // {
-            //     path: "/meta-ads/creatives/edit/:id",
-            //     element: <CreativeEdit   />
-            // },
+            {
+                path: "/meta-ads/creatives/edit/:id",
+                element: <CreativeEdit   />
+            },
 
 
             {

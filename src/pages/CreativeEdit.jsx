@@ -29,7 +29,7 @@ const CreativeEdit = () => {
             );
 
             const result = await res.json();
-
+console.log("Creative Edit Data:", result.data);
             if (result.success) {
                 setData(
                     result.data?.data ||
