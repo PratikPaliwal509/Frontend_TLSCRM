@@ -8,10 +8,10 @@ import Footer from '@/components/shared/Footer';
 import { verifyPagePermission } from '@/utils/verifyPagePermission';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
-
+import GenerateReportModal from '@/components/metaPosts/GenerateReportModal';
 const MetaPosts = () => {
     const navigate = useNavigate();
-
+    const [showReportModal, setShowReportModal] = useState(false);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
@@ -149,7 +149,9 @@ const MetaPosts = () => {
     const handleCreatePost = () => {
         navigate('/meta/posts/create');
     };
-
+    const handleGenerateReport = () => {
+        setShowReportModal(true);
+    };
     return (
         <>
             {/* ================= PAGE HEADER ================= */}
@@ -159,12 +161,14 @@ const MetaPosts = () => {
                     postCount={posts.length}
                     onRefresh={fetchPosts}
                     onCreatePost={handleCreatePost}
+                    onGenerateReport={handleGenerateReport}
                 />
             </PageHeader>
 
             {/* ================= MAIN CONTENT ================= */}
             <div className="main-content">
-                <div className="row"  style={{height: '60vh'}}>
+                <div className="row" style={{ height: '60vh' }}>
+
                     <MetaPostsContent
                         posts={posts}
                         loading={loading}
@@ -175,6 +179,10 @@ const MetaPosts = () => {
             </div>
 
             <Footer />
+            <GenerateReportModal
+                show={showReportModal}
+                onClose={() => setShowReportModal(false)}
+            />
         </>
     );
 };

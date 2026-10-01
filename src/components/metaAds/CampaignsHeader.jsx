@@ -7,7 +7,8 @@ import {
     FiPlus,
     FiPause,
     FiCheckCircle,
-    FiArchive
+    FiArchive,
+    FiFileText
 } from "react-icons/fi";
 
 import {
@@ -22,7 +23,11 @@ import {
 import Dropdown from "@/components/shared/Dropdown";
 import { Link } from "react-router-dom";
 
-const CampaignsHeader = ({ onExport, onFilter }) => {
+const CampaignsHeader = ({
+    onExport,
+    onFilter,
+    onGenerateReport
+}) => {
 
     const fileType = [
         {
@@ -81,62 +86,83 @@ const CampaignsHeader = ({ onExport, onFilter }) => {
     ];
 
     return (
-        <>
-            <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+        <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                <a
-                    href="#"
-                    className="btn btn-icon btn-light-brand"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#campaignStatistics"
-                >
-                    <FiBarChart
+            {/* STATISTICS */}
+
+            <a
+                href="#"
+                className="btn btn-icon btn-light-brand"
+                data-bs-toggle="collapse"
+                data-bs-target="#campaignStatistics"
+            >
+                <FiBarChart
+                    size={16}
+                    strokeWidth={1.6}
+                />
+            </a>
+
+            {/* FILTER */}
+
+            <Dropdown
+                dropdownItems={filterAction}
+                triggerPosition={"0, 12"}
+                triggerIcon={
+                    <FiFilter
                         size={16}
                         strokeWidth={1.6}
                     />
-                </a>
+                }
+                triggerClass="btn btn-icon btn-light-brand"
+                isAvatar={false}
+            />
 
-                <Dropdown
-                    dropdownItems={filterAction}
-                    triggerPosition={"0, 12"}
-                    triggerIcon={
-                        <FiFilter
-                            size={16}
-                            strokeWidth={1.6}
-                        />
-                    }
-                    triggerClass="btn btn-icon btn-light-brand"
-                    isAvatar={false}
-                />
+            {/* EXPORT */}
 
-                <Dropdown
-                    dropdownItems={fileType}
-                    triggerPosition={"0, 12"}
-                    triggerIcon={
-                        <FiPaperclip
-                            size={16}
-                            strokeWidth={1.6}
-                        />
-                    }
-                    triggerClass="btn btn-icon btn-light-brand"
-                    iconStrokeWidth={0}
-                    isAvatar={false}
-                />
-
-                <Link
-                    to="/meta-ads/campaigns/create"
-                    className="btn btn-primary"
-                >
-                    <FiPlus
+            <Dropdown
+                dropdownItems={fileType}
+                triggerPosition={"0, 12"}
+                triggerIcon={
+                    <FiPaperclip
                         size={16}
-                        className="me-2"
+                        strokeWidth={1.6}
                     />
+                }
+                triggerClass="btn btn-icon btn-light-brand"
+                iconStrokeWidth={0}
+                isAvatar={false}
+            />
 
-                    <span>Create Campaign</span>
-                </Link>
+            {/* GENERATE REPORT */}
 
-            </div>
-        </>
+            <button
+                type="button"
+                className="btn btn-light-brand"
+                onClick={onGenerateReport}
+            >
+                <FiFileText
+                    size={16}
+                    className="me-2"
+                />
+
+                <span>Generate Report</span>
+            </button>
+
+            {/* CREATE */}
+
+            <Link
+                to="/meta-ads/campaigns/create"
+                className="btn btn-primary"
+            >
+                <FiPlus
+                    size={16}
+                    className="me-2"
+                />
+
+                <span>Create Campaign</span>
+            </Link>
+
+        </div>
     );
 };
 

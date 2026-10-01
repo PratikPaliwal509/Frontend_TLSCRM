@@ -1,12 +1,12 @@
-
 import React from 'react';
-import { FiRefreshCw, FiPlus } from 'react-icons/fi';
+import { FiRefreshCw, FiPlus, FiFileText } from 'react-icons/fi';
 
 const MetaPostsHeader = ({
     loading,
     postCount,
     onRefresh,
     onCreatePost,
+    onGenerateReport,
 }) => {
     return (
         <div className="d-flex align-items-center justify-content-between w-100">
@@ -25,7 +25,6 @@ const MetaPostsHeader = ({
             {/* ================= ACTIONS ================= */}
             <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                {/* Total Posts */}
                 <span className="badge bg-soft-primary text-primary px-3 py-2">
                     {postCount} Posts
                 </span>
@@ -41,8 +40,18 @@ const MetaPostsHeader = ({
                         size={16}
                         className={`me-2 ${loading ? 'spin' : ''}`}
                     />
-
                     Refresh
+                </button>
+
+                {/* Generate Report */}
+                <button
+                    type="button"
+                    className="btn btn-light-brand"
+                    disabled={loading}
+                    onClick={onGenerateReport}
+                >
+                    <FiFileText size={16} className="me-2" />
+                    Generate Report
                 </button>
 
                 {/* Create Post */}
@@ -52,11 +61,7 @@ const MetaPostsHeader = ({
                     disabled={loading}
                     onClick={onCreatePost}
                 >
-                    <FiPlus
-                        size={16}
-                        className="me-2"
-                    />
-
+                    <FiPlus size={16} className="me-2" />
                     Create Post
                 </button>
 

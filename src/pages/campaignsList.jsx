@@ -5,13 +5,12 @@ import CampaignsHeader from "@/components/metaAds/CampaignsHeader";
 import CampaignsTable from "@/components/metaAds/CampaignsTable";
 import { useNavigate } from "react-router-dom";
 import { verifyPagePermission } from "@/utils/verifyPagePermission";
-
+import GenerateAdsReportModal from "@/components/metaAds/GenerateAdsReportModal";
 const CampaignsList = () => {
     const navigate = useNavigate();
-
     const [filter, setFilter] = useState("all");
     const [campaigns, setCampaigns] = useState([]);
-
+    const [showReportModal, setShowReportModal] = useState(false);
     // useEffect(() => {
     //     verifyPagePermission("meta_ads", "view", navigate);
     // }, [navigate]);
@@ -217,8 +216,8 @@ const CampaignsList = () => {
 
                         <tbody>
                             ${filteredCampaigns
-                                .map(
-                                    (c) => `
+                .map(
+                    (c) => `
                                         <tr>
                                             <td>${c.name}</td>
                                             <td>${c.id}</td>
@@ -227,8 +226,8 @@ const CampaignsList = () => {
                                             <td>${c.createdAt}</td>
                                         </tr>
                                     `
-                                )
-                                .join("")}
+                )
+                .join("")}
                         </tbody>
                     </table>
                 </body>
@@ -246,6 +245,7 @@ const CampaignsList = () => {
                 <CampaignsHeader
                     onExport={handleExport}
                     onFilter={setFilter}
+                    onGenerateReport={() => setShowReportModal(true)}
                 />
             </PageHeader>
 
@@ -257,6 +257,11 @@ const CampaignsList = () => {
                     />
                 </div>
             </div>
+
+            <GenerateAdsReportModal
+                show={showReportModal}
+                onClose={() => setShowReportModal(false)}
+            />
 
             <Footer />
         </>
