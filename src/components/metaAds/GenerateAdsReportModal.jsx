@@ -1,31 +1,148 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { FiX, FiFileText, FiBarChart2 } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { generateAdsReportPdf } from "./generateAdsReportPdf";
+
+// Change this for production (or read it from your env config)
+const API_BASE = "https://api-0ggv.onrender.com/api/facebook/campaigns";
+
+const SECTION_OPTIONS = [
+    { key: "summary", label: "Executive Summary (KPI cards)" },
+    { key: "trends", label: "Spend & Performance Trend" },
+    { key: "campaigns", label: "Campaign Performance" },
+    { key: "comparison", label: "Campaign Comparison (needs comparison)" },
+    { key: "adsets", label: "Ad Set Performance" },
+    { key: "ads", label: "Ad Performance + Top Ads" },
+    { key: "billing", label: "Billing & Spend" },
+    { key: "funnel", label: "Conversion Funnel" },
+    { key: "insights", label: "Key Insights" },
+    { key: "appendix", label: "Appendix / Definitions" },
+];
+
+const allSectionsSelected = () =>
+    SECTION_OPTIONS.reduce((acc, s) => ({ ...acc, [s.key]: true }), {});
+
+const toISO = (d) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+        d.getDate()
+    ).padStart(2, "0")}`;
 
 const GenerateAdsReportModal = ({ show, onClose }) => {
-
+    // Dates
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
 
-    const [compareType, setCompareType] = useState("previous_month");
-
+    // Comparison
+    const [compareType, setCompareType] = useState("previous_period");
     const [compareFromDate, setCompareFromDate] = useState("");
     const [compareToDate, setCompareToDate] = useState("");
 
-    const [reportLevel, setReportLevel] = useState("overall");
+    // Scope: all campaigns OR specific campaigns
+    const [scope, setScope] = useState("all");
+    const [campaigns, setCampaigns] = useState([]);
+    const [selectedCampaignIds, setSelectedCampaignIds] = useState([]);
+    const [campaignSearch, setCampaignSearch] = useState("");
+    const [campaignsLoading, setCampaignsLoading] = useState(false);
+
+    // Report content (everything selected by default)
+    const [sections, setSections] = useState(allSectionsSelected());
 
     const [loading, setLoading] = useState(false);
 
+    const getToken = () => localStorage.getItem("token");
+
+    const authHeaders = () => ({
+        Authorization: `Bearer ${getToken()}`,
+        "Content-Type": "application/json",
+    });
+
+    /* ---------------- load campaigns when modal opens ---------------- */
+
+    useEffect(() => {
+        if (!show || campaigns.length > 0) return;
+
+        const loadCampaigns = async () => {
+            try {
+                setCampaignsLoading(true);
+
+                const res = await fetch(`${API_BASE}/reports/campaign-options`, {
+                    headers: authHeaders(),
+                });
+                const result = await res.json();
+
+                if (!res.ok || !result.success) {
+                    throw new Error(result.message || "Failed to load campaigns");
+                }
+
+                setCampaigns(result.data || []);
+            } catch (error) {
+                console.error("Campaign list error:", error);
+                toast.error(error.message || "Failed to load campaigns");
+            } finally {
+                setCampaignsLoading(false);
+            }
+        };
+
+        loadCampaigns();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [show]);
+
+    const visibleCampaigns = useMemo(() => {
+        const q = campaignSearch.trim().toLowerCase();
+        return q
+            ? campaigns.filter((c) => c.name.toLowerCase().includes(q))
+            : campaigns;
+    }, [campaigns, campaignSearch]);
+
     if (!show) return null;
 
-    const getToken = () => {
-        return localStorage.getItem("token");
+    /* ---------------- helpers ---------------- */
+
+    const applyPreset = (preset) => {
+        const today = new Date();
+        let from;
+        let to = new Date(today);
+
+        if (preset === "last7") {
+            from = new Date(today);
+            from.setDate(from.getDate() - 6);
+        } else if (preset === "last30") {
+            from = new Date(today);
+            from.setDate(from.getDate() - 29);
+        } else if (preset === "thisMonth") {
+            from = new Date(today.getFullYear(), today.getMonth(), 1);
+        } else if (preset === "lastMonth") {
+            from = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            to = new Date(today.getFullYear(), today.getMonth(), 0);
+        }
+
+        setFromDate(toISO(from));
+        setToDate(toISO(to));
     };
 
-    const generateReport = async (withGraph = false) => {
+    const toggleCampaign = (id) =>
+        setSelectedCampaignIds((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        );
 
+    const toggleSection = (key) =>
+        setSections((prev) => ({ ...prev, [key]: !prev[key] }));
+
+    const setAllSections = (value) =>
+        setSections(
+            SECTION_OPTIONS.reduce((acc, s) => ({ ...acc, [s.key]: value }), {})
+        );
+
+    /* ---------------- generate ---------------- */
+
+    const generateReport = async (withGraph = false) => {
         if (!fromDate || !toDate) {
             toast.error("Please select report dates");
+            return;
+        }
+
+        if (fromDate > toDate) {
+            toast.error("From date cannot be after To date");
             return;
         }
 
@@ -37,15 +154,28 @@ const GenerateAdsReportModal = ({ show, onClose }) => {
             return;
         }
 
-        try {
+        if (scope === "selected" && selectedCampaignIds.length === 0) {
+            toast.error("Please select at least one campaign");
+            return;
+        }
 
+        const selectedSections = SECTION_OPTIONS.filter(
+            (s) => sections[s.key]
+        ).map((s) => s.key);
+
+        if (selectedSections.length === 0) {
+            toast.error("Please select at least one report section");
+            return;
+        }
+
+        try {
             setLoading(true);
 
             const params = new URLSearchParams({
                 fromDate,
                 toDate,
                 compareType,
-                reportLevel,
+                sections: selectedSections.join(","),
             });
 
             if (compareType === "custom") {
@@ -53,330 +183,48 @@ const GenerateAdsReportModal = ({ show, onClose }) => {
                 params.append("compareToDate", compareToDate);
             }
 
+            // Empty campaignIds = ALL campaigns
+            if (scope === "selected") {
+                params.append("campaignIds", selectedCampaignIds.join(","));
+            }
+
             const response = await fetch(
-                `https://api-0ggv.onrender.com/api/facebook/campaigns/reports/ads?${params.toString()}`,
-                {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`,
-                        "Content-Type": "application/json"
-                    }
-                }
+                `${API_BASE}/reports/ads?${params.toString()}`,
+                { method: "GET", headers: authHeaders() }
             );
 
             const result = await response.json();
 
             if (!response.ok || !result.success) {
-                throw new Error(
-                    result.message || "Failed to generate report"
-                );
+                throw new Error(result.message || "Failed to generate report");
             }
 
-            const report = result.data;
-
-            if (withGraph) {
-                await generatePDFWithGraph(report);
-            } else {
-                await generatePDF(report);
-            }
+            await generateAdsReportPdf(result.data, { withGraphs: withGraph });
 
             toast.success("Report generated successfully");
-
         } catch (error) {
-
             console.error("Report Error:", error);
-
-            toast.error(
-                error.message || "Failed to generate report"
-            );
-
+            toast.error(error.message || "Failed to generate report");
         } finally {
             setLoading(false);
         }
     };
 
-    const generatePDF = async (report) => {
+    const allSectionsChecked = SECTION_OPTIONS.every((s) => sections[s.key]);
 
-        const jsPDF = (await import("jspdf")).default;
-        const autoTable = (await import("jspdf-autotable")).default;
-
-        const doc = new jsPDF("l", "mm", "a4");
-
-        doc.setFontSize(18);
-        doc.text("META ADS PERFORMANCE REPORT", 148, 15, {
-            align: "center"
-        });
-
-        doc.setFontSize(10);
-
-        doc.text(
-            `Period: ${report.period.fromDate} to ${report.period.toDate}`,
-            15,
-            25
-        );
-
-        doc.text(
-            `Comparison: ${report.comparison.fromDate} to ${report.comparison.toDate}`,
-            15,
-            31
-        );
-
-        // SUMMARY
-
-        doc.setFontSize(13);
-        doc.text("Overall Performance", 15, 42);
-
-        const current = report.summary.current;
-        const previous = report.summary.previous;
-        const growth = report.summary.growth;
-
-        autoTable(doc, {
-            startY: 46,
-
-            head: [[
-                "Metric",
-                "Current",
-                "Previous",
-                "Growth"
-            ]],
-
-            body: [
-                [
-                    "Spend",
-                    current.spend,
-                    previous.spend,
-                    formatGrowth(growth.spend)
-                ],
-                [
-                    "Impressions",
-                    current.impressions,
-                    previous.impressions,
-                    formatGrowth(growth.impressions)
-                ],
-                [
-                    "Reach",
-                    current.reach,
-                    previous.reach,
-                    formatGrowth(growth.reach)
-                ],
-                [
-                    "Clicks",
-                    current.clicks,
-                    previous.clicks,
-                    formatGrowth(growth.clicks)
-                ],
-                [
-                    "CTR",
-                    `${current.ctr}%`,
-                    `${previous.ctr}%`,
-                    formatGrowth(growth.ctr)
-                ],
-                [
-                    "CPC",
-                    current.cpc,
-                    previous.cpc,
-                    formatGrowth(growth.cpc)
-                ],
-                [
-                    "CPM",
-                    current.cpm,
-                    previous.cpm,
-                    formatGrowth(growth.cpm)
-                ],
-                [
-                    "Leads",
-                    current.leads,
-                    previous.leads,
-                    formatGrowth(growth.leads)
-                ]
-            ]
-        });
-
-        // CAMPAIGNS
-
-        let startY = doc.lastAutoTable.finalY + 12;
-
-        doc.setFontSize(13);
-        doc.text("Campaign Performance", 15, startY);
-
-        autoTable(doc, {
-            startY: startY + 4,
-
-            head: [[
-                "Campaign",
-                "Spend",
-                "Impressions",
-                "Reach",
-                "Clicks",
-                "CTR",
-                "Leads",
-                "CPC",
-                "CPM"
-            ]],
-
-            body: report.campaigns.map((campaign) => [
-                campaign.name,
-
-                campaign.current.spend,
-
-                campaign.current.impressions,
-
-                campaign.current.reach,
-
-                campaign.current.clicks,
-
-                `${campaign.current.ctr}%`,
-
-                campaign.current.leads,
-
-                campaign.current.cpc,
-
-                campaign.current.cpm
-            ]),
-
-            styles: {
-                fontSize: 8
-            }
-        });
-
-        // AD SETS
-
-        report.campaigns.forEach((campaign) => {
-
-            doc.addPage();
-
-            doc.setFontSize(13);
-
-            doc.text(
-                `Ad Sets - ${campaign.name}`,
-                15,
-                15
-            );
-
-            autoTable(doc, {
-
-                startY: 20,
-
-                head: [[
-                    "Ad Set",
-                    "Spend",
-                    "Impressions",
-                    "Clicks",
-                    "CTR",
-                    "Leads",
-                    "CPC"
-                ]],
-
-                body: campaign.adSets.map((adSet) => [
-                    adSet.name,
-                    adSet.current.spend,
-                    adSet.current.impressions,
-                    adSet.current.clicks,
-                    `${adSet.current.ctr}%`,
-                    adSet.current.leads,
-                    adSet.current.cpc
-                ]),
-
-                styles: {
-                    fontSize: 8
-                }
-            });
-
-            // ADS
-
-            campaign.adSets.forEach((adSet) => {
-
-                doc.addPage();
-
-                doc.setFontSize(13);
-
-                doc.text(
-                    `Ads - ${adSet.name}`,
-                    15,
-                    15
-                );
-
-                autoTable(doc, {
-
-                    startY: 20,
-
-                    head: [[
-                        "Ad",
-                        "Spend",
-                        "Impressions",
-                        "Clicks",
-                        "CTR",
-                        "Leads",
-                        "CPC"
-                    ]],
-
-                    body: adSet.ads.map((ad) => [
-                        ad.name,
-                        ad.current.spend,
-                        ad.current.impressions,
-                        ad.current.clicks,
-                        `${ad.current.ctr}%`,
-                        ad.current.leads,
-                        ad.current.cpc
-                    ]),
-
-                    styles: {
-                        fontSize: 8
-                    }
-                });
-
-            });
-
-        });
-
-        doc.save(
-            `meta-ads-report-${fromDate}-to-${toDate}.pdf`
-        );
-    };
-
-    const generatePDFWithGraph = async (report) => {
-
-        // For now generate the normal report.
-        // We can add Chart.js graphs here using report.dailyTrend.
-
-        await generatePDF(report);
-    };
-
-    const formatGrowth = (value) => {
-
-        if (value === null || value === undefined) {
-            return "N/A";
-        }
-
-        const number = Number(value);
-
-        if (Number.isNaN(number)) {
-            return "N/A";
-        }
-
-        return `${number > 0 ? "+" : ""}${number.toFixed(2)}%`;
-    };
+    /* ---------------- UI ---------------- */
 
     return (
         <div
             className="modal fade show d-block"
             tabIndex="-1"
-            style={{
-                backgroundColor: "rgba(0,0,0,0.5)"
-            }}
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
-
-            <div className="modal-dialog modal-lg modal-dialog-centered">
-
+            <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div className="modal-content">
-
                     {/* HEADER */}
-
                     <div className="modal-header">
-
-                        <h5 className="modal-title">
-                            Generate Meta Ads Report
-                        </h5>
+                        <h5 className="modal-title">Generate Meta Ads Report</h5>
 
                         <button
                             type="button"
@@ -385,175 +233,244 @@ const GenerateAdsReportModal = ({ show, onClose }) => {
                         >
                             <FiX />
                         </button>
-
                     </div>
 
                     {/* BODY */}
-
                     <div className="modal-body">
+                        {/* ---------- DATE RANGE ---------- */}
+                        <h6 className="fw-bold mb-2">1. Report Period</h6>
 
-                        <div className="row g-3">
+                        <div className="d-flex flex-wrap gap-2 mb-2">
+                            {[
+                                ["last7", "Last 7 days"],
+                                ["last30", "Last 30 days"],
+                                ["thisMonth", "This month"],
+                                ["lastMonth", "Last month"],
+                            ].map(([key, label]) => (
+                                <button
+                                    key={key}
+                                    type="button"
+                                    className="btn btn-sm btn-outline-secondary"
+                                    onClick={() => applyPreset(key)}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
 
-                            {/* FROM */}
-
+                        <div className="row g-3 mb-4">
                             <div className="col-md-6">
-
-                                <label className="form-label">
-                                    From Date
-                                </label>
-
+                                <label className="form-label">From Date</label>
                                 <input
                                     type="date"
                                     className="form-control"
                                     value={fromDate}
-                                    onChange={(e) =>
-                                        setFromDate(e.target.value)
-                                    }
+                                    onChange={(e) => setFromDate(e.target.value)}
                                 />
-
                             </div>
 
-                            {/* TO */}
-
                             <div className="col-md-6">
-
-                                <label className="form-label">
-                                    To Date
-                                </label>
-
+                                <label className="form-label">To Date</label>
                                 <input
                                     type="date"
                                     className="form-control"
                                     value={toDate}
-                                    onChange={(e) =>
-                                        setToDate(e.target.value)
-                                    }
+                                    onChange={(e) => setToDate(e.target.value)}
                                 />
-
                             </div>
 
-                            {/* COMPARISON */}
-
                             <div className="col-md-6">
-
-                                <label className="form-label">
-                                    Compare With
-                                </label>
-
+                                <label className="form-label">Compare With</label>
                                 <select
                                     className="form-select"
                                     value={compareType}
-                                    onChange={(e) =>
-                                        setCompareType(e.target.value)
-                                    }
+                                    onChange={(e) => setCompareType(e.target.value)}
                                 >
-
-                                    <option value="previous_month">
-                                        Previous Month
-                                    </option>
-
-                                    <option value="previous_period">
-                                        Previous Period
-                                    </option>
-
-                                    <option value="custom">
-                                        Custom Period
-                                    </option>
-
+                                    <option value="previous_period">Previous Period</option>
+                                    <option value="previous_month">Previous Month</option>
+                                    <option value="previous_year">Previous Year</option>
+                                    <option value="custom">Custom Period</option>
+                                    <option value="none">No Comparison</option>
                                 </select>
-
                             </div>
-
-                            {/* REPORT LEVEL */}
-
-                            <div className="col-md-6">
-
-                                <label className="form-label">
-                                    Report Level
-                                </label>
-
-                                <select
-                                    className="form-select"
-                                    value={reportLevel}
-                                    onChange={(e) =>
-                                        setReportLevel(e.target.value)
-                                    }
-                                >
-
-                                    <option value="overall">
-                                        Overall
-                                    </option>
-
-                                    <option value="campaign">
-                                        Campaign
-                                    </option>
-
-                                    <option value="adset">
-                                        Ad Set
-                                    </option>
-
-                                    <option value="ad">
-                                        Ad
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                            {/* CUSTOM COMPARISON */}
 
                             {compareType === "custom" && (
                                 <>
+                                    <div className="col-md-6" />
 
                                     <div className="col-md-6">
-
-                                        <label className="form-label">
-                                            Comparison From
-                                        </label>
-
+                                        <label className="form-label">Comparison From</label>
                                         <input
                                             type="date"
                                             className="form-control"
                                             value={compareFromDate}
                                             onChange={(e) =>
-                                                setCompareFromDate(
-                                                    e.target.value
-                                                )
+                                                setCompareFromDate(e.target.value)
                                             }
                                         />
-
                                     </div>
 
                                     <div className="col-md-6">
-
-                                        <label className="form-label">
-                                            Comparison To
-                                        </label>
-
+                                        <label className="form-label">Comparison To</label>
                                         <input
                                             type="date"
                                             className="form-control"
                                             value={compareToDate}
                                             onChange={(e) =>
-                                                setCompareToDate(
-                                                    e.target.value
-                                                )
+                                                setCompareToDate(e.target.value)
                                             }
                                         />
-
                                     </div>
-
                                 </>
                             )}
-
                         </div>
 
+                        {/* ---------- SCOPE ---------- */}
+                        <h6 className="fw-bold mb-2">2. Campaigns</h6>
+
+                        <div className="mb-2">
+                            <div className="form-check form-check-inline">
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    id="scopeAll"
+                                    checked={scope === "all"}
+                                    onChange={() => setScope("all")}
+                                />
+                                <label className="form-check-label" htmlFor="scopeAll">
+                                    All campaigns (with all ad sets &amp; ads)
+                                </label>
+                            </div>
+
+                            <div className="form-check form-check-inline">
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    id="scopeSelected"
+                                    checked={scope === "selected"}
+                                    onChange={() => setScope("selected")}
+                                />
+                                <label className="form-check-label" htmlFor="scopeSelected">
+                                    Specific campaign(s)
+                                </label>
+                            </div>
+                        </div>
+
+                        {scope === "selected" && (
+                            <div className="border rounded p-2 mb-4">
+                                <input
+                                    type="text"
+                                    className="form-control form-control-sm mb-2"
+                                    placeholder="Search campaign..."
+                                    value={campaignSearch}
+                                    onChange={(e) => setCampaignSearch(e.target.value)}
+                                />
+
+                                <div className="d-flex justify-content-between mb-2">
+                                    <small className="text-muted">
+                                        {selectedCampaignIds.length} selected
+                                    </small>
+
+                                    <div>
+                                        <button
+                                            type="button"
+                                            className="btn btn-link btn-sm p-0 me-3"
+                                            onClick={() =>
+                                                setSelectedCampaignIds(
+                                                    visibleCampaigns.map((c) => c.id)
+                                                )
+                                            }
+                                        >
+                                            Select all
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-link btn-sm p-0"
+                                            onClick={() => setSelectedCampaignIds([])}
+                                        >
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{ maxHeight: 180, overflowY: "auto" }}>
+                                    {campaignsLoading && (
+                                        <div className="text-muted small">
+                                            Loading campaigns...
+                                        </div>
+                                    )}
+
+                                    {!campaignsLoading &&
+                                        visibleCampaigns.length === 0 && (
+                                            <div className="text-muted small">
+                                                No campaigns found
+                                            </div>
+                                        )}
+
+                                    {visibleCampaigns.map((c) => (
+                                        <div className="form-check" key={c.id}>
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id={`camp-${c.id}`}
+                                                checked={selectedCampaignIds.includes(c.id)}
+                                                onChange={() => toggleCampaign(c.id)}
+                                            />
+                                            <label
+                                                className="form-check-label"
+                                                htmlFor={`camp-${c.id}`}
+                                            >
+                                                {c.name}{" "}
+                                                <span className="badge bg-light text-dark">
+                                                    {c.status}
+                                                </span>
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {scope === "all" && <div className="mb-4" />}
+
+                        {/* ---------- SECTIONS ---------- */}
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h6 className="fw-bold mb-0">3. Report Content</h6>
+
+                            <button
+                                type="button"
+                                className="btn btn-link btn-sm p-0"
+                                onClick={() => setAllSections(!allSectionsChecked)}
+                            >
+                                {allSectionsChecked ? "Clear all" : "Select all"}
+                            </button>
+                        </div>
+
+                        <div className="row">
+                            {SECTION_OPTIONS.map((s) => (
+                                <div className="col-md-6" key={s.key}>
+                                    <div className="form-check mb-1">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            id={`sec-${s.key}`}
+                                            checked={!!sections[s.key]}
+                                            onChange={() => toggleSection(s.key)}
+                                        />
+                                        <label
+                                            className="form-check-label"
+                                            htmlFor={`sec-${s.key}`}
+                                        >
+                                            {s.label}
+                                        </label>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* FOOTER */}
-
                     <div className="modal-footer">
-
                         <button
                             type="button"
                             className="btn btn-light"
@@ -568,16 +485,8 @@ const GenerateAdsReportModal = ({ show, onClose }) => {
                             disabled={loading}
                             onClick={() => generateReport(false)}
                         >
-
-                            <FiFileText
-                                size={16}
-                                className="me-2"
-                            />
-
-                            {loading
-                                ? "Generating..."
-                                : "Generate PDF"}
-
+                            <FiFileText size={16} className="me-2" />
+                            {loading ? "Generating..." : "Generate PDF"}
                         </button>
 
                         <button
@@ -586,24 +495,12 @@ const GenerateAdsReportModal = ({ show, onClose }) => {
                             disabled={loading}
                             onClick={() => generateReport(true)}
                         >
-
-                            <FiBarChart2
-                                size={16}
-                                className="me-2"
-                            />
-
-                            {loading
-                                ? "Generating..."
-                                : "PDF with Graph"}
-
+                            <FiBarChart2 size={16} className="me-2" />
+                            {loading ? "Generating..." : "PDF with Graph"}
                         </button>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     );
 };

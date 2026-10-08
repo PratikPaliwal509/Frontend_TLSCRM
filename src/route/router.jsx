@@ -125,6 +125,7 @@ import CreativeView from "../pages/CreativeView";
 import AdCreate from "../pages/AdCreate";
 import AdSetEdit from "../pages/AdSetEdit";
 import AdEdit from "../pages/AdEdit";
+import SeoReport from "../pages/SeoReport";
 // import MetaAdView from "../pages/MetaAdView";
 export const router = createBrowserRouter([
     {
@@ -436,6 +437,10 @@ export const router = createBrowserRouter([
             {
                 path: "/meta-ads/creatives/view/:creativeId",
                 element: <CreativeView  />
+            },
+            {
+                path: "/seo",
+                element: <SeoReport  />
             },
         ]
     },
